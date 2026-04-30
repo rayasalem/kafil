@@ -22,7 +22,7 @@ export const GlobalErrorFallback: FC<{ error: Error; resetErrorBoundary: () => v
           العودة للرئيسية
         </button>
       </div>
-      {process.env.NODE_ENV === 'development' && (
+      {import.meta.env.DEV && (
         <pre className="mt-10 p-4 bg-gray-50 rounded-xl text-xs text-red-500 text-left overflow-auto max-w-full" dir="ltr">
           {error.message}
         </pre>

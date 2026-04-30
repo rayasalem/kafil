@@ -20,12 +20,13 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { useGSAP } from '@gsap/react';
 import Lenis from 'lenis';
 import { cn } from '@/shared/utils/cn';
 
 // Register GSAP plugins
-gsap.registerPlugin(ScrollTrigger, useGSAP);
+gsap.registerPlugin(ScrollTrigger, MotionPathPlugin, useGSAP);
 
 export default function Landing() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -82,37 +83,25 @@ export default function Landing() {
       ease: "back.out(1.7)"
     }, "-=0.4");
 
-    // NEW Hero Vault Cinematic Animation
+    // Hero Vault Cinematic Animation
     const vaultTl = gsap.timeline({
       repeat: -1,
       repeatDelay: 3
     });
 
-    // 1. Initial Reveal & Vault Appears
     vaultTl.to(".escrow-vault", { opacity: 1, scale: 1, duration: 1.2, ease: "power4.out" })
-      .to(".source-node", { opacity: 1, y: 20, duration: 0.8, ease: "back.out(1.7)" }, "-=0.7");
-
-    // 2. Flow into Vault
-    vaultTl.to(".input-flow", { strokeDashoffset: 0, duration: 1.2, ease: "power2.inOut" })
-      .to(".source-node", { opacity: 0, scale: 0.8, duration: 0.5 }, "-=0.3");
-
-    // 3. Vault Processing (Locking)
-    vaultTl.to(".vault-progress", { width: "100%", duration: 2, ease: "power2.inOut" })
+      .to(".source-node", { opacity: 1, y: 20, duration: 0.8, ease: "back.out(1.7)" }, "-=0.7")
+      .to(".input-flow", { strokeDashoffset: 0, duration: 1.2, ease: "power2.inOut" })
+      .to(".source-node", { opacity: 0, scale: 0.8, duration: 0.5 }, "-=0.3")
+      .to(".vault-progress", { width: "100%", duration: 2, ease: "power2.inOut" })
       .to(".vault-pulse", { scale: 1.6, opacity: 0, duration: 1, repeat: 1, yoyo: true }, "-=1.8")
-      .to(".escrow-vault", { boxShadow: "0 0 60px rgba(201, 168, 76, 0.4)", duration: 0.6 }, "-=0.6");
-
-    // 4. Distribution Flows
-    vaultTl.to(".output-flow-1, .output-flow-2", { strokeDashoffset: 0, duration: 1.5, ease: "power3.inOut", stagger: 0.15 });
-
-    // 5. Allocation Nodes Reveal
-    vaultTl.to(".alloc-node-1, .alloc-node-2", { opacity: 1, y: 0, duration: 1, ease: "back.out(1.2)", stagger: 0.3 }, "-=1");
-
-    // 6. Success State
-    vaultTl.to(".outcome-text", { opacity: 1, y: -5, duration: 0.5 }, "-=0.5")
+      .to(".escrow-vault", { boxShadow: "0 0 60px rgba(201, 168, 76, 0.4)", duration: 0.6 }, "-=0.6")
+      .to(".output-flow-1, .output-flow-2", { strokeDashoffset: 0, duration: 1.5, ease: "power3.inOut", stagger: 0.15 })
+      .to(".alloc-node-1, .alloc-node-2", { opacity: 1, y: 0, duration: 1, ease: "back.out(1.2)", stagger: 0.3 }, "-=1")
+      .to(".outcome-text", { opacity: 1, y: -5, duration: 0.5 }, "-=0.5")
       .to(".success-overlay", { opacity: 1, scale: 1, duration: 0.8, ease: "power4.out" }, "-=0.2")
       .to(".escrow-vault, .alloc-node-1, .alloc-node-2", { opacity: 0.3, filter: "blur(4px)", duration: 0.8 }, "-=0.8");
 
-    // Cleanup for loop
     vaultTl.to({}, { duration: 3 })
       .to(".success-overlay, .escrow-vault, .alloc-node-1, .alloc-node-2, .outcome-text", { opacity: 0, duration: 0.8 })
       .set(".input-flow, .output-flow-1, .output-flow-2", { strokeDashoffset: 1000 })
@@ -121,18 +110,46 @@ export default function Landing() {
       .set(".escrow-vault", { scale: 0.95, boxShadow: "0 0 40px rgba(201, 168, 76, 0.15)", filter: "blur(0px)" })
       .set(".alloc-node-1, .alloc-node-2", { y: 40 });
 
+    // Apple-Style Morph Narrative (Section 3)
+    const morphTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: "#about",
+        start: "top top",
+        end: "+=300%",
+        scrub: 1,
+        pin: true,
+        anticipatePin: 1,
+      }
+    });
+
+    morphTl
+      .to(".traditional-card", { x: -200, opacity: 0, scale: 0.8, filter: "blur(20px)", duration: 1.5 })
+      .to(".morph-bg", { backgroundColor: "#0D1B2A", duration: 1.5 }, 0)
+      .to(".morph-headline", { color: "#FFFFFF", duration: 1.5 }, 0)
+      .fromTo(".kafeel-assembly-container", 
+        { scale: 0.7, opacity: 0, y: 100 },
+        { scale: 1, opacity: 1, y: 0, duration: 2, ease: "power4.out" },
+        "-=0.5"
+      )
+      .to(".secure-circuit-path", {
+        strokeDashoffset: 0,
+        opacity: 1,
+        stagger: 0.3,
+        duration: 2.5,
+        ease: "power2.inOut"
+      }, "-=1.5");
+
     // Scroll-triggered Reveal Animations
     gsap.utils.toArray<HTMLElement>('.reveal-section').forEach((section) => {
       gsap.from(section, {
         scrollTrigger: {
           trigger: section,
-          start: "top 80%",
-          end: "top 20%",
+          start: "top 85%",
           toggleActions: "play none none reverse",
         },
         opacity: 0,
-        y: 50,
-        duration: 1,
+        y: 30,
+        duration: 0.8,
         ease: "power3.out",
       });
     });
@@ -157,14 +174,6 @@ export default function Landing() {
     { q: "كيف يعمل مقيم العدالة (كاشف العدالة)؟", a: "أثناء تسعير المهام، يقوم نظام الذكاء الاصطناعي الخاص بنا بمقارنة المبالغ المعروضة مع متوسط أجور السوق الإقليمية للمستقلين. إذا كان المبلغ مجحفاً، يظهر تحذير للمدير وللمستقل قبل قبول العمل لضمان الإنصاف." },
     { q: "هل هناك رسوم إضافية لاستخدام العقد الذكي/الضمان؟", a: "يتم خصم نسبة بسيطة فقط عند نجاح المهمة واستلام المستقل لمستحقاته كرسوم لتشغيل النظام الآمن وتغطية تكاليف بوابات الدفع، دون أي رسوم مخفية." }
   ];
-
-  // Split title into characters for animation
-  const titleText = "احمِ أموالك. وخلي كل واحد ياخذ حقه.";
-  const splitTitle = titleText.split("").map((char, i) => (
-    <span key={i} className="char inline-block whitespace-pre">
-      {char}
-    </span>
-  ));
 
   const navLinks = [
     { name: 'الرئيسية', id: 'home' },
@@ -444,62 +453,93 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ❌ PROBLEM VS ✅ SOLUTION - High Contrast Reveal */}
-      <section id="about" className="reveal-section py-32 px-6 bg-gray-50/50">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-20">
-             <h2 className="text-4xl md:text-5xl font-black text-[#0D1B2A] mb-6 tracking-tight">وداعاً لمشاكل العمل التقليدي</h2>
-             <p className="text-xl text-gray-500 max-w-2xl mx-auto font-medium">اخترنا لك الطريق الأكثر أماناً وعدلاً.</p>
+      {/* ❌ PROBLEM VS ✅ SOLUTION - Apple-Style Morph Narrative */}
+      <section id="about" className="relative h-[400vh] bg-[#F9F4EE] morph-bg transition-colors duration-1000">
+        <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden px-6">
+          
+          <div className="text-center mb-16 relative z-30">
+            <motion.h2 className="morph-headline text-5xl md:text-[6rem] lg:text-[7rem] font-black text-[#0D1B2A] mb-6 tracking-tighter">
+              من الفوضى... إلى اليقين.
+            </motion.h2>
+            <p className="text-xl md:text-2xl text-gray-500 max-w-3xl mx-auto font-medium leading-relaxed opacity-60">
+               اسحب للأسفل لترى كيف نحول المخاطر إلى ضمانات.
+            </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-10">
-            {/* The Old Way */}
-            <motion.div 
-              whileHover={{ y: -10 }}
-              className="bg-white p-10 rounded-[3rem] shadow-sm border border-gray-100 relative overflow-hidden group"
-            >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-bl-full -z-10 transition-all group-hover:scale-110"></div>
-              <div className="flex items-center gap-4 mb-8 text-red-500">
-                <AlertTriangle size={32} />
-                <h3 className="text-3xl font-black text-[#0D1B2A]">الطريقة التقليدية</h3>
-              </div>
-              <ul className="space-y-6">
-                {[
-                  "غياب الضمان المالي وضياع الحقوق.",
-                  "عمولات خفية من المنسقين والوسطاء.",
-                  "نزاعات طويلة بدون حكم عادل."
-                ].map((text, i) => (
-                  <li key={i} className="flex gap-4 items-start">
-                    <div className="bg-red-100 p-1.5 rounded-full mt-1"><span className="w-1.5 h-1.5 bg-red-500 rounded-full block"></span></div>
-                    <p className="text-lg text-gray-500 font-bold">{text}</p>
-                  </li>
-                ))}
-              </ul>
+          <div className="relative w-full max-w-7xl h-[60vh] flex items-center justify-center">
+            
+            {/* 🌉 CINEMATIC SVG ASSEMBLY - Pinned Center */}
+            <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none" dir="ltr">
+              <svg className="w-full h-full max-w-4xl" viewBox="0 0 800 500">
+                <defs>
+                  <filter id="gold-neon" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="8" result="blur" />
+                    <feFlood floodColor="#C9A84C" floodOpacity="0.6" />
+                    <feComposite in2="blur" operator="in" />
+                    <feMerge>
+                      <feMergeNode />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                </defs>
+                
+                {/* Circuit paths that assemble */}
+                <g className="kafeel-assembly-container opacity-0">
+                  <path className="secure-circuit-path" d="M100 250 Q200 100, 400 100 T700 250" stroke="#C9A84C" strokeWidth="2" fill="none" strokeDasharray="1000" strokeDashoffset="1000" filter="url(#gold-neon)" />
+                  <path className="secure-circuit-path" d="M100 250 Q200 400, 400 400 T700 250" stroke="#C9A84C" strokeWidth="2" fill="none" strokeDasharray="1000" strokeDashoffset="1000" filter="url(#gold-neon)" />
+                  <circle cx="400" cy="250" r="100" fill="none" stroke="#C9A84C" strokeWidth="1" strokeDasharray="10 10" className="animate-[spin_60s_linear_infinite]" />
+                  <Lock className="text-[#C9A84C] w-12 h-12" x="375" y="225" />
+                </g>
+              </svg>
+            </div>
+
+            {/* Stage 1: Traditional Risk Card */}
+            <motion.div className="traditional-card absolute z-20 w-full max-w-xl bg-white/80 backdrop-blur-xl p-12 rounded-[3rem] shadow-2xl border border-red-100">
+               <div className="flex items-center gap-6 mb-10 text-red-500">
+                  <div className="p-4 bg-red-50 rounded-2xl animate-pulse">
+                    <AlertTriangle size={32} />
+                  </div>
+                  <h3 className="text-4xl font-black text-[#0D1B2A]">العمل التقليدي</h3>
+               </div>
+               <div className="space-y-6">
+                 {[
+                   "ضياع الحقوق المالية بسبب غياب الضمان.",
+                   "عمولات خفية وغير مبررة من الوسطاء.",
+                   "نزاعات تستمر لشهور دون حل عادل."
+                 ].map((text, i) => (
+                   <div key={i} className="flex gap-4 items-start text-gray-500 font-bold text-lg">
+                     <span className="w-2 h-2 rounded-full bg-red-400 mt-2.5 shrink-0" />
+                     {text}
+                   </div>
+                 ))}
+               </div>
             </motion.div>
 
-            {/* The Kafeel Way */}
-            <motion.div 
-              whileHover={{ y: -10 }}
-              className="bg-[#0D1B2A] p-10 rounded-[3rem] shadow-2xl shadow-blue-900/20 border border-blue-900/50 relative overflow-hidden group"
-            >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-900/30 rounded-bl-full -z-10 transition-all group-hover:scale-110"></div>
-              <div className="flex items-center gap-4 mb-8 text-blue-400">
-                <ShieldCheck size={32} />
-                <h3 className="text-3xl font-black text-white">طريق كفيل</h3>
-              </div>
-              <ul className="space-y-6">
-                {[
-                  "نظام خزنة مستقلة (Escrow) يحمي الطرفين.",
-                  "شفافية مطلقة في الميزانيات والعمولات.",
-                  "تحكيم مدعوم بالذكاء الاصطناعي الفوري."
-                ].map((text, i) => (
-                  <li key={i} className="flex gap-4 items-start">
-                    <CheckCircle className="text-blue-400 shrink-0 mt-1" size={20}/>
-                    <p className="text-lg text-blue-100 font-bold">{text}</p>
-                  </li>
-                ))}
-              </ul>
+            {/* Stage 2: Kafeel Secured Card (Reveals on Scroll) */}
+            <motion.div className="kafeel-assembly-container absolute z-20 w-full max-w-xl bg-[#0D1B2A]/90 backdrop-blur-2xl p-12 rounded-[3rem] shadow-[0_0_100px_rgba(201,168,76,0.15)] border border-[#C9A84C]/30 opacity-0 scale-90">
+               <div className="flex items-center gap-6 mb-10 text-[#C9A84C]">
+                  <div className="p-4 bg-[#C9A84C]/10 rounded-2xl shadow-[0_0_20px_rgba(201,168,76,0.2)]">
+                    <ShieldCheck size={32} />
+                  </div>
+                  <h3 className="text-4xl font-black text-white">مع كفيل</h3>
+               </div>
+               <div className="space-y-6 mb-12">
+                 {[
+                   "أموالك في خزنة بنكية مستقلة حتى الاستلام.",
+                   "شفافية مطلقة في كل معاملة وميزانية.",
+                   "عدالة فورية مدعومة بالذكاء الاصطناعي."
+                 ].map((text, i) => (
+                   <div key={i} className="flex gap-4 items-start text-blue-100/70 font-bold text-lg">
+                     <CheckCircle className="text-[#C9A84C] mt-1 shrink-0" size={20} />
+                     {text}
+                   </div>
+                 ))}
+               </div>
+               <Link to="/register" className="block w-full py-6 bg-[#C9A84C] text-[#0D1B2A] font-black text-center rounded-2xl hover:bg-[#D4B55E] transition-all shadow-xl shadow-blue-950">
+                  ابدأ تجربتك الآمنة الآن
+               </Link>
             </motion.div>
+
           </div>
         </div>
       </section>
@@ -675,28 +715,39 @@ export default function Landing() {
         </div>
         <div className="hidden lg:flex gap-10 text-gray-500 font-bold text-sm justify-center mb-12">
           {[
-            { name: 'الرئيسية', id: 'hero' },
+            { name: 'الرئيسية', id: 'home' },
             { name: 'من نحن', id: 'about' },
             { name: 'كيفية العمل', id: 'how-it-works' },
             { name: 'الذكاء الاصطناعي', id: 'ai-justice' },
             { name: 'الأسئلة الشائعة', id: 'faq' }
           ].map((item, i) => (
-            <a key={i} href={`#${item.id}`} className="hover:text-blue-900 transition-colors relative group">
+            <motion.a 
+              key={i} 
+              href={`#${item.id}`} 
+              whileHover={{ y: -2, color: '#0D1B2A' }}
+              className="hover:text-blue-900 transition-colors relative group"
+            >
               {item.name}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
-            </a>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#C9A84C] transition-all group-hover:w-full"></span>
+            </motion.a>
           ))}
         </div>
         <div className="border-t border-gray-100 max-w-7xl mx-auto pt-12 flex flex-col md:flex-row justify-between items-center text-gray-400 font-bold text-sm">
           <p>© {new Date().getFullYear()} كفيل - Kafeel. كل الحقوق محفوظة.</p>
           <div className="flex gap-10 mt-6 md:mt-0">
-             <a href="#" className="hover:text-[#0D1B2A] transition-colors">Twitter (X)</a>
-             <a href="#" className="hover:text-[#0D1B2A] transition-colors">LinkedIn</a>
-             <a href="#" className="hover:text-[#0D1B2A] transition-colors">Instagram</a>
+             {['Twitter (X)', 'LinkedIn', 'Instagram'].map((social) => (
+               <motion.a 
+                 key={social} 
+                 href="#" 
+                 whileHover={{ scale: 1.1, color: '#0D1B2A' }}
+                 className="hover:text-[#0D1B2A] transition-colors"
+               >
+                 {social}
+               </motion.a>
+             ))}
           </div>
         </div>
       </footer>
     </div>
   );
 }
-

@@ -259,11 +259,26 @@ export default function Landing() {
               </a>
             </div>
 
-            <div className="pt-12 border-t border-white/10 mt-12">
-               <div className="flex gap-8 opacity-50 grayscale contrast-125 justify-end">
-                 <Lock className="w-8 h-8 text-white"/>
-                 <ShieldCheck className="w-8 h-8 text-white"/>
-                 <UserCheck className="w-8 h-8 text-white"/>
+            <div className="pt-16 border-t border-white/5 mt-16">
+               <div className="flex flex-wrap gap-8 justify-end">
+                 {[
+                   { icon: Lock, label: "تشفير عسكري", color: "text-blue-400", bg: "bg-blue-400/10" },
+                   { icon: ShieldCheck, label: "ضمان مالي 100%", color: "text-green-400", bg: "bg-green-400/10" },
+                   { icon: UserCheck, label: "هوية موثقة", color: "text-amber-400", bg: "bg-amber-400/10" }
+                 ].map((badge, i) => (
+                   <motion.div 
+                     key={i}
+                     initial={{ opacity: 0, y: 20 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     transition={{ delay: 0.8 + i * 0.1 }}
+                     className="flex items-center gap-3 bg-white/5 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/10 hover:bg-white/10 transition-all group"
+                   >
+                     <div className={`p-2 rounded-xl ${badge.bg} ${badge.color} group-hover:scale-110 transition-transform`}>
+                        <badge.icon size={20} />
+                     </div>
+                     <span className="text-sm font-bold text-gray-400 group-hover:text-white transition-colors">{badge.label}</span>
+                   </motion.div>
+                 ))}
                </div>
             </div>
           </div>

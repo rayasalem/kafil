@@ -1,36 +1,107 @@
-@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Arabic:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Tajawal", system-ui, -apple-system, sans-serif;
+  /* Design Tokens from UI/UX Spec */
+  --font-sans: "IBM Plex Arabic", "Inter", system-ui, sans-serif;
+  
+  /* Brand Palette */
+  --color-kafil-midnight: #0D1B2A;
+  --color-kafil-gold: #C9A84C;
+  --color-kafil-gold-light: #D4B55E;
+  --color-kafil-teal: #1A7F74;
+  --color-kafil-cream: #F9F4EE;
+  --color-kafil-sand: #E8DDD0;
+
+  /* Semantic Statuses */
+  --color-status-green: #22C55E;
+  --color-status-yellow: #EAB308;
+  --color-status-red: #EF4444;
+  --color-status-blue: #3B82F6;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(13,27,42,0.08), 0 1px 2px rgba(13,27,42,0.06);
+  --shadow-modal: 0 20px 60px rgba(13,27,42,0.20), 0 4px 16px rgba(13,27,42,0.10);
+  --shadow-escrow: 0 0 0 3px rgba(201,168,76,0.25);
 }
 
-body {
-  margin: 0;
-  font-family: var(--font-sans);
-  background-color: #F9FAFB;
-  color: #111827;
-  -webkit-font-smoothing: antialiased;
+@layer base {
+  :root {
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    background-color: var(--color-kafil-cream);
+    color: var(--color-kafil-midnight);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.8; /* Optimized for Arabic letterforms */
+  }
+
+  /* Handle monetary amounts to always stay LTR for readability */
+  bdi, .currency {
+    direction: ltr;
+    unicode-bidi: isolate;
+    font-variant-numeric: tabular-nums;
+  }
 }
 
-.rtl {
-  direction: rtl;
+@layer components {
+  .kafil-card {
+    background: white;
+    border: 1px solid var(--color-kafil-sand);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  }
+
+  .kafil-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(13,27,42,0.12);
+  }
+
+  .btn-gold {
+    background-color: var(--color-kafil-gold);
+    color: white;
+    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 12px rgba(201,168,76,0.35);
+  }
+
+  .btn-gold:hover {
+    background-color: var(--color-kafil-gold-light);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(201,168,76,0.45);
+  }
 }
 
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+@layer utilities {
+  @keyframes vault-lock {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
 
-@keyframes pulse-soft {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.95; transform: scale(0.995); }
-}
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-.animate-fade-in {
-  animation: fade-in 0.4s ease-out forwards;
-}
+  .animate-vault-lock {
+    animation: vault-lock 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
 
-.animate-pulse-soft {
-  animation: pulse-soft 2s ease-in-out infinite;
+  .animate-fade-up {
+    animation: fade-up 0.5s ease-out forwards;
+  }
 }

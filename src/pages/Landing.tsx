@@ -1,10 +1,154 @@
-import { useState } from 'react';
-import { ShieldCheck, ArrowLeft, AlertTriangle, Lock, Briefcase, Zap, CheckCircle, BrainCircuit, Scale, ChevronDown, HeartHandshake, UserCheck, Settings } from 'lucide-react';
+import { useEffect, useRef, useLayoutEffect, useState } from 'react';
+import { 
+  ShieldCheck, 
+  ArrowLeft, 
+  AlertTriangle, 
+  Lock, 
+  Briefcase, 
+  Zap, 
+  CheckCircle, 
+  BrainCircuit, 
+  Scale, 
+  ChevronDown, 
+  HeartHandshake, 
+  UserCheck, 
+  MousePointer2,
+  Sparkles,
+  Fingerprint
+} from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
+import Lenis from 'lenis';
+
+// Register GSAP plugins
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 export default function Landing() {
-  const navigate = useNavigate();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  // Initialize Smooth Scrolling (Lenis)
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+    });
+
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
+
+  // GSAP Animations
+  useGSAP(() => {
+    // Hero Text Animation
+    const heroTl = gsap.timeline();
+    
+    heroTl.from(".char", {
+      opacity: 0,
+      y: 100,
+      rotateX: -90,
+      stagger: 0.02,
+      duration: 1,
+      ease: "expo.out",
+    })
+    .from(".hero-sub", {
+      opacity: 0,
+      y: 20,
+      duration: 0.8,
+      ease: "power3.out"
+    }, "-=0.5")
+    .from(".hero-btn", {
+      opacity: 0,
+      scale: 0.8,
+      stagger: 0.1,
+      duration: 0.6,
+      ease: "back.out(1.7)"
+    }, "-=0.4");
+
+    // NEW Hero Vault Cinematic Animation
+    const vaultTl = gsap.timeline({
+      repeat: -1,
+      repeatDelay: 3
+    });
+
+    // 1. Initial Reveal & Vault Appears
+    vaultTl.to(".escrow-vault", { opacity: 1, scale: 1, duration: 1.2, ease: "power4.out" })
+      .to(".source-node", { opacity: 1, y: 20, duration: 0.8, ease: "back.out(1.7)" }, "-=0.7");
+
+    // 2. Flow into Vault
+    vaultTl.to(".input-flow", { strokeDashoffset: 0, duration: 1.2, ease: "power2.inOut" })
+      .to(".source-node", { opacity: 0, scale: 0.8, duration: 0.5 }, "-=0.3");
+
+    // 3. Vault Processing (Locking)
+    vaultTl.to(".vault-progress", { width: "100%", duration: 2, ease: "power2.inOut" })
+      .to(".vault-pulse", { scale: 1.6, opacity: 0, duration: 1, repeat: 1, yoyo: true }, "-=1.8")
+      .to(".escrow-vault", { boxShadow: "0 0 60px rgba(201, 168, 76, 0.4)", duration: 0.6 }, "-=0.6");
+
+    // 4. Distribution Flows
+    vaultTl.to(".output-flow-1, .output-flow-2", { strokeDashoffset: 0, duration: 1.5, ease: "power3.inOut", stagger: 0.15 });
+
+    // 5. Allocation Nodes Reveal
+    vaultTl.to(".alloc-node-1, .alloc-node-2", { opacity: 1, y: 0, duration: 1, ease: "back.out(1.2)", stagger: 0.3 }, "-=1");
+
+    // 6. Success State
+    vaultTl.to(".outcome-text", { opacity: 1, y: -5, duration: 0.5 }, "-=0.5")
+      .to(".success-overlay", { opacity: 1, scale: 1, duration: 0.8, ease: "power4.out" }, "-=0.2")
+      .to(".escrow-vault, .alloc-node-1, .alloc-node-2", { opacity: 0.3, filter: "blur(4px)", duration: 0.8 }, "-=0.8");
+
+    // Cleanup for loop
+    vaultTl.to({}, { duration: 3 })
+      .to(".success-overlay, .escrow-vault, .alloc-node-1, .alloc-node-2, .outcome-text", { opacity: 0, duration: 0.8 })
+      .set(".input-flow, .output-flow-1, .output-flow-2", { strokeDashoffset: 1000 })
+      .set(".source-node", { opacity: 0, y: 0, scale: 1 })
+      .set(".vault-progress", { width: "0%" })
+      .set(".escrow-vault", { scale: 0.95, boxShadow: "0 0 40px rgba(201, 168, 76, 0.15)", filter: "blur(0px)" })
+      .set(".alloc-node-1, .alloc-node-2", { y: 40 });
+
+    // Scroll-triggered Reveal Animations
+    gsap.utils.toArray<HTMLElement>('.reveal-section').forEach((section) => {
+      gsap.from(section, {
+        scrollTrigger: {
+          trigger: section,
+          start: "top 80%",
+          end: "top 20%",
+          toggleActions: "play none none reverse",
+        },
+        opacity: 0,
+        y: 50,
+        duration: 1,
+        ease: "power3.out",
+      });
+    });
+
+    // Escrow Vault Animation
+    gsap.to(".vault-inner", {
+      scrollTrigger: {
+        trigger: ".vault-section",
+        start: "top center",
+        end: "bottom center",
+        scrub: 1,
+      },
+      rotate: 360,
+      scale: 1.1,
+    });
+
+  }, { scope: containerRef });
 
   const faqs = [
     { q: "ما هو نظام الضمان المالي (Escrow)؟", a: "في كفيل، يقوم العميل بإيداع ميزانية المشروع كاملة لدينا في البداية. نحتفظ بها بشكل آمن، ولا نفرج عنها للمستقل إلا بعد إنجاز المهام المتفق عليها. هذا يضمن حق العميل في الاستلام وحق المستقل بالدفع." },
@@ -13,387 +157,427 @@ export default function Landing() {
     { q: "هل هناك رسوم إضافية لاستخدام العقد الذكي/الضمان؟", a: "يتم خصم نسبة بسيطة فقط عند نجاح المهمة واستلام المستقل لمستحقاته كرسوم لتشغيل النظام الآمن وتغطية تكاليف بوابات الدفع، دون أي رسوم مخفية." }
   ];
 
+  // Split title into characters for animation
+  const titleText = "احمِ أموالك. وخلي كل واحد ياخذ حقه.";
+  const splitTitle = titleText.split("").map((char, i) => (
+    <span key={i} className="char inline-block whitespace-pre">
+      {char}
+    </span>
+  ));
+
   return (
-    <div className="bg-gray-50 min-h-screen text-gray-900 font-sans selection:bg-blue-200">
+    <div ref={containerRef} className="bg-white min-h-screen text-[#0D1B2A] font-sans selection:bg-blue-100 overflow-x-hidden" dir="rtl">
       
-      {/* 🟢 NAVBAR */}
-      <nav className="fixed w-full flex justify-between items-center p-5 md:px-10 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
-        <div className="text-2xl font-extrabold text-blue-900 flex items-center gap-2 tracking-tight">
-          <ShieldCheck className="text-green-500" size={34}/> كفيل
+      {/* 🟢 NAVIGATION - Minimalist & Glassy */}
+      <motion.nav 
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.8, ease: "circOut" }}
+        className="fixed w-full flex justify-between items-center p-6 md:px-12 z-50 bg-white/70 backdrop-blur-xl border-b border-gray-100/50"
+      >
+        <div className="text-2xl font-black text-[#0D1B2A] flex items-center gap-3 tracking-tighter">
+          <div className="bg-blue-900 p-1.5 rounded-xl shadow-lg shadow-blue-900/20">
+            <ShieldCheck className="text-white" size={24}/>
+          </div>
+          كفيل
         </div>
-        <div className="hidden md:flex gap-8 text-gray-600 font-bold text-sm">
-          <a href="#" className="hover:text-blue-600 transition">الرئيسية</a>
-          <a href="#about" className="hover:text-blue-600 transition">من نحن</a>
-          <a href="#how-it-works" className="hover:text-blue-600 transition">كيفية العمل</a>
-          <a href="#ai-justice" className="hover:text-blue-600 transition">الذكاء الاصطناعي</a>
-          <a href="#faq" className="hover:text-blue-600 transition">الأسئلة الشائعة</a>
+        <div className="hidden lg:flex gap-10 text-gray-500 font-bold text-sm">
+          {['الرئيسية', 'من نحن', 'كيفية العمل', 'الذكاء الاصطناعي', 'الأسئلة الشائعة'].map((item, i) => (
+            <a key={i} href={`#${item}`} className="hover:text-blue-900 transition-colors relative group">
+              {item}
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
+            </a>
+          ))}
         </div>
-        <div className="flex gap-3">
-          <Link to="/login" className="text-blue-900 font-bold px-4 py-2.5 hover:bg-blue-50 rounded-full transition">دخول</Link>
-          <Link to="/register" className="bg-blue-900 text-white font-bold px-6 py-2.5 rounded-full hover:bg-blue-800 transition shadow-md shadow-blue-900/10">إنشاء حساب</Link>
-        </div>
-      </nav>
-
-      {/* 🚀 HERO SECTION */}
-      <section className="pt-40 pb-20 px-6 max-w-6xl mx-auto text-center relative overflow-hidden">
-        {/* Background Gradients */}
-        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-gradient-to-br from-blue-100/40 to-indigo-50 rounded-full blur-[100px] -z-10"></div>
-        <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-gradient-to-tr from-green-50/60 to-blue-50/50 rounded-full blur-[80px] -z-10"></div>
-        
-        <div className="inline-flex items-center gap-2 bg-white/80 text-blue-800 font-bold px-5 py-2.5 rounded-full text-sm mb-8 border border-blue-100 shadow-sm backdrop-blur-sm">
-          <ShieldCheck size={18} className="text-blue-600" /> كفيل يحمي الدفعات حتى إتمام العمل بنجاح
-        </div>
-        
-        <h1 className="text-5xl md:text-[5.5rem] font-black text-gray-900 mb-8 leading-[1.1] tracking-tight">
-          احمِ أموالك. وخلي كل<br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-l from-blue-600 via-indigo-700 to-blue-900">واحد ياخذ حقه.</span>
-        </h1>
-        
-        <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
-          منصة الضمان المالي الأولى التي تحفظ ميزانية المشاريع بأمان، وتضمن تسليم العمل المتقن للمستقل. بيئة آمنة للعملاء والمستقلين.
-        </p>
-        
-        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-16">
-          <Link to="/register" className="w-full sm:w-auto bg-blue-900 text-white font-bold px-10 py-4 rounded-2xl hover:bg-blue-800 transition-all flex items-center justify-center gap-3 shadow-xl shadow-blue-900/20 text-lg group">
-            ابدأ الآن <ArrowLeft size={22} className="transform group-hover:-translate-x-1 transition-transform"/>
+        <div className="flex gap-4">
+          <Link to="/login" className="text-[#0D1B2A] font-bold px-6 py-2.5 hover:bg-gray-100 rounded-full transition-all text-sm">دخول</Link>
+          <Link to="/register" className="bg-[#0D1B2A] text-white font-bold px-8 py-3 rounded-full hover:scale-105 active:scale-95 transition-all shadow-xl shadow-blue-900/10 text-sm">
+            ابدأ الآن
           </Link>
-          <a href="#how-it-works" className="w-full sm:w-auto bg-white text-gray-700 font-bold px-10 py-4 rounded-2xl hover:bg-gray-50 transition-all border-2 border-gray-100 text-lg flex items-center justify-center shadow-sm">
-            كيف يعمل النظام
-          </a>
         </div>
+      </motion.nav>
 
-        {/* TRUST INDICATORS */}
-        <div className="flex flex-wrap justify-center items-center gap-6 md:gap-12 text-sm md:text-base font-bold text-gray-500 mb-20">
-           <div className="flex items-center gap-2 bg-gray-50/80 px-4 py-2 rounded-full"><Lock size={18} className="text-green-500"/> أموالك محفوظة</div>
-           <div className="flex items-center gap-2 bg-gray-50/80 px-4 py-2 rounded-full"><Scale size={18} className="text-blue-500"/> تحكيم عادل</div>
-           <div className="flex items-center gap-2 bg-gray-50/80 px-4 py-2 rounded-full"><ShieldCheck size={18} className="text-indigo-500"/> دفع آمن</div>
-        </div>
+      {/* 🚀 HERO SECTION - Cinematic SVG */}
+      <section ref={heroRef} className="relative pt-40 pb-32 px-6 overflow-hidden min-h-[90vh] flex flex-col items-center justify-center bg-gradient-to-br from-[#0D1B2A] to-[#08111A]">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center relative z-10 w-full">
+          <div className="space-y-8 text-right hero-text-content">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center gap-2 bg-blue-900/40 text-blue-300 font-bold px-6 py-2 rounded-full text-sm border border-blue-500/30 backdrop-blur-sm shadow-[0_0_15px_rgba(59,130,246,0.15)]"
+            >
+              <Sparkles size={16} className="text-blue-400" /> معيار جديد للعمل الحر في الشرق الأوسط
+            </motion.div>
 
-        {/* ESCROW VISUAL FLOW */}
-        <div className="relative mt-4 max-w-4xl mx-auto z-10 px-4">
-          <div className="absolute top-1/2 left-4 right-4 h-1.5 bg-gradient-to-r from-gray-100 via-blue-200 to-gray-100 -z-10 rounded-full hidden md:block transform -translate-y-1/2"></div>
-          
-          <div className="grid md:grid-cols-3 gap-8 relative">
+            <h1 ref={titleRef} className="text-5xl md:text-[5rem] lg:text-[6rem] font-black text-white mb-8 leading-[1.1] tracking-tight">
+              <div className="overflow-hidden">
+                احمِ أموالك.
+              </div>
+              <div className="overflow-hidden text-transparent bg-clip-text bg-gradient-to-l from-[#C9A84C] via-[#E8DDD0] to-[#C9A84C] py-2">
+                وضمان حقوقك.
+              </div>
+            </h1>
             
-            {/* Client Card */}
-            <div className="bg-white p-8 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 flex flex-col items-center relative group hover:-translate-y-2 transition-transform duration-300">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-bl-full -z-10 rounded-tr-[2rem] transition-colors group-hover:bg-blue-100"></div>
-              <div className="w-20 h-20 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-sm"><Briefcase size={36}/></div>
-              <h3 className="font-bold text-2xl text-gray-900 mb-2">العميل</h3>
-              <p className="text-base text-gray-500 font-medium">يودع ميزانية المشروع</p>
-            </div>
-
-            {/* Escrow/Kafeel Card */}
-            <div className="bg-gradient-to-br from-blue-900 to-indigo-900 p-8 rounded-[2rem] shadow-2xl shadow-blue-900/30 border border-blue-700/50 flex flex-col items-center relative transform md:scale-110 z-10 group">
-              <div className="absolute -top-4 -right-4">
-                 <span className="flex h-8 w-8 relative">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-8 w-8 bg-green-500 items-center justify-center text-white"><CheckCircle size={18} strokeWidth={3}/></span>
-                </span>
-              </div>
-              <div className="w-20 h-20 bg-white/10 text-white rounded-2xl flex items-center justify-center mb-6 backdrop-blur-md shadow-inner border border-white/10"><Lock size={36}/></div>
-              <h3 className="font-black text-2xl text-white mb-2 tracking-wide">خزنة كفيل</h3>
-              <p className="text-sm text-blue-200 font-medium text-center leading-relaxed">المبلغ محجوز بأمان كامل في حسابات بنكية حتى التسليم</p>
-            </div>
-
-            {/* Freelancer Card */}
-            <div className="bg-white p-8 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 flex flex-col items-center relative group hover:-translate-y-2 transition-transform duration-300">
-              <div className="absolute top-0 left-0 w-24 h-24 bg-green-50 rounded-br-full -z-10 rounded-tl-[2rem] transition-colors group-hover:bg-green-100"></div>
-              <div className="w-20 h-20 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center mb-6 shadow-sm"><UserCheck size={36}/></div>
-              <h3 className="font-bold text-2xl text-gray-900 mb-2">المستقل</h3>
-              <p className="text-base text-gray-500 font-medium">ينجز العمل ويستلم حقوقه</p>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* 🚀 ABOUT SECTION */}
-      <section id="about" className="py-24 bg-white border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-6 text-center">
-            <h2 className="text-3xl font-black text-gray-900 mb-6">عن كفيل</h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              كفيل هو منصة تقنية مالية (Fintech) مبتكرة تهدف إلى القضاء على انعدام الثقة في سوق العمل المستقل. 
-              نحن نعمل كطرف ثالث موثوق لتأمين الدفعات بطريقة تضمن الجودة للعملاء، والاستقرار المالي للمستقلين.
+            <p className="hero-sub text-xl text-gray-400 max-w-lg leading-relaxed font-medium">
+              نظام ضمان احترافي (Escrow) مصمم خصيصاً للمستقلين العرب. نحول مجهودك الإبداعي إلى تعويض مضمون.
             </p>
-        </div>
-      </section>
-
-      {/* 📊 TRUST METRICS */}
-      <section className="py-10 border-y border-gray-100 bg-white">
-        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x md:divide-x-reverse divide-gray-100">
-          <div className="pt-4 md:pt-0">
-            <h4 className="text-4xl font-black text-blue-900 mb-2">+$2M</h4>
-            <p className="text-gray-500 font-medium">أموال محمية بالضمان</p>
-          </div>
-          <div className="pt-4 md:pt-0">
-             <h4 className="text-4xl font-black text-blue-900 mb-2">10k+</h4>
-            <p className="text-gray-500 font-medium">مستقل استلم حقوقه في وقتها</p>
-          </div>
-          <div className="pt-4 md:pt-0">
-             <h4 className="text-4xl font-black text-blue-900 mb-2">99.8%</h4>
-            <p className="text-gray-500 font-medium">نسبة النزاعات المحلولة بذكاء</p>
-          </div>
-        </div>
-      </section>
-
-      {/* ❌ PROBLEM VS ✅ SOLUTION SECTION */}
-      <section className="py-24 px-6 bg-gray-50">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-             <h2 className="text-3xl md:text-4xl font-black text-gray-900">سوق العمل الحر يعاني من أزمة ثقة</h2>
-             <p className="text-lg text-gray-600 mt-4 max-w-2xl mx-auto">في كل عام، يخسر المستقلون والشركات ملايين الدولارات بسبب الاحتيال، التأخر في السداد، أو الاستغلال المالي المتعمد من بعض الوسطاء.</p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-red-50 border border-red-100 p-8 rounded-3xl relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-2 h-full bg-red-400"></div>
-              <h3 className="text-2xl font-bold text-red-900 mb-6 flex items-center gap-2">
-                <AlertTriangle className="text-red-500"/> الطريق التقليدي (خطر)
-              </h3>
-              <ul className="space-y-5 text-red-800">
-                <li className="flex items-start gap-3">
-                  <div className="bg-red-200 rounded-full p-1 mt-0.5"><span className="w-2 h-2 rounded-full bg-red-600 block"></span></div>
-                  <span className="font-semibold text-lg">تحويل الأموال لمنسقين ووسطاء يخفون المبالغ الفعلية عن المستقل لزيادة هوامش ربحهم.</span>
-                </li>
-                 <li className="flex items-start gap-3">
-                  <div className="bg-red-200 rounded-full p-1 mt-0.5"><span className="w-2 h-2 rounded-full bg-red-600 block"></span></div>
-                  <span className="font-semibold text-lg">المستقل ينجز العمل والعميل يختفي، أو العميل يدفع مقدماً والمستقل يختفي.</span>
-                </li>
-                 <li className="flex items-start gap-3">
-                  <div className="bg-red-200 rounded-full p-1 mt-0.5"><span className="w-2 h-2 rounded-full bg-red-600 block"></span></div>
-                  <span className="font-semibold text-lg">نزاعات لا تنتهي بسبب انعدام العقود الواضحة وآليات فض الشراكات.</span>
-                </li>
-              </ul>
+            
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <Link to="/register" className="hero-btn bg-[#C9A84C] text-[#0D1B2A] font-black px-10 py-4 rounded-full hover:bg-[#D4B55E] transition-all shadow-[0_0_30px_rgba(201,168,76,0.3)] hover:shadow-[0_0_40px_rgba(201,168,76,0.5)] flex items-center justify-center gap-3 text-lg group">
+                ابدأ الآن <ArrowLeft size={22} className="transform group-hover:-translate-x-2 transition-transform duration-300"/>
+              </Link>
+              <a href="#how-it-works" className="hero-btn bg-white/5 backdrop-blur-md text-white font-bold px-10 py-4 rounded-full hover:bg-white/10 transition-all border border-white/10 text-lg flex items-center justify-center gap-2">
+                <ShieldCheck size={20}/> كيف يعمل النظام
+              </a>
             </div>
 
-            <div className="bg-blue-50 border border-blue-100 p-8 rounded-3xl shadow-lg relative overflow-hidden transform md:-translate-y-4">
-              <div className="absolute top-0 right-0 w-2 h-full bg-blue-600"></div>
-              <h3 className="text-2xl font-bold text-blue-900 mb-6 flex items-center gap-2">
-                <ShieldCheck className="text-blue-600"/> مسار كفيل (أمان وثقة)
-              </h3>
-              <ul className="space-y-5 text-blue-900">
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="text-blue-600 shrink-0"/>
-                  <span className="font-semibold text-lg">الأموال تودع مسبقاً وتُحجز في (خزنة كفيل) فلا يعمل المستقل إلا والمبلغ مؤمّن.</span>
-                </li>
-                 <li className="flex items-start gap-3">
-                  <CheckCircle className="text-blue-600 shrink-0"/>
-                  <span className="font-semibold text-lg">شفافية تامة: المستقل يرى ميزانية المهمة ولا مجال لاقتطاع رسوم خفية من الوسيط.</span>
-                </li>
-                 <li className="flex items-start gap-3">
-                  <CheckCircle className="text-blue-600 shrink-0"/>
-                  <span className="font-semibold text-lg">الذكاء الاصطناعي يراقب الأرقام وينبه عند محاولة استغلال المستقلين بمبالغ أقل من السوق.</span>
-                </li>
-              </ul>
+            <div className="pt-12 border-t border-white/10 mt-12">
+               <div className="flex gap-8 opacity-50 grayscale contrast-125 justify-end">
+                 <Lock className="w-8 h-8 text-white"/>
+                 <ShieldCheck className="w-8 h-8 text-white"/>
+                 <UserCheck className="w-8 h-8 text-white"/>
+               </div>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* 💸 MONEY FLOW VISUALIZATION */}
-      <section id="escrow" className="py-24 bg-white border-y border-gray-100">
-        <div className="max-w-6xl mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4">كيف تتدفق الأموال؟ (محاكاة الضمان)</h2>
-          <p className="text-gray-500 mb-16 text-lg">نحن لا نلمس أموالك للاستثمار، نحن نحرسها بكيانات بنكية مستقلة حتى إتمام مهامك.</p>
-          
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 max-w-4xl mx-auto relative">
-             <div className="hidden md:block absolute top-1/2 left-10 right-10 h-1.5 bg-gray-100 -z-10 rounded-full"></div>
-             
-             {/* Step 1: Client */}
-             <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100 w-full md:w-64 z-10 flex flex-col items-center">
-                <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-4"><Briefcase size={32}/></div>
-                <h4 className="font-bold text-lg">العميل</h4>
-                <p className="text-sm text-gray-500 mt-2">يقوم المالك بإيداع ميزانية المشروع كاملة ليثبت جديته ويؤمن التزاماته.</p>
-             </div>
+          {/* Cinematic Animation Container */}
+          <div className="relative h-[500px] lg:h-[600px] w-full flex items-center justify-center animation-container" dir="ltr">
+            <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="xMidYMid meet" viewBox="0 0 500 600">
+              <defs>
+                <linearGradient id="gold-grad" x1="0%" x2="100%" y1="0%" y2="0%">
+                  <stop offset="0%" stopColor="#C9A84C" stopOpacity="0.2"></stop>
+                  <stop offset="100%" stopColor="#C9A84C" stopOpacity="1"></stop>
+                </linearGradient>
+                <linearGradient id="teal-grad" x1="0%" x2="100%" y1="0%" y2="0%">
+                  <stop offset="0%" stopColor="#1A7F74" stopOpacity="0.2"></stop>
+                  <stop offset="100%" stopColor="#1A7F74" stopOpacity="1"></stop>
+                </linearGradient>
+                <linearGradient id="blue-grad" x1="0%" x2="100%" y1="0%" y2="0%">
+                  <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.2"></stop>
+                  <stop offset="100%" stopColor="#3B82F6" stopOpacity="1"></stop>
+                </linearGradient>
+                <filter id="glow">
+                  <feGaussianBlur result="coloredBlur" stdDeviation="4"></feGaussianBlur>
+                  <feMerge>
+                    <feMergeNode in="coloredBlur"></feMergeNode>
+                    <feMergeNode in="SourceGraphic"></feMergeNode>
+                  </feMerge>
+                </filter>
+              </defs>
+              <path className="input-flow" style={{strokeDasharray: 1000, strokeDashoffset: 1000}} d="M250 50 L250 180" fill="none" filter="url(#glow)" stroke="url(#gold-grad)" strokeWidth="3"></path>
+              <path className="output-flow-1" style={{strokeDasharray: 1000, strokeDashoffset: 1000}} d="M250 380 Q250 450, 120 450 L120 500" fill="none" filter="url(#glow)" stroke="url(#teal-grad)" strokeWidth="3"></path>
+              <path className="output-flow-2" style={{strokeDasharray: 1000, strokeDashoffset: 1000}} d="M250 380 Q250 450, 380 450 L380 500" fill="none" filter="url(#glow)" stroke="url(#blue-grad)" strokeWidth="3"></path>
+            </svg>
 
-             {/* Arrow/Line */}
-             <div className="hidden md:flex text-gray-300"><ArrowLeft size={32}/></div>
+            <div className="source-node absolute top-10 flex flex-col items-center opacity-0 z-10">
+              <div className="w-16 h-16 rounded-full bg-[#22C55E]/20 border-2 border-[#22C55E] flex items-center justify-center shadow-[0_0_20px_#22C55E] text-[#22C55E] mb-2">
+                <span className="text-3xl font-black">$</span>
+              </div>
+              <span className="font-bold text-[#22C55E]">$5,000</span>
+            </div>
 
-             {/* Step 2: Escrow Vault */}
-             <div className="bg-blue-900 text-white p-8 rounded-3xl shadow-xl border border-blue-800 w-full md:w-72 z-10 flex flex-col items-center transform scale-105">
-                <div className="w-20 h-20 bg-blue-800/50 text-green-400 rounded-full flex items-center justify-center mb-4 ring-4 ring-blue-700"><Lock size={40}/></div>
-                <h4 className="font-black text-2xl">خزنة كفيل (Escrow)</h4>
-                <p className="text-sm text-blue-200 mt-2">الأموال مجمدة هنا. العميل لا يستطيع سحبها والمستقل لا يملكها حتى التسليم.</p>
-             </div>
+            <div className="escrow-vault bg-[#0D1B2A]/60 backdrop-blur-md rounded-[2rem] p-8 w-72 shadow-[0_0_40px_rgba(201,168,76,0.15)] relative z-20 border border-[#C9A84C]/30 opacity-0 transform scale-95 flex flex-col items-center justify-center text-center">
+              <div className="vault-icon w-24 h-24 rounded-full bg-[#0D1B2A] border-2 border-[#C9A84C] flex items-center justify-center mb-6 relative overflow-hidden">
+                <Lock className="text-[#C9A84C] w-12 h-12 lock-icon" />
+                <div className="absolute inset-0 bg-[#C9A84C]/20 vault-pulse rounded-full"></div>
+              </div>
+              <span className="font-black text-[#C9A84C] text-xl mb-2">خزنة الضمان (Escrow)</span>
+              <span className="text-sm text-gray-400 px-4 leading-snug">بيئة آمنة تضمن حقوق الطرفين.</span>
+              <div className="w-full h-1.5 bg-white/10 rounded-full mt-6 overflow-hidden">
+                <div className="vault-progress h-full bg-[#C9A84C] w-0 shadow-[0_0_10px_#C9A84C]"></div>
+              </div>
+              <div className="mt-4 flex flex-col items-center space-y-1 opacity-0 outcome-text">
+                <span className="font-bold text-[#22C55E] text-sm">تم الإنجاز</span>
+                <span className="text-[10px] text-white/40 uppercase tracking-tighter">تم تحرير الدفعات بنجاح</span>
+              </div>
+            </div>
 
-             {/* Arrow/Line */}
-             <div className="hidden md:flex text-gray-300"><ArrowLeft size={32}/></div>
-
-             {/* Step 3: Freelancers */}
-             <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100 w-full md:w-64 z-10 flex flex-col items-center">
-                <div className="flex gap-2 mb-4">
-                  <div className="w-12 h-12 bg-green-50 text-green-600 rounded-full flex items-center justify-center"><UserCheck size={24}/></div>
-                  <div className="w-12 h-12 bg-green-50 text-green-600 rounded-full flex items-center justify-center"><UserCheck size={24}/></div>
+            <div className="absolute bottom-10 w-full flex justify-between px-4 sm:px-10 z-10">
+              <div className="alloc-node-1 flex flex-col items-center opacity-0 transform translate-y-10">
+                <div className="w-16 h-16 rounded-full bg-[#1A7F74]/20 border-2 border-[#1A7F74] flex items-center justify-center shadow-[0_0_20px_#1A7F74] text-[#1A7F74] mb-2 overflow-hidden ring-4 ring-black/40">
+                  <UserCheck className="w-8 h-8" />
                 </div>
-                <h4 className="font-bold text-lg">المستقلون</h4>
-                <p className="text-sm text-gray-500 mt-2">بمجرد الاعتماد، يتم توجيه الدفعات مباشرة إلى حساباتهم البنكية.</p>
-             </div>
+                <span className="text-sm font-bold text-gray-400">المصمم</span>
+                <span className="font-bold text-[#1A7F74] text-lg">$2,000</span>
+              </div>
+              <div className="alloc-node-2 flex flex-col items-center opacity-0 transform translate-y-10">
+                <div className="w-16 h-16 rounded-full bg-[#3B82F6]/20 border-2 border-[#3B82F6] flex items-center justify-center shadow-[0_0_20px_#3B82F6] text-[#3B82F6] mb-2 overflow-hidden ring-4 ring-black/40">
+                  <BrainCircuit className="w-8 h-8" />
+                </div>
+                <span className="text-sm font-bold text-gray-400">المطور</span>
+                <span className="font-bold text-[#3B82F6] text-lg">$3,000</span>
+              </div>
+            </div>
+
+            <div className="success-overlay absolute inset-0 flex flex-col items-center justify-center opacity-0 pointer-events-none z-30">
+              <div className="w-32 h-32 rounded-full bg-[#22C55E]/10 border-2 border-[#22C55E] flex items-center justify-center shadow-[0_0_100px_rgba(34,197,94,0.3)] backdrop-blur-md mb-6">
+                <CheckCircle className="text-[#22C55E] w-16 h-16" />
+              </div>
+              <div className="bg-white/5 backdrop-blur-md px-6 py-3 rounded-2xl border border-white/10 flex flex-col items-center">
+                <span className="text-xs uppercase tracking-widest text-white/60 mb-1 font-bold">نسبة العدالة</span>
+                <span className="text-4xl font-black text-[#22C55E]">100%</span>
+                <span className="text-xs text-white/80 mt-2">تسعير عادل للمنطقة</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 🤖 AI FEATURES */}
-      <section id="ai-justice" className="py-24 bg-gray-900 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+CjxwYXRoIGQ9Ik0wIDBoNDB2NDBIMHoiIGZpbGw9Im5vbmUiLz4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjEpIi8+Cjwvc3ZnPg==')] opacity-50 pointer-events-none"></div>
-        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center z-10 relative">
-          <div>
-            <div className="inline-flex items-center gap-2 bg-blue-500/20 text-blue-300 font-bold px-4 py-2 rounded-full text-sm mb-6 border border-blue-500/30">
-              <Zap size={16} /> مدعوم بمحركات GPT-4o
-            </div>
-            <h2 className="text-4xl font-black mb-6">الذكاء الاصطناعي كضامن للعدالة</h2>
-            <p className="text-lg text-gray-400 mb-8 leading-relaxed">
-              تنفرد منصة كفيل بدمج الذكاء الاصطناعي لضمان النزاهة في تسعير المشاريع. نقوم بتحليل المهام وتنبيه الأطراف إذا كان التسعير مبالغاً فيه أو مجحفاً، كما نلخص النزاعات بسرعة فائقة في حال الاختلاف.
+      {/* 🔒 THE VAULT SECTION - Interactive Animation */}
+      <section className="vault-section py-40 bg-[#0D1B2A] text-white relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-500 via-transparent to-transparent"></div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10 flex flex-col lg:flex-row items-center gap-20">
+          <div className="flex-1 text-right">
+            <motion.div 
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              className="inline-flex items-center gap-2 bg-blue-500/20 text-blue-400 font-black px-5 py-2 rounded-full text-sm mb-8 border border-blue-500/30"
+            >
+              <Lock size={16} /> حماية مطلقة للأموال
+            </motion.div>
+            <h2 className="text-4xl md:text-6xl font-black mb-10 leading-tight">
+              خزنة كفيل الرقمية<br />
+              <span className="text-blue-400">حيث تنام أموالك بسلام.</span>
+            </h2>
+            <p className="text-xl text-gray-400 mb-12 leading-relaxed">
+              عندما تودع ميزانية المشروع، لا تذهب لجيوبنا ولا لجيوب المستقل مباشرة. هي تظل في حساب بنكي مشفر ومؤمن، ولا يتم تحريرها إلا عندما تضغط أنت على "استلام العمل".
             </p>
-            <ul className="space-y-6">
-              <li className="flex gap-4">
-                <div className="mt-1 bg-blue-800 p-2 rounded-lg text-blue-300"><Scale size={24}/></div>
-                <div>
-                  <h4 className="font-bold text-xl mb-1">كاشف العدالة المالي</h4>
-                  <p className="text-gray-400">يقارن تسعير المهمة بأسعار السوق. إذا أعطى الوسيط للمستقل $100 لمهمة برمجية متوسطها $500، يتدخل النظام ليطالب برفع التعويض.</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              {[
+                { title: 'تشفير عسكري', desc: 'نستخدم أعلى معايير التشفير (AES-256) لحماية بياناتك المالية.' },
+                { title: 'تحرير ذكي', desc: 'يتم صرف الدفعات بناءً على مراحل الإنجاز المعتمدة.' }
+              ].map((item, i) => (
+                <div key={i} className="bg-white/5 p-6 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
+                  <h4 className="font-bold text-xl mb-3 text-white">{item.title}</h4>
+                  <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
                 </div>
-              </li>
-              <li className="flex gap-4">
-                <div className="mt-1 bg-blue-800 p-2 rounded-lg text-blue-300"><BrainCircuit size={24}/></div>
-                <div>
-                  <h4 className="font-bold text-xl mb-1">التقسيم التلقائي للميزانيات</h4>
-                  <p className="text-gray-400">يقرأ وصف المشروع المقدم، ويقترح تقسيماً عادلاً لمهام فرعية وتوجيه الميزانية بنسب معقولة كمسودة أولية للمالك.</p>
-                </div>
-              </li>
-            </ul>
-          </div>
-          <div className="relative">
-            <div className="absolute inset-0 bg-blue-600 rounded-3xl filter blur-3xl opacity-30"></div>
-            <div className="bg-gray-800 border border-gray-700 p-8 rounded-3xl shadow-2xl relative">
-              <div className="flex border-b border-gray-700 pb-4 mb-4 gap-4 items-center">
-                 <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                 <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                 <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                 <span className="text-gray-500 text-sm font-mono mr-auto">kafeel-justice-engine.ts</span>
-              </div>
-              <div className="space-y-4">
-                <div className="bg-gray-900 border border-gray-700 p-4 rounded-xl">
-                  <p className="text-gray-400 text-sm mb-1">تحليل المهمة: برمجة الواجهات الأمامية</p>
-                  <p className="text-white font-bold text-lg mb-2">المعروض: 150 دولار</p>
-                  <div className="bg-red-500/20 text-red-400 p-3 rounded-lg flex gap-2 text-sm">
-                    <AlertTriangle size={18}/> <span>تحذير: هذا السعر أقل بـ 60% من متوسط السوق الإقليمية. يرجى توخي العدل.</span>
-                  </div>
-                </div>
-                <div className="bg-gray-900 border border-gray-700 p-4 rounded-xl">
-                  <p className="text-gray-400 text-sm mb-1">تحليل المهمة: تصميم الشعار (Logo)</p>
-                  <p className="text-white font-bold text-lg mb-2">المعروض: 350 دولار</p>
-                  <div className="bg-green-500/20 text-green-400 p-3 rounded-lg flex gap-2 text-sm">
-                    <CheckCircle size={18}/> <span>تطابق جيد: السعر ضمن متوسط السوق والمهمة عادلة للطرفين.</span>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* 💬 TESTIMONIALS */}
-      <section className="py-24 bg-white">
-        <div className="max-w-6xl mx-auto px-6 text-center">
-            <h2 className="text-3xl font-black text-gray-900 mb-12">صمم للمستقلين وملاك الأعمال</h2>
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="bg-gray-50 border border-gray-100 p-8 rounded-3xl text-right relative">
-                <HeartHandshake className="text-blue-200 absolute top-6 left-6" size={40}/>
-                <p className="text-gray-600 text-lg mb-6 relative z-10 lg:pl-10">"كنا نعاني من اختفاء بعض المستقلين بعد استلام الدفعة الأولى. مع خزنة الضمان بكفيل، صرنا ندفع بثقة واحنا متأكدين ان العمل سيتم."</p>
-                <div>
-                  <h5 className="font-bold text-gray-900">سالم القحطاني</h5>
-                  <p className="text-gray-500 text-sm">مؤسس شركة ناشئة</p>
-                </div>
-              </div>
-              <div className="bg-blue-900 text-white shadow-xl shadow-blue-900/10 p-8 rounded-3xl text-right relative transform scale-105">
-                <p className="text-blue-100 text-lg mb-6 relative z-10 lg:pl-10">"لأول مرة أشوف نظام يمنع الوسيط من ابتلاع ميزانية العميل! في كفيل أعرف بالضبط القيمة المخصصة لمهمتي وبفضل الله لم يضع لي حق أبداً."</p>
-                <div>
-                  <h5 className="font-bold text-white">سارة طارق</h5>
-                  <p className="text-blue-300 text-sm">مطور أنظمة خلفية (مستقلة)</p>
-                </div>
-              </div>
-              <div className="bg-gray-50 border border-gray-100 p-8 rounded-3xl text-right relative">
-                 <HeartHandshake className="text-green-200 absolute top-6 left-6" size={40}/>
-                <p className="text-gray-600 text-lg mb-6 relative z-10 lg:pl-10">"كنت متخوف من توظيف فريق كبير بسبب التعقيد المالي وكثرة الحوالات. كفيل حل لي كل مشاكلي وصرت أعتمد المهام بكبسة زر."</p>
-                <div>
-                  <h5 className="font-bold text-gray-900">محمد علي</h5>
-                  <p className="text-gray-500 text-sm">مدير مشاريع تقنية</p>
-                </div>
-              </div>
-            </div>
-        </div>
-      </section>
-
-      {/* ❓ FAQ */}
-      <section id="faq" className="py-24 bg-gray-50 border-t border-gray-200">
-        <div className="max-w-3xl mx-auto px-6">
-          <div className="text-center mb-16">
-             <h2 className="text-3xl font-black text-gray-900 mb-4">الأسئلة الشائعة</h2>
-          </div>
-          <div className="space-y-4">
-            {faqs.map((faq, i) => (
-              <div key={i} className="bg-white border border-gray-200 rounded-2xl overflow-hidden transition-all duration-300">
-                <button 
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full px-6 py-5 text-right font-bold text-lg text-gray-800 flex justify-between items-center focus:outline-none"
-                >
-                  {faq.q}
-                  <ChevronDown className={`transform transition-transform text-gray-400 ${openFaq === i ? "rotate-180" : ""}`}/>
-                </button>
-                {openFaq === i && (
-                  <div className="px-6 pb-5 pt-0 text-gray-600 text-lg leading-relaxed border-t border-gray-50 mt-2 pt-4">
-                    {faq.a}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 🚀 FINAL CTA */}
-      <section className="py-24 px-6 md:px-10">
-        <div className="bg-gradient-to-r from-blue-900 to-indigo-900 rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden max-w-6xl mx-auto shadow-2xl">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-green-400 opacity-10 rounded-full blur-3xl"></div>
           
-          <h2 className="text-4xl md:text-5xl font-black text-white mb-6 relative z-10">عالم من الثقة. خالي من الاستغلال.</h2>
-          <p className="text-xl text-blue-200 mb-10 max-w-2xl mx-auto relative z-10">ابنِ فريقك عن بعد بثقة متناهية، أو احصل على حقوقك كمستقل في موعدها بلا أي تلاعب.</p>
-          <Link to="/register" className="inline-block bg-white text-blue-900 font-extrabold px-12 py-5 rounded-2xl hover:bg-gray-100 transition shadow-xl text-lg relative z-10">
-            ابدأ باستخدام كفيل مجاناً
-          </Link>
+          <div className="flex-1 flex justify-center relative">
+            <div className="vault-inner w-72 h-72 md:w-96 md:h-96 rounded-full border-[20px] border-blue-900/50 flex items-center justify-center relative shadow-[0_0_100px_rgba(59,130,246,0.2)]">
+               <div className="absolute inset-4 rounded-full border-4 border-dashed border-blue-400/30 animate-[spin_20s_linear_infinite]"></div>
+               <div className="w-48 h-48 md:w-64 md:h-64 bg-gradient-to-br from-blue-600 to-indigo-900 rounded-full flex items-center justify-center shadow-2xl relative overflow-hidden">
+                  <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
+                  <Fingerprint size={80} className="text-white animate-pulse" />
+               </div>
+               
+               {/* Orbital Indicators */}
+               <motion.div 
+                 animate={{ rotate: 360 }}
+                 transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                 className="absolute inset-[-40px] pointer-events-none"
+               >
+                 <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-blue-500 w-4 h-4 rounded-full shadow-[0_0_20px_#3b82f6]"></div>
+                 <div className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-indigo-500 w-4 h-4 rounded-full shadow-[0_0_20px_#6366f1]"></div>
+               </motion.div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* 🏁 FOOTER */}
-      <footer className="bg-white border-t border-gray-100 pt-16 pb-8 px-6 text-center md:text-right">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-4 gap-8 mb-12">
+      {/* ❌ PROBLEM VS ✅ SOLUTION - High Contrast Reveal */}
+      <section className="reveal-section py-32 px-6 bg-gray-50/50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-20">
+             <h2 className="text-4xl md:text-5xl font-black text-[#0D1B2A] mb-6 tracking-tight">وداعاً لمشاكل العمل التقليدي</h2>
+             <p className="text-xl text-gray-500 max-w-2xl mx-auto font-medium">اخترنا لك الطريق الأكثر أماناً وعدلاً.</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-10">
+            {/* The Old Way */}
+            <motion.div 
+              whileHover={{ y: -10 }}
+              className="bg-white p-10 rounded-[3rem] shadow-sm border border-gray-100 relative overflow-hidden group"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-bl-full -z-10 transition-all group-hover:scale-110"></div>
+              <div className="flex items-center gap-4 mb-8 text-red-500">
+                <AlertTriangle size={32} />
+                <h3 className="text-3xl font-black text-[#0D1B2A]">الطريقة التقليدية</h3>
+              </div>
+              <ul className="space-y-6">
+                {[
+                  "غياب الضمان المالي وضياع الحقوق.",
+                  "عمولات خفية من المنسقين والوسطاء.",
+                  "نزاعات طويلة بدون حكم عادل."
+                ].map((text, i) => (
+                  <li key={i} className="flex gap-4 items-start">
+                    <div className="bg-red-100 p-1.5 rounded-full mt-1"><span className="w-1.5 h-1.5 bg-red-500 rounded-full block"></span></div>
+                    <p className="text-lg text-gray-500 font-bold">{text}</p>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+            {/* The Kafeel Way */}
+            <motion.div 
+              whileHover={{ y: -10 }}
+              className="bg-[#0D1B2A] p-10 rounded-[3rem] shadow-2xl shadow-blue-900/20 border border-blue-900/50 relative overflow-hidden group"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-900/30 rounded-bl-full -z-10 transition-all group-hover:scale-110"></div>
+              <div className="flex items-center gap-4 mb-8 text-blue-400">
+                <ShieldCheck size={32} />
+                <h3 className="text-3xl font-black text-white">طريق كفيل</h3>
+              </div>
+              <ul className="space-y-6">
+                {[
+                  "نظام خزنة مستقلة (Escrow) يحمي الطرفين.",
+                  "شفافية مطلقة في الميزانيات والعمولات.",
+                  "تحكيم مدعوم بالذكاء الاصطناعي الفوري."
+                ].map((text, i) => (
+                  <li key={i} className="flex gap-4 items-start">
+                    <CheckCircle className="text-blue-400 shrink-0 mt-1" size={20}/>
+                    <p className="text-lg text-blue-100 font-bold">{text}</p>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* 🤖 AI JUSTICE - Cyberpunk Tech Aesthetic */}
+      <section className="reveal-section py-40 bg-white relative overflow-hidden">
+        <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-24 items-center">
+          <div className="relative order-2 lg:order-1">
+            <div className="absolute -inset-10 bg-blue-100/50 blur-[80px] rounded-full -z-10"></div>
+            <motion.div 
+              initial={{ rotate: -5, scale: 0.9 }}
+              whileInView={{ rotate: 0, scale: 1 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="bg-white border-8 border-gray-100 rounded-[3rem] shadow-2xl overflow-hidden"
+            >
+              <div className="bg-gray-900 p-6 flex gap-3 border-b border-gray-800">
+                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <span className="text-gray-500 text-[10px] font-mono mr-auto uppercase tracking-widest">ai-justice-engine.js</span>
+              </div>
+              <div className="p-8 space-y-6">
+                <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                   <div className="flex justify-between items-center mb-4">
+                      <span className="text-xs font-black text-blue-600 uppercase">تحليل الميزانية</span>
+                      <span className="text-xs font-bold text-gray-400">ID: #8829</span>
+                   </div>
+                   <h4 className="font-bold text-xl mb-2 text-[#0D1B2A]">تصميم تطبيق كامل (iOS)</h4>
+                   <p className="text-2xl font-black text-[#0D1B2A] mb-4">$200.00</p>
+                   <div className="bg-red-50 border border-red-100 p-4 rounded-xl flex gap-4 items-start">
+                      <AlertTriangle className="text-red-500 shrink-0" size={20}/>
+                      <p className="text-sm font-bold text-red-900">تحذير: السعر أقل من متوسط السوق بنسبة 70%. هذا السعر قد يعتبر مجحفاً للمستقل.</p>
+                   </div>
+                </div>
+                <div className="flex items-center gap-4 text-gray-400 animate-pulse">
+                   <BrainCircuit size={20}/>
+                   <span className="text-xs font-mono">الذكاء الاصطناعي يقوم بتحليل العقد...</span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          <div className="order-1 lg:order-2">
+            <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 font-black px-5 py-2 rounded-full text-sm mb-8 border border-indigo-100">
+              <Zap size={16} /> مدعوم بـ GPT-4o
+            </div>
+            <h2 className="text-4xl md:text-6xl font-black text-[#0D1B2A] mb-10 leading-tight tracking-tight">
+              مقـيم العدالة<br />
+              <span className="text-indigo-600">كاشف الاستغلال.</span>
+            </h2>
+            <p className="text-xl text-gray-500 mb-12 leading-relaxed font-medium">
+              أول نظام ذكاء اصطناعي في المنطقة يراقب تسعير المهام بشكل آلي. إذا حاول أي طرف استغلال الآخر بميزانيات غير منطقية، يتدخل النظام فوراً لتقديم نصيحة سعرية عادلة بناءً على متوسطات السوق.
+            </p>
+            <div className="space-y-6">
+              {[
+                { icon: Scale, title: 'تحكيم فوري', desc: 'في حال النزاع، يقوم الـ AI بتلخيص المشكلة واقتراح حل عادل في ثوانٍ.' },
+                { icon: Sparkles, title: 'تحليل العقود', desc: 'كشف الثغرات في وصف المشاريع قبل البدء لضمان وضوح المهام.' }
+              ].map((item, i) => (
+                <div key={i} className="flex gap-6 group">
+                  <div className="w-14 h-14 bg-white border border-gray-100 shadow-sm rounded-2xl flex items-center justify-center text-[#0D1B2A] group-hover:bg-[#0D1B2A] group-hover:text-white transition-all duration-300 shrink-0">
+                    <item.icon size={24}/>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xl mb-1 text-[#0D1B2A]">{item.title}</h4>
+                    <p className="text-gray-500 leading-relaxed">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 🚀 FINAL CTA - Apple Card Style */}
+      <section className="reveal-section py-40 px-6">
+        <motion.div 
+          whileHover={{ scale: 1.01 }}
+          className="bg-gradient-to-br from-[#0D1B2A] via-[#16213e] to-[#0D1B2A] rounded-[4rem] p-16 md:p-32 text-center relative overflow-hidden max-w-7xl mx-auto shadow-2xl"
+        >
+          {/* Decorative Elements */}
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[100px] -z-10"></div>
+          <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[100px] -z-10"></div>
+          
+          <div className="relative z-10">
+            <h2 className="text-5xl md:text-7xl font-black text-white mb-10 leading-tight tracking-tight">
+              جاهز لتبني مستقبلك<br />بكل أمان؟
+            </h2>
+            <p className="text-xl md:text-2xl text-blue-200 mb-16 max-w-2xl mx-auto font-medium opacity-80">
+              انضم إلى آلاف العملاء والمستقلين الذين اختاروا "كفيل" كشريك موثوق لرحلتهم في عالم العمل الحر.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-8">
+              <Link to="/register" className="w-full sm:w-auto bg-white text-[#0D1B2A] font-black px-16 py-6 rounded-3xl hover:bg-gray-100 transition-all shadow-2xl text-xl scale-110 hover:scale-115 active:scale-105">
+                ابدأ رحلتك الآن
+              </Link>
+            </div>
+            <div className="mt-20 flex flex-wrap justify-center items-center gap-12 text-blue-300/50 font-bold uppercase tracking-widest text-xs">
+               <div className="flex items-center gap-2"><Lock size={16}/> مشفر بالكامل</div>
+               <div className="flex items-center gap-2"><ShieldCheck size={16}/> ضمان مالي</div>
+               <div className="flex items-center gap-2"><UserCheck size={16}/> هوية موثقة</div>
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* 🏁 FOOTER - Minimalist Apple Style */}
+      <footer className="bg-white pt-32 pb-16 px-6 md:px-12 border-t border-gray-100">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-4 gap-20 mb-24">
           <div className="md:col-span-2">
-            <div className="text-2xl font-black text-blue-900 flex items-center justify-center md:justify-start gap-2 mb-4">
-              <ShieldCheck className="text-green-500" size={28}/> كفيل
+            <div className="text-3xl font-black text-[#0D1B2A] flex items-center gap-4 mb-8">
+               <div className="bg-[#0D1B2A] p-2 rounded-2xl">
+                <ShieldCheck className="text-white" size={28}/>
+               </div>
+               كفيل
             </div>
-            <p className="text-gray-500 max-w-sm mx-auto md:mx-0">نظام لضمان المدفوعات والتحكيم المجتمعي، مصمم لرفع الثقة في سوق العمل الحر في العالم العربي.</p>
+            <p className="text-xl text-gray-500 max-w-md font-medium leading-relaxed">
+              كفيل هو المعيار الجديد للأمان في العمل الحر. بنينا نظاماً يضمن حق الجميع، ويحول دون أي محاولة للاستغلال المالي.
+            </p>
           </div>
           <div>
-            <h4 className="font-bold text-gray-900 mb-4">المنتج</h4>
-            <ul className="space-y-2 text-gray-500">
-              <li>الميزات</li>
-              <li>الأسعار</li>
-              <li>نظام الضمان</li>
+            <h4 className="font-black text-[#0D1B2A] mb-8 text-lg">المنصة</h4>
+            <ul className="space-y-4 text-gray-500 font-bold">
+              <li><a href="#" className="hover:text-blue-600 transition-colors">عن كفيل</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">نظام الضمان</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">مقـيم العدالة</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">الأسعار</a></li>
             </ul>
           </div>
           <div>
-            <h4 className="font-bold text-gray-900 mb-4">قانوني</h4>
-            <ul className="space-y-2 text-gray-500">
-              <li>الشروط والأحكام</li>
-              <li>الخصوصية</li>
-              <li>شروط التحكيم</li>
+            <h4 className="font-black text-[#0D1B2A] mb-8 text-lg">قانوني</h4>
+            <ul className="space-y-4 text-gray-500 font-bold">
+              <li><a href="#" className="hover:text-blue-600 transition-colors">الشروط والأحكام</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">سياسة الخصوصية</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">قواعد التحكيم</a></li>
             </ul>
           </div>
         </div>
-        <div className="border-t border-gray-100 max-w-6xl mx-auto pt-8 flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm">
-          <p>© {new Date().getFullYear()} كفيل - Kafeel. جميع الحقوق محفوظة.</p>
-          <p className="mt-2 md:mt-0">بُني بشغف في الهاكاثون 🚀</p>
+        <div className="border-t border-gray-100 max-w-7xl mx-auto pt-12 flex flex-col md:flex-row justify-between items-center text-gray-400 font-bold text-sm">
+          <p>© {new Date().getFullYear()} كفيل - Kafeel. كل الحقوق محفوظة.</p>
+          <div className="flex gap-10 mt-6 md:mt-0">
+             <a href="#" className="hover:text-[#0D1B2A] transition-colors">Twitter (X)</a>
+             <a href="#" className="hover:text-[#0D1B2A] transition-colors">LinkedIn</a>
+             <a href="#" className="hover:text-[#0D1B2A] transition-colors">Instagram</a>
+          </div>
         </div>
       </footer>
     </div>

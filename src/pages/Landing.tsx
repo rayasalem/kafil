@@ -167,7 +167,7 @@ export default function Landing() {
   ));
 
   const navLinks = [
-    { name: 'الرئيسية', id: 'hero' },
+    { name: 'الرئيسية', id: 'home' },
     { name: 'كيفية العمل', id: 'how-it-works' },
     { name: 'من نحن', id: 'about' },
     { name: 'الذكاء الاصطناعي', id: 'ai-justice' },
@@ -182,7 +182,7 @@ export default function Landing() {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-        className="fixed w-full flex justify-between items-center p-6 md:px-12 z-50 bg-white/70 backdrop-blur-xl border-b border-gray-100/50"
+        className="fixed w-full flex justify-between items-center p-4 md:px-12 z-50 bg-white/50 backdrop-blur-2xl border-b border-white/10"
       >
         <Link to="/" className="text-2xl font-black text-[#0D1B2A] flex items-center gap-3 tracking-tighter hover:opacity-80 transition-opacity">
           <div className="bg-[#0D1B2A] p-1.5 rounded-xl shadow-lg shadow-blue-900/20">
@@ -191,22 +191,21 @@ export default function Landing() {
           كفيل
         </Link>
 
-        <div className="hidden lg:flex gap-2 p-1 bg-gray-100/50 rounded-full border border-gray-200/50">
+        <div className="hidden lg:flex gap-1 p-1.5 bg-white/40 backdrop-blur-md rounded-full border border-white/20 shadow-[0_4px_30px_rgba(0,0,0,0.03)]">
           {navLinks.map((link, i) => (
             <motion.a 
               key={link.id}
               href={`#${link.id}`}
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 + i * 0.1, duration: 0.5 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-6 py-2.5 rounded-full text-sm font-bold text-gray-500 hover:text-[#0D1B2A] hover:bg-white transition-all duration-300 relative group"
+              transition={{ delay: 0.1 + i * 0.1, duration: 0.5 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="px-6 py-2 rounded-full text-sm font-bold text-gray-600 hover:text-[#0D1B2A] transition-all duration-300 relative group"
             >
-              {link.name}
+              <span className="relative z-10">{link.name}</span>
               <motion.span 
-                layoutId="nav-underline"
-                className="absolute inset-0 bg-white rounded-full -z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute inset-0 bg-white/80 rounded-full -z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-sm"
               />
             </motion.a>
           ))}
@@ -226,7 +225,7 @@ export default function Landing() {
       </motion.nav>
 
       {/* 🚀 HERO SECTION - Cinematic SVG */}
-      <section id="hero" ref={heroRef} className="relative pt-40 pb-32 px-6 overflow-hidden min-h-[90vh] flex flex-col items-center justify-center bg-gradient-to-br from-[#0D1B2A] to-[#08111A]">
+      <section id="home" ref={heroRef} className="relative pt-40 pb-32 px-6 overflow-hidden min-h-[90vh] flex flex-col items-center justify-center bg-gradient-to-br from-[#0D1B2A] to-[#08111A]">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center relative z-10 w-full">
           <div className="space-y-8 text-right hero-text-content">
             <motion.div 

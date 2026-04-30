@@ -167,7 +167,7 @@ export default function Landing() {
   ));
 
   const navLinks = [
-    { name: 'الرئيسية', id: 'home' },
+    { name: 'الرئيسية', id: 'hero' },
     { name: 'كيفية العمل', id: 'how-it-works' },
     { name: 'من نحن', id: 'about' },
     { name: 'الذكاء الاصطناعي', id: 'ai-justice' },
@@ -226,7 +226,7 @@ export default function Landing() {
       </motion.nav>
 
       {/* 🚀 HERO SECTION - Cinematic SVG */}
-      <section id="home" ref={heroRef} className="relative pt-40 pb-32 px-6 overflow-hidden min-h-[90vh] flex flex-col items-center justify-center bg-gradient-to-br from-[#0D1B2A] to-[#08111A]">
+      <section id="hero" ref={heroRef} className="relative pt-40 pb-32 px-6 overflow-hidden min-h-[90vh] flex flex-col items-center justify-center bg-gradient-to-br from-[#0D1B2A] to-[#08111A]">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center relative z-10 w-full">
           <div className="space-y-8 text-right hero-text-content">
             <motion.div 
@@ -353,7 +353,7 @@ export default function Landing() {
       </section>
 
       {/* 🔒 THE VAULT SECTION - Interactive Animation */}
-      <section id="كيفية العمل" className="vault-section py-40 bg-[#0D1B2A] text-white relative overflow-hidden">
+      <section id="how-it-works" className="vault-section py-40 bg-[#0D1B2A] text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-500 via-transparent to-transparent"></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10 flex flex-col lg:flex-row items-center gap-20">
           <div className="flex-1 text-right">
@@ -408,7 +408,7 @@ export default function Landing() {
       </section>
 
       {/* ❌ PROBLEM VS ✅ SOLUTION - High Contrast Reveal */}
-      <section id="من نحن" className="reveal-section py-32 px-6 bg-gray-50/50">
+      <section id="about" className="reveal-section py-32 px-6 bg-gray-50/50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-20">
              <h2 className="text-4xl md:text-5xl font-black text-[#0D1B2A] mb-6 tracking-tight">وداعاً لمشاكل العمل التقليدي</h2>
@@ -468,7 +468,7 @@ export default function Landing() {
       </section>
 
       {/* 🤖 AI JUSTICE - Cyberpunk Tech Aesthetic */}
-      <section id="الذكاء الاصطناعي" className="reveal-section py-40 bg-white relative overflow-hidden">
+      <section id="ai-justice" className="reveal-section py-40 bg-white relative overflow-hidden">
         <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-24 items-center">
           <div className="relative order-2 lg:order-1">
             <div className="absolute -inset-10 bg-blue-100/50 blur-[80px] rounded-full -z-10"></div>
@@ -568,7 +568,7 @@ export default function Landing() {
       </section>
 
       {/* ❓ FAQ SECTION */}
-      <section id="الأسئلة الشائعة" className="reveal-section py-32 bg-gray-50/30">
+      <section id="faq" className="reveal-section py-32 bg-gray-50/30">
         <div className="max-w-4xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-black text-[#0D1B2A] mb-4 tracking-tight">الأسئلة الشائعة</h2>
@@ -621,10 +621,10 @@ export default function Landing() {
           <div>
             <h4 className="font-black text-[#0D1B2A] mb-8 text-lg">المنصة</h4>
             <ul className="space-y-4 text-gray-500 font-bold">
-              <li><a href="#" className="hover:text-blue-600 transition-colors">عن كفيل</a></li>
-              <li><a href="#" className="hover:text-blue-600 transition-colors">نظام الضمان</a></li>
-              <li><a href="#" className="hover:text-blue-600 transition-colors">مقـيم العدالة</a></li>
-              <li><a href="#" className="hover:text-blue-600 transition-colors">الأسعار</a></li>
+              <li><a href="#about" className="hover:text-blue-600 transition-colors">عن كفيل</a></li>
+              <li><a href="#how-it-works" className="hover:text-blue-600 transition-colors">نظام الضمان</a></li>
+              <li><a href="#ai-justice" className="hover:text-blue-600 transition-colors">مقـيم العدالة</a></li>
+              <li><a href="#faq" className="hover:text-blue-600 transition-colors">الأسئلة الشائعة</a></li>
             </ul>
           </div>
           <div>
@@ -635,6 +635,20 @@ export default function Landing() {
               <li><a href="#" className="hover:text-blue-600 transition-colors">قواعد التحكيم</a></li>
             </ul>
           </div>
+        </div>
+        <div className="hidden lg:flex gap-10 text-gray-500 font-bold text-sm justify-center mb-12">
+          {[
+            { name: 'الرئيسية', id: 'hero' },
+            { name: 'من نحن', id: 'about' },
+            { name: 'كيفية العمل', id: 'how-it-works' },
+            { name: 'الذكاء الاصطناعي', id: 'ai-justice' },
+            { name: 'الأسئلة الشائعة', id: 'faq' }
+          ].map((item, i) => (
+            <a key={i} href={`#${item.id}`} className="hover:text-blue-900 transition-colors relative group">
+              {item.name}
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
+            </a>
+          ))}
         </div>
         <div className="border-t border-gray-100 max-w-7xl mx-auto pt-12 flex flex-col md:flex-row justify-between items-center text-gray-400 font-bold text-sm">
           <p>© {new Date().getFullYear()} كفيل - Kafeel. كل الحقوق محفوظة.</p>

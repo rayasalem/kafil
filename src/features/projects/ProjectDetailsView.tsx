@@ -4,6 +4,7 @@ import { Lock, Send } from 'lucide-react';
 import TaskItem from '@/features/projects/TaskItem';
 import MoneyFlowBar from '@/features/escrow/MoneyFlowBar';
 import { api } from '@/services/api';
+import { toast } from 'sonner';
 import { Project, User } from '@/types';
 import { formatCurrency } from '@/shared/utils/format';
 
@@ -30,19 +31,29 @@ const ProjectDetails: FC = () => {
   const addTask = async (e: FormEvent) => {
     e.preventDefault();
     if (id) {
-      await api.addTask(id, { name, assignedTo, payment: Number(payment) });
-      setName('');
-      setAssignedTo('');
-      setPayment('');
-      loadProject();
+      try {
+        await api.addTask(id, { name, assignedTo, payment: Number(payment) });
+        toast.success('تمت إضافة المهمة بنجاح');
+        setName('');
+        setAssignedTo('');
+        setPayment('');
+        loadProject();
+      } catch (err) {
+        toast.error('فشل إضافة المهمة');
+      }
     }
   };
 
   const completeTask = async (taskId: string) => {
     if (!window.confirm('الإفراج عن الدفعة نهائي. تأكيد؟')) return;
     if (id) {
-      await api.completeTask(id, taskId);
-      loadProject();
+      try {
+        await api.completeTask(id, taskId);
+        toast.success('تم صرف الدفعة وتحويلها للمستقل بنجاح');
+        loadProject();
+      } catch (err) {
+        toast.error('فشل صرف الدفعة');
+      }
     }
   };
 

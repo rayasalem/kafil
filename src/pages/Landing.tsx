@@ -110,34 +110,45 @@ export default function Landing() {
       .set(".escrow-vault", { scale: 0.95, boxShadow: "0 0 40px rgba(201, 168, 76, 0.15)", filter: "blur(0px)" })
       .set(".alloc-node-1, .alloc-node-2", { y: 40 });
 
-    // Apple-Style Morph Narrative (Section 3)
+    // Apple-Style Morph Narrative (Section 3) - Maximum Snappiness
     const morphTl = gsap.timeline({
       scrollTrigger: {
         trigger: "#about",
         start: "top top",
-        end: "+=300%",
-        scrub: 1,
+        end: "+=120%", // Tightened to prevent dead scroll
+        scrub: 0.8,    // Slightly smoother scrub for better feel
         pin: true,
         anticipatePin: 1,
       }
     });
 
     morphTl
-      .to(".traditional-card", { x: -200, opacity: 0, scale: 0.8, filter: "blur(20px)", duration: 1.5 })
-      .to(".morph-bg", { backgroundColor: "#0D1B2A", duration: 1.5 }, 0)
-      .to(".morph-headline", { color: "#FFFFFF", duration: 1.5 }, 0)
+      // 1. Rapidly clear the old state
+      .to(".traditional-card", { 
+        x: -100, 
+        opacity: 0, 
+        scale: 0.85, 
+        filter: "blur(15px)", 
+        duration: 0.8 
+      })
+      .to(".morph-bg", { backgroundColor: "#0D1B2A", duration: 0.8 }, 0)
+      .to(".morph-headline", { color: "#FFFFFF", duration: 0.8 }, 0)
+      
+      // 2. Reveal the new state immediately after
       .fromTo(".kafeel-assembly-container", 
-        { scale: 0.7, opacity: 0, y: 100 },
-        { scale: 1, opacity: 1, y: 0, duration: 2, ease: "power4.out" },
-        "-=0.5"
+        { scale: 0.9, opacity: 0, y: 40 },
+        { scale: 1, opacity: 1, y: 0, duration: 1, ease: "power3.out" },
+        "-=0.4"
       )
+      
+      // 3. Final touch of security activation
       .to(".secure-circuit-path", {
         strokeDashoffset: 0,
         opacity: 1,
-        stagger: 0.3,
-        duration: 2.5,
+        stagger: 0.1,
+        duration: 1,
         ease: "power2.inOut"
-      }, "-=1.5");
+      }, "-=0.5");
 
     // Scroll-triggered Reveal Animations
     gsap.utils.toArray<HTMLElement>('.reveal-section').forEach((section) => {

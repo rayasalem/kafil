@@ -386,15 +386,38 @@ export default function Landing() {
             <p className="text-xl text-gray-400 mb-12 leading-relaxed">
               عندما تودع ميزانية المشروع، لا تذهب لجيوبنا ولا لجيوب المستقل مباشرة. هي تظل في حساب بنكي مشفر ومؤمن، ولا يتم تحريرها إلا عندما تضغط أنت على "استلام العمل".
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {[
-                { title: 'تشفير عسكري', desc: 'نستخدم أعلى معايير التشفير (AES-256) لحماية بياناتك المالية.' },
-                { title: 'تحرير ذكي', desc: 'يتم صرف الدفعات بناءً على مراحل الإنجاز المعتمدة.' }
+                { 
+                  title: 'تشفير AES-256', 
+                  desc: 'تشفير كامل لبياناتك المالية.',
+                  icon: Lock,
+                  glow: "shadow-[0_0_20px_rgba(59,130,246,0.4)]",
+                  bg: "bg-blue-500/20",
+                  text: "text-blue-400"
+                },
+                { 
+                  title: 'تحرير ذكي', 
+                  desc: 'صرف آلي بناءً على الإنجاز.',
+                  icon: Zap,
+                  glow: "shadow-[0_0_20px_rgba(201,168,76,0.4)]",
+                  bg: "bg-amber-500/20",
+                  text: "text-amber-400"
+                }
               ].map((item, i) => (
-                <div key={i} className="bg-white/5 p-6 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
-                  <h4 className="font-bold text-xl mb-3 text-white">{item.title}</h4>
-                  <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
-                </div>
+                <motion.div 
+                  key={i}
+                  whileHover={{ y: -3, scale: 1.02 }}
+                  className="bg-white/10 backdrop-blur-md p-5 rounded-3xl border border-white/20 flex items-center gap-4 group transition-all duration-300 hover:bg-white/15"
+                >
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${item.bg} ${item.text} border border-white/10 ${item.glow} group-hover:scale-110 transition-transform duration-500`}>
+                    <item.icon size={22} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-lg text-white mb-0.5">{item.title}</h4>
+                    <p className="text-gray-400 text-sm font-medium">{item.desc}</p>
+                  </div>
+                </motion.div>
               ))}
             </div>
           </div>

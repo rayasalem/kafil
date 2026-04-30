@@ -19,7 +19,7 @@ export interface Project {
   tasks: Task[];
 }
 
-export type UserRole = 'admin' | 'client' | 'freelancer' | 'coordinator';
+export type UserRole = 'admin' | 'client' | 'freelancer' | 'coordinator' | 'arbitrator';
 
 export interface User {
   id: string;

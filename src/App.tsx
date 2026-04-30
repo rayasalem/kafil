@@ -11,9 +11,12 @@ const AdminDashboard = lazy(() => import('@/features/projects/AdminDashboard'));
 const ClientDashboard = lazy(() => import('@/features/projects/ClientDashboard'));
 const FreelancerDashboard = lazy(() => import('@/features/projects/FreelancerDashboard'));
 const CoordinatorDashboard = lazy(() => import('@/features/projects/CoordinatorDashboard'));
+const ArbitratorDashboard = lazy(() => import('@/features/dashboards/ArbitratorDashboard'));
 const CreateProject = lazy(() => import('@/features/projects/CreateProjectView'));
 const ProjectDetails = lazy(() => import('@/features/projects/ProjectDetailsView'));
 const DisputeFlow = lazy(() => import('@/pages/DisputeFlow'));
+const ArbitratorCaseView = lazy(() => import('@/pages/ArbitratorCaseView'));
+const DisputesPage = lazy(() => import('@/pages/DisputesPage'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
 const DashboardRedirect: FC = () => {
@@ -42,10 +45,13 @@ const App: FC = () => {
             <Route path="/dashboard/client" element={<ClientDashboard />} />
             <Route path="/dashboard/freelancer" element={<FreelancerDashboard />} />
             <Route path="/dashboard/coordinator" element={<CoordinatorDashboard />} />
+            <Route path="/dashboard/arbitrator" element={<ArbitratorDashboard />} />
             <Route path="/dashboard" element={<DashboardRedirect />} />
             <Route path="/create" element={<CreateProject />} />
             <Route path="/projects/:id" element={<ProjectDetails />} />
             <Route path="/dispute/:taskId" element={<DisputeFlow />} />
+            <Route path="/arbitrate/:caseId" element={<ArbitratorCaseView />} />
+            <Route path="/disputes" element={<DisputesPage />} />
           </Route>
           {/* Catch-all route for 404 Not Found */}
           <Route path="*" element={<NotFound />} />

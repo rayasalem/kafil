@@ -22,6 +22,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import Lenis from 'lenis';
+import { cn } from '@/shared/utils/cn';
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -165,40 +166,67 @@ export default function Landing() {
     </span>
   ));
 
+  const navLinks = [
+    { name: 'الرئيسية', id: 'home' },
+    { name: 'كيفية العمل', id: 'how-it-works' },
+    { name: 'من نحن', id: 'about' },
+    { name: 'الذكاء الاصطناعي', id: 'ai-justice' },
+    { name: 'الأسئلة الشائعة', id: 'faq' },
+  ];
+
   return (
     <div ref={containerRef} className="bg-white min-h-screen text-[#0D1B2A] font-sans selection:bg-blue-100 overflow-x-hidden" dir="rtl">
       
-      {/* 🟢 NAVIGATION - Minimalist & Glassy */}
+      {/* 🟢 NAVIGATION - Apple-Inspired Interactive Nav */}
       <motion.nav 
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.8, ease: "circOut" }}
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
         className="fixed w-full flex justify-between items-center p-6 md:px-12 z-50 bg-white/70 backdrop-blur-xl border-b border-gray-100/50"
       >
-        <div className="text-2xl font-black text-[#0D1B2A] flex items-center gap-3 tracking-tighter">
-          <div className="bg-blue-900 p-1.5 rounded-xl shadow-lg shadow-blue-900/20">
+        <Link to="/" className="text-2xl font-black text-[#0D1B2A] flex items-center gap-3 tracking-tighter hover:opacity-80 transition-opacity">
+          <div className="bg-[#0D1B2A] p-1.5 rounded-xl shadow-lg shadow-blue-900/20">
             <ShieldCheck className="text-white" size={24}/>
           </div>
           كفيل
-        </div>
-        <div className="hidden lg:flex gap-10 text-gray-500 font-bold text-sm">
-          {['الرئيسية', 'من نحن', 'كيفية العمل', 'الذكاء الاصطناعي', 'الأسئلة الشائعة'].map((item, i) => (
-            <a key={i} href={`#${item}`} className="hover:text-blue-900 transition-colors relative group">
-              {item}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
-            </a>
+        </Link>
+
+        <div className="hidden lg:flex gap-2 p-1 bg-gray-100/50 rounded-full border border-gray-200/50">
+          {navLinks.map((link, i) => (
+            <motion.a 
+              key={link.id}
+              href={`#${link.id}`}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 + i * 0.1, duration: 0.5 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-6 py-2.5 rounded-full text-sm font-bold text-gray-500 hover:text-[#0D1B2A] hover:bg-white transition-all duration-300 relative group"
+            >
+              {link.name}
+              <motion.span 
+                layoutId="nav-underline"
+                className="absolute inset-0 bg-white rounded-full -z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+              />
+            </motion.a>
           ))}
         </div>
+
         <div className="flex gap-4">
           <Link to="/login" className="text-[#0D1B2A] font-bold px-6 py-2.5 hover:bg-gray-100 rounded-full transition-all text-sm">دخول</Link>
-          <Link to="/register" className="bg-[#0D1B2A] text-white font-bold px-8 py-3 rounded-full hover:scale-105 active:scale-95 transition-all shadow-xl shadow-blue-900/10 text-sm">
-            ابدأ الآن
-          </Link>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Link to="/register" className="bg-[#0D1B2A] text-white font-bold px-8 py-3 rounded-full shadow-xl shadow-blue-900/10 text-sm block">
+              إنشاء حساب
+            </Link>
+          </motion.div>
         </div>
       </motion.nav>
 
       {/* 🚀 HERO SECTION - Cinematic SVG */}
-      <section ref={heroRef} className="relative pt-40 pb-32 px-6 overflow-hidden min-h-[90vh] flex flex-col items-center justify-center bg-gradient-to-br from-[#0D1B2A] to-[#08111A]">
+      <section id="home" ref={heroRef} className="relative pt-40 pb-32 px-6 overflow-hidden min-h-[90vh] flex flex-col items-center justify-center bg-gradient-to-br from-[#0D1B2A] to-[#08111A]">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center relative z-10 w-full">
           <div className="space-y-8 text-right hero-text-content">
             <motion.div 
@@ -325,7 +353,7 @@ export default function Landing() {
       </section>
 
       {/* 🔒 THE VAULT SECTION - Interactive Animation */}
-      <section className="vault-section py-40 bg-[#0D1B2A] text-white relative overflow-hidden">
+      <section id="كيفية العمل" className="vault-section py-40 bg-[#0D1B2A] text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-500 via-transparent to-transparent"></div>
         <div className="max-w-6xl mx-auto px-6 relative z-10 flex flex-col lg:flex-row items-center gap-20">
           <div className="flex-1 text-right">
@@ -380,7 +408,7 @@ export default function Landing() {
       </section>
 
       {/* ❌ PROBLEM VS ✅ SOLUTION - High Contrast Reveal */}
-      <section className="reveal-section py-32 px-6 bg-gray-50/50">
+      <section id="من نحن" className="reveal-section py-32 px-6 bg-gray-50/50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-20">
              <h2 className="text-4xl md:text-5xl font-black text-[#0D1B2A] mb-6 tracking-tight">وداعاً لمشاكل العمل التقليدي</h2>
@@ -440,7 +468,7 @@ export default function Landing() {
       </section>
 
       {/* 🤖 AI JUSTICE - Cyberpunk Tech Aesthetic */}
-      <section className="reveal-section py-40 bg-white relative overflow-hidden">
+      <section id="الذكاء الاصطناعي" className="reveal-section py-40 bg-white relative overflow-hidden">
         <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-24 items-center">
           <div className="relative order-2 lg:order-1">
             <div className="absolute -inset-10 bg-blue-100/50 blur-[80px] rounded-full -z-10"></div>
@@ -537,6 +565,43 @@ export default function Landing() {
             </div>
           </div>
         </motion.div>
+      </section>
+
+      {/* ❓ FAQ SECTION */}
+      <section id="الأسئلة الشائعة" className="reveal-section py-32 bg-gray-50/30">
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-black text-[#0D1B2A] mb-4 tracking-tight">الأسئلة الشائعة</h2>
+            <p className="text-gray-500 font-bold">كل ما تحتاج معرفته عن نظام كفيل والضمان المالي.</p>
+          </div>
+          <div className="space-y-4">
+            {faqs.map((faq, i) => (
+              <div key={i} className="bg-white rounded-3xl border border-gray-100 overflow-hidden transition-all hover:shadow-md">
+                <button 
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  className="w-full p-6 text-right flex justify-between items-center"
+                >
+                  <span className="font-bold text-lg text-[#0D1B2A]">{faq.q}</span>
+                  <ChevronDown className={cn("text-gray-400 transition-transform", openFaq === i && "rotate-180")} />
+                </button>
+                <AnimatePresence>
+                  {openFaq === i && (
+                    <motion.div 
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="p-6 pt-0 text-gray-500 font-medium leading-relaxed border-t border-gray-50">
+                        {faq.a}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* 🏁 FOOTER - Minimalist Apple Style */}

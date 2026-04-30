@@ -1,20 +1,20 @@
 import { Suspense, lazy, FC } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Layout from './components/Layout';
-import { User } from './types';
+import Layout from '@/layouts/MainLayout';
+import { User } from '@/types';
 
-// Lazy loading pages for production optimization
-const Landing = lazy(() => import('./pages/Landing'));
-const Login = lazy(() => import('./pages/Login'));
-const Register = lazy(() => import('./pages/Register'));
-const AdminDashboard = lazy(() => import('./pages/dashboards/AdminDashboard'));
-const ClientDashboard = lazy(() => import('./pages/dashboards/ClientDashboard'));
-const FreelancerDashboard = lazy(() => import('./pages/dashboards/FreelancerDashboard'));
-const CoordinatorDashboard = lazy(() => import('./pages/dashboards/CoordinatorDashboard'));
-const CreateProject = lazy(() => import('./pages/CreateProject'));
-const ProjectDetails = lazy(() => import('./pages/ProjectDetails'));
-const DisputeFlow = lazy(() => import('./pages/DisputeFlow'));
-const NotFound = lazy(() => import('./pages/NotFound'));
+// Lazy loading views for production optimization
+const Landing = lazy(() => import('@/pages/Landing'));
+const Login = lazy(() => import('@/features/auth/LoginView'));
+const Register = lazy(() => import('@/features/auth/RegisterView'));
+const AdminDashboard = lazy(() => import('@/features/projects/AdminDashboard'));
+const ClientDashboard = lazy(() => import('@/features/projects/ClientDashboard'));
+const FreelancerDashboard = lazy(() => import('@/features/projects/FreelancerDashboard'));
+const CoordinatorDashboard = lazy(() => import('@/features/projects/CoordinatorDashboard'));
+const CreateProject = lazy(() => import('@/features/projects/CreateProjectView'));
+const ProjectDetails = lazy(() => import('@/features/projects/ProjectDetailsView'));
+const DisputeFlow = lazy(() => import('@/pages/DisputeFlow'));
+const NotFound = lazy(() => import('@/pages/NotFound'));
 
 const DashboardRedirect: FC = () => {
   const userStr = localStorage.getItem('user');

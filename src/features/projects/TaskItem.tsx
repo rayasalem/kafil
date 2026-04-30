@@ -1,7 +1,9 @@
 import { FC } from 'react';
 import { ShieldCheck, User, ArrowLeft, TriangleAlert, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Task, UserRole } from '../types';
+import { Task, UserRole } from '@/types';
+import { formatCurrency } from '@/shared/utils/format';
+import { cn } from '@/shared/utils/cn';
 
 interface TaskItemProps {
   t: Task;
@@ -16,18 +18,27 @@ const TaskItem: FC<TaskItemProps> = ({ t, onApprove, userRole }) => {
   const isDisputed = t.status === 'Disputed';
 
   return (
-    <div className={`group relative bg-white border ${isPaid ? 'border-emerald-100 bg-emerald-50/20' : 'border-gray-100'} p-6 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all hover:shadow-lg hover:shadow-gray-100/50`}>
+    <div className={cn(
+      "group relative bg-white border p-6 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all hover:shadow-lg hover:shadow-gray-100/50",
+      isPaid ? "border-emerald-100 bg-emerald-50/20" : "border-gray-100"
+    )}>
       {isPaid && <div className="absolute top-0 right-10 transform -translate-y-1/2 bg-emerald-500 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm">تم الدفع بنجاح</div>}
       
       <div className="flex items-start gap-4 flex-1">
-        <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${isPaid ? 'bg-emerald-100 text-emerald-600' : 'bg-blue-50 text-blue-600'}`}>
+        <div className={cn(
+          "w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm",
+          isPaid ? "bg-emerald-100 text-emerald-600" : "bg-blue-50 text-blue-600"
+        )}>
           {isPaid ? <CheckCircle2 size={24}/> : <ShieldCheck size={24}/>}
         </div>
         <div>
           <h3 className="font-bold text-gray-900 text-lg mb-1 leading-tight">{t.name}</h3>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
             <span className="text-gray-400 flex items-center gap-1.5 font-medium"><User size={14} className="text-gray-300"/> {t.assignedTo}</span>
-            <span className={`flex items-center gap-1.5 font-bold ${isPaid ? 'text-emerald-600' : isDisputed ? 'text-red-600' : 'text-amber-600'}`}>
+            <span className={cn(
+              "flex items-center gap-1.5 font-bold",
+              isPaid ? "text-emerald-600" : isDisputed ? "text-red-600" : "text-amber-600"
+            )}>
                <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
                {isPaid ? 'مكتمل' : isDisputed ? 'نزاع مفتوح' : isProgress ? 'قيد التنفيذ' : 'انتظار الاعتماد'}
             </span>
@@ -38,7 +49,7 @@ const TaskItem: FC<TaskItemProps> = ({ t, onApprove, userRole }) => {
       <div className="flex items-center gap-6 w-full md:w-auto border-t md:border-t-0 pt-4 md:pt-0">
         <div className="text-left">
           <span className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">مبلغ المهمة</span>
-          <span className="text-xl font-black text-gray-900 leading-none">${t.payment.toLocaleString()}</span>
+          <span className="text-xl font-black text-gray-900 leading-none">{formatCurrency(t.payment)}</span>
         </div>
         
         <div className="flex gap-2 mr-auto md:mr-0">

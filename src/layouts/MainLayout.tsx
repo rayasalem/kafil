@@ -1,9 +1,10 @@
 import { FC } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { ShieldCheck, LogOut, LayoutDashboard, PlusCircle, Bell, Search, Settings } from 'lucide-react';
-import { User } from '../types';
+import { User } from '@/types';
+import { cn } from '@/shared/utils/cn';
 
-const Layout: FC = () => {
+const MainLayout: FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const userStr = localStorage.getItem('user');
@@ -32,16 +33,22 @@ const Layout: FC = () => {
 
         <nav className="flex-1 px-4 space-y-1">
           <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-4 mb-4 mt-2">القائمة الرئيسية</div>
-          {menuItems.filter(item => !item.roles || item.roles.includes(user.role)).map((item) => (
-            <Link 
-              key={item.path}
-              to={item.path}
-              className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold transition-all ${location.pathname === item.path ? 'bg-blue-50 text-blue-700 shadow-sm' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'}`}
-            >
-              <span className={`${location.pathname === item.path ? 'text-blue-600' : 'text-gray-400'}`}>{item.icon}</span>
-              {item.name}
-            </Link>
-          ))}
+          {menuItems.filter(item => !item.roles || item.roles.includes(user.role)).map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <Link 
+                key={item.path}
+                to={item.path}
+                className={cn(
+                  "flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold transition-all",
+                  isActive ? "bg-blue-50 text-blue-700 shadow-sm" : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                )}
+              >
+                <span className={cn(isActive ? "text-blue-600" : "text-gray-400")}>{item.icon}</span>
+                {item.name}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="p-4 mt-auto">
@@ -104,4 +111,4 @@ const Layout: FC = () => {
   );
 };
 
-export default Layout;
+export default MainLayout;

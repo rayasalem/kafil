@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Lock, CheckCircle, Briefcase, ChevronLeft, Wallet } from 'lucide-react';
-import DemoButton from '@/components/DemoButton';
+import DemoButton from '@/shared/components/DemoButton';
 import { api } from '@/services/api';
 import { Project, User } from '@/types';
 

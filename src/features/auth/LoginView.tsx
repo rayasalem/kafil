@@ -1,7 +1,7 @@
 import { useState, FC, FormEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ShieldCheck, Lock, User as UserIcon, ArrowLeft } from 'lucide-react';
-import { User } from '../types';
+import { User } from '@/types';
 
 const Login: FC = () => {
   const [username, setUsername] = useState('');

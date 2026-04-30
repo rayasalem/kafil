@@ -1,8 +1,8 @@
 import { useState, FC, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, DollarSign, FileText, ArrowLeft, ShieldCheck } from 'lucide-react';
-import { api } from '../services/api';
-import { User } from '../types';
+import { api } from '@/services/api';
+import { User } from '@/types';
 
 const CreateProject: FC = () => {
   const [title, setTitle] = useState('');

@@ -1,10 +1,11 @@
 import { useEffect, useState, FC, FormEvent } from 'react';
 import { useParams } from 'react-router-dom';
 import { Lock, Send } from 'lucide-react';
-import TaskItem from '../components/TaskItem';
-import MoneyFlowBar from '../components/MoneyFlowBar';
-import { api } from '../services/api';
-import { Project, User } from '../types';
+import TaskItem from '@/features/projects/TaskItem';
+import MoneyFlowBar from '@/features/escrow/MoneyFlowBar';
+import { api } from '@/services/api';
+import { Project, User } from '@/types';
+import { formatCurrency } from '@/shared/utils/format';
 
 const ProjectDetails: FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -66,7 +67,7 @@ const ProjectDetails: FC = () => {
           </div>
           <div className="text-right bg-gray-50 p-5 rounded-2xl border border-gray-100 min-w-[200px]">
             <span className="block text-sm font-bold text-gray-400 mb-1 uppercase">الميزانية الإجمالية</span>
-            <span className="block text-4xl font-black text-blue-900 tracking-tight">${project.budget.toLocaleString()}</span>
+            <span className="block text-4xl font-black text-blue-900 tracking-tight">{formatCurrency(project.budget)}</span>
           </div>
         </div>
 

@@ -1,4 +1,4 @@
-import { Project, Task, Database } from '../types';
+import { Project, Task, Database } from '@/types';
 
 const INITIAL_PROJECTS: Project[] = [
   {

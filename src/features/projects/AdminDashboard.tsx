@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Lock, CheckCircle, Briefcase, Wallet } from 'lucide-react';
-import { api } from '../../services/api';
+import { api } from '@/services/api';
 import { Project } from '@/types';
 
 export default function AdminDashboard() {

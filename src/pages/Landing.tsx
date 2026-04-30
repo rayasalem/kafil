@@ -150,6 +150,25 @@ export default function Landing() {
         ease: "power2.inOut"
       }, "-=0.5");
 
+    // 4. AI Justice Core Animation (Section 4)
+    gsap.to(".justice-orbital", {
+      rotate: 360,
+      duration: 20,
+      repeat: -1,
+      ease: "none"
+    });
+
+    gsap.fromTo(".scanner-line", 
+      { translateY: -100 },
+      { 
+        translateY: 300, 
+        duration: 3, 
+        repeat: -1, 
+        yoyo: true, 
+        ease: "power1.inOut" 
+      }
+    );
+
     // Scroll-triggered Reveal Animations
     gsap.utils.toArray<HTMLElement>('.reveal-section').forEach((section) => {
       gsap.from(section, {
@@ -646,10 +665,21 @@ export default function Landing() {
                 ابدأ رحلتك الآن
               </Link>
             </div>
-            <div className="mt-20 flex flex-wrap justify-center items-center gap-12 text-blue-300/50 font-bold uppercase tracking-widest text-xs">
-               <div className="flex items-center gap-2"><Lock size={16}/> مشفر بالكامل</div>
-               <div className="flex items-center gap-2"><ShieldCheck size={16}/> ضمان مالي</div>
-               <div className="flex items-center gap-2"><UserCheck size={16}/> هوية موثقة</div>
+            <div className="mt-20 flex flex-wrap justify-center items-center gap-6">
+               {[
+                 { icon: Lock, label: "مشفر بالكامل", color: "text-blue-400", shadow: "shadow-blue-500/40" },
+                 { icon: ShieldCheck, label: "ضمان مالي", color: "text-green-400", shadow: "shadow-green-500/40" },
+                 { icon: UserCheck, label: "هوية موثقة", color: "text-amber-400", shadow: "shadow-amber-500/40" }
+               ].map((badge, i) => (
+                 <motion.div 
+                   key={i}
+                   whileHover={{ y: -5, backgroundColor: "rgba(255, 255, 255, 0.15)" }}
+                   className="flex items-center gap-3 bg-white/10 backdrop-blur-xl px-7 py-3.5 rounded-2xl border border-white/20 transition-all cursor-default group shadow-[0_0_15px_rgba(255,255,255,0.05)]"
+                 >
+                   <badge.icon className={`${badge.color} group-hover:scale-125 transition-transform duration-500 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]`} size={20} />
+                   <span className="text-sm font-black text-white uppercase tracking-widest transition-colors drop-shadow-sm">{badge.label}</span>
+                 </motion.div>
+               ))}
             </div>
           </div>
         </motion.div>

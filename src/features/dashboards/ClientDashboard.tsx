@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Briefcase, Lock, CheckCircle, Wallet, ArrowLeft, ChevronLeft } from 'lucide-react';
-import DemoButton from '@/components/DemoButton';
+import DemoButton from '@/shared/components/DemoButton';
 import { FC } from 'react';
 import { Project } from '@/types';
 

@@ -142,92 +142,101 @@ const ClientDashboard: FC<ClientDashboardProps> = ({
           {projects.map((p) => {
             const isAnimating = animatingProjectId === p.id;
             const isOther = animatingProjectId && animatingProjectId !== p.id;
-            
-            return (
-            <motion.a
-              key={p.id}
-              href={`/projects/${p.id}`}
-              onClick={(e) => handleProjectClick(e, p.id)}
-              animate={isAnimating ? {
-                position: "fixed",
-                top: "20%",
-                left: "50%",
-                x: "-50%",
-                width: "90vw",
-                maxWidth: "800px",
-                zIndex: 60,
-                scale: 1.05,
-                boxShadow: "0 40px 100px -20px rgba(30,58,138,0.4)"
-              } : {
-                position: "relative",
-                top: "auto",
-                left: "auto",
-                x: "0%",
-                width: "auto",
-                maxWidth: "none",
-                zIndex: 1,
-                scale: 1,
-                boxShadow: "0 0px 0px 0px rgba(0,0,0,0)"
-              }}
-              whileHover={animatingProjectId ? {} : { scale: 1.02 }}
-              transition={{
-                type: 'spring', stiffness: 80, damping: 15, mass: 1
-              }}
-              className={`group block cursor-pointer overflow-hidden rounded-3xl border border-gray-100 bg-white p-6 hover:border-blue-200 hover:shadow-xl ${
-                isOther
-                  ? 'pointer-events-none scale-[0.9] opacity-0 blur-md transition-all duration-700'
-                  : ''
-              }`}
-            >
-              <div className="relative z-10 mb-6 flex items-start justify-between">
-                <h3 className="truncate pl-2 text-xl font-extrabold text-gray-900 transition group-hover:text-blue-900">
-                  {p.title}
-                </h3>
-                <span className="flex shrink-0 items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 shadow-sm">
-                  <Lock size={12} /> كفيل يحمي الدفعات
-                </span>
-              </div>
 
-              <div className="relative z-10 mb-6">
-                <div className="mb-2 flex justify-between text-xs font-bold text-gray-400">
-                  <span>الميزانية المرصودة</span>
-                  <span className="text-emerald-600">
-                    أُنجِز {p.tasks.filter((t) => t.paid).length} من {p.tasks.length} مهام
+            return (
+              <motion.a
+                key={p.id}
+                href={`/projects/${p.id}`}
+                onClick={(e) => handleProjectClick(e, p.id)}
+                animate={
+                  isAnimating
+                    ? {
+                        position: 'fixed',
+                        top: '20%',
+                        left: '50%',
+                        x: '-50%',
+                        width: '90vw',
+                        maxWidth: '800px',
+                        zIndex: 60,
+                        scale: 1.05,
+                        boxShadow: '0 40px 100px -20px rgba(30,58,138,0.4)',
+                      }
+                    : {
+                        position: 'relative',
+                        top: 'auto',
+                        left: 'auto',
+                        x: '0%',
+                        width: 'auto',
+                        maxWidth: 'none',
+                        zIndex: 1,
+                        scale: 1,
+                        boxShadow: '0 0px 0px 0px rgba(0,0,0,0)',
+                      }
+                }
+                whileHover={animatingProjectId ? {} : { scale: 1.02 }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 80,
+                  damping: 15,
+                  mass: 1,
+                }}
+                className={`group block cursor-pointer overflow-hidden rounded-3xl border border-gray-100 bg-white p-6 hover:border-blue-200 hover:shadow-xl ${
+                  isOther
+                    ? 'pointer-events-none scale-[0.9] opacity-0 blur-md transition-all duration-700'
+                    : ''
+                }`}
+              >
+                <div className="relative z-10 mb-6 flex items-start justify-between">
+                  <h3 className="truncate pl-2 text-xl font-extrabold text-gray-900 transition group-hover:text-blue-900">
+                    {p.title}
+                  </h3>
+                  <span className="flex shrink-0 items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 shadow-sm">
+                    <Lock size={12} /> كفيل يحمي الدفعات
                   </span>
                 </div>
-                <div className="flex h-2 w-full overflow-hidden rounded-full bg-gray-100 shadow-inner">
-                  <div
-                    className="h-full w-1/4 bg-emerald-500 transition-all duration-1000"
-                    style={{
-                      width: `${p.tasks.length ? (p.tasks.filter((t) => t.paid).length / p.tasks.length) * 100 : 0}%`,
-                    }}
-                  ></div>
-                </div>
-              </div>
 
-              <div className="relative z-10 flex items-end justify-between border-t border-gray-50 pt-2">
-                <div>
-                  <span className="mb-1 block text-xs font-bold text-gray-400">الميزانية</span>
-                  <p className="text-2xl font-black text-gray-900">${p.budget.toLocaleString()}</p>
+                <div className="relative z-10 mb-6">
+                  <div className="mb-2 flex justify-between text-xs font-bold text-gray-400">
+                    <span>الميزانية المرصودة</span>
+                    <span className="text-emerald-600">
+                      أُنجِز {p.tasks.filter((t) => t.paid).length} من {p.tasks.length} مهام
+                    </span>
+                  </div>
+                  <div className="flex h-2 w-full overflow-hidden rounded-full bg-gray-100 shadow-inner">
+                    <div
+                      className="h-full w-1/4 bg-emerald-500 transition-all duration-1000"
+                      style={{
+                        width: `${p.tasks.length ? (p.tasks.filter((t) => t.paid).length / p.tasks.length) * 100 : 0}%`,
+                      }}
+                    ></div>
+                  </div>
                 </div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-50 text-gray-400 transition-colors group-hover:bg-blue-50 group-hover:text-blue-600">
-                  <ArrowLeft
-                    size={20}
-                    className="transition-transform group-hover:-translate-x-1"
+
+                <div className="relative z-10 flex items-end justify-between border-t border-gray-50 pt-2">
+                  <div>
+                    <span className="mb-1 block text-xs font-bold text-gray-400">الميزانية</span>
+                    <p className="text-2xl font-black text-gray-900">
+                      ${p.budget.toLocaleString()}
+                    </p>
+                  </div>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-50 text-gray-400 transition-colors group-hover:bg-blue-50 group-hover:text-blue-600">
+                    <ArrowLeft
+                      size={20}
+                      className="transition-transform group-hover:-translate-x-1"
+                    />
+                  </div>
+                </div>
+
+                {/* Animated Expansion Overlay when clicked */}
+                {animatingProjectId === p.id && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 50 }}
+                    transition={{ duration: 0.6, ease: 'easeIn' }}
+                    className="absolute top-1/2 left-1/2 z-0 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-50/90"
                   />
-                </div>
-              </div>
-
-              {/* Animated Expansion Overlay when clicked */}
-              {animatingProjectId === p.id && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 50 }}
-                  transition={{ duration: 0.6, ease: 'easeIn' }}
-                  className="absolute top-1/2 left-1/2 z-0 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-50/90"
-                />
-              )}
-            </motion.a>
+                )}
+              </motion.a>
             );
           })}
         </div>

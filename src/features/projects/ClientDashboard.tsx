@@ -119,13 +119,22 @@ export default function ClientDashboard() {
   useLayoutEffect(() => {
     // Attempt to restore scroll position immediately on mount to prevent visual jumps
     const savedScrollPos = sessionStorage.getItem('clientDashboardScroll');
-    if (savedScrollPos) {
-      // Must use a tiny delay sometimes to ensure DOM has painted length
+    if (!savedScrollPos) return;
+
+    const scroller = document.getElementById('app-scroll-container');
+    const targetTop = parseInt(savedScrollPos, 10);
+
+    if (scroller) {
       setTimeout(() => {
-        window.scrollTo({ top: parseInt(savedScrollPos, 10), behavior: 'instant' });
+        scroller.scrollTop = targetTop;
       }, 10);
-      sessionStorage.removeItem('clientDashboardScroll');
+    } else {
+      setTimeout(() => {
+        window.scrollTo({ top: targetTop, behavior: 'instant' });
+      }, 10);
     }
+
+    sessionStorage.removeItem('clientDashboardScroll');
   }, [projects.length]);
 
   // Memoized derived state to prevent re-calculations on every render
@@ -173,8 +182,10 @@ export default function ClientDashboard() {
   };
 
   const handleOpenProjectDetails = (projectId: string) => {
-    // Save scroll position precisely before animating out
-    sessionStorage.setItem('clientDashboardScroll', window.scrollY.toString());
+    // Save scroll position from the layout's scroll container before animating out
+    const scroller = document.getElementById('app-scroll-container');
+    const scrollTop = scroller ? scroller.scrollTop : window.scrollY;
+    sessionStorage.setItem('clientDashboardScroll', scrollTop.toString());
     setOpeningProjectId(projectId);
 
     if (routeTimerRef.current) {

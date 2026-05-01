@@ -214,6 +214,7 @@ const MainLayout: FC = () => {
             <AnimatePresence mode="popLayout">
               <motion.div
                 key={location.pathname}
+                id="app-scroll-container"
                 className="absolute inset-0 p-6 md:p-10 overflow-y-auto w-full h-full"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

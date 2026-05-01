@@ -1,35 +1,7 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { 
-  Activity, 
-  ShieldCheck, 
-  Users, 
-  Sparkles, 
-  LayoutDashboard, 
-  ArrowRight, 
-  ChevronLeft, 
-  Lock, 
-  TrendingUp, 
-  Search,
-  MessageSquare,
-  AlertCircle
-} from 'lucide-react';
-import { api } from '@/services/api';
-import { Project, User } from '@/types';
-import { formatCurrency } from '@/shared/utils/format';
-
-// Mock AI Suggestions
-const AI_BREAKDOWN_SUGGESTIONS = [
-  { role: 'مصمم واجهات', hours: 40, rate: 15, total: 600, fairness: 'above' },
-  { role: 'مطور واجهات', hours: 80, rate: 20, total: 1600, fairness: 'market' },
-  { role: 'كاتب محتوى', hours: 10, rate: 12, total: 120, fairness: 'below' },
-];
-
 import { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Activity, 
-  ShieldCheck, 
   Users, 
   Sparkles, 
   LayoutDashboard, 
@@ -43,7 +15,7 @@ import {
   Plus
 } from 'lucide-react';
 import { api } from '@/services/api';
-import { Project, User, Task } from '@/types';
+import { Project, User } from '@/types';
 import { formatCurrency } from '@/shared/utils/format';
 import { KafilMark } from '@/components/KafilLogo';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -148,7 +120,7 @@ export default function CoordinatorDashboard() {
           </div>
           <div>
             <p className="text-[10px] font-black text-[#C9A84C] uppercase tracking-widest">Kafil Verified Lead</p>
-            <p className="text-lg font-black text-[#0D1B2A]">⭐ 4.9 <span className="text-sm font-bold text-gray-400 mr-2">| 24 مشروع</span></p>
+            <p className="text-lg font-black text-[#0D1B2A]">⭐ 4.9 <span className="text-sm font-bold text-gray-400 mr-2">| {projects.length + 21} مشروع</span></p>
           </div>
         </div>
       </div>

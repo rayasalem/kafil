@@ -73,16 +73,14 @@ const Login: FC = () => {
   
   const navigate = useNavigate();
 
-  const handleLogin = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleLogin = async (e?: FormEvent, mockEmail?: string) => {
+    if (e) e.preventDefault();
     setError(null);
+    const loginQuery = mockEmail || email;
     try {
-      if (!email || !password) throw new Error(t.error);
+      if (!loginQuery) throw new Error(t.error);
       
-      const user = await api.login(email, password);
-      // Because API ignores passwords, we mock validate 123456 for this hackathon
-      if (password !== '123456') throw new Error(t.error);
-
+      const user = await api.login(loginQuery, password || '123456');
       localStorage.setItem('user', JSON.stringify(user));
       navigate(`/dashboard/${user.role}`);
     } catch (err: any) {
@@ -93,12 +91,11 @@ const Login: FC = () => {
   const handleMockUserSelect = (mockUser: any) => {
     setEmail(mockUser.email);
     setPassword(mockUser.password);
-    setError(null);
+    handleLogin(undefined, mockUser.email);
   };
 
   useEffect(() => {
     // Reset DB on login page load to make sure the hackathon mock emails exist 
-    // in case they had older cached data in localStorage
     api.resetDb();
   }, []);
 
@@ -123,7 +120,7 @@ const Login: FC = () => {
           <h2 className="text-2xl font-black text-gray-900 mb-2">{t.title}</h2>
           <p className="text-gray-400 font-medium mb-8 text-sm">{t.subtitle}</p>
 
-          <form onSubmit={handleLogin} className="space-y-5">
+          <form onSubmit={(e) => handleLogin(e)} className="space-y-5">
             {error && (
               <div className="bg-red-50 text-red-600 p-3 rounded-xl text-sm font-medium border border-red-100 flex items-start gap-2">
                 <AlertCircle size={18} className="shrink-0 mt-0.5" />
@@ -136,12 +133,12 @@ const Login: FC = () => {
               <div className="relative">
                 <Mail className={cn("absolute top-1/2 -translate-y-1/2 text-gray-400", isRtl ? 'right-4' : 'left-4')} size={20} />
                 <input 
-                  type="email" 
+                  type="text" 
                   className={cn(
                     "w-full bg-gray-50/50 border border-gray-200 p-3.5 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all outline-none font-medium text-sm",
                     isRtl ? 'pr-12 pl-4' : 'pl-12 pr-4'
                   )}
-                  placeholder="email@example.com"
+                  placeholder={isRtl ? "اسم المستخدم أو البريد" : "Username or Email"}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   dir="ltr"
@@ -164,7 +161,6 @@ const Login: FC = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   dir="ltr"
-                  required
                 />
               </div>
             </div>

@@ -1,12 +1,27 @@
-import { Link } from 'react-router-dom';
-import { Activity } from 'lucide-react';
+import { KafilMark } from '@/components/KafilLogo';
 
 export default function CoordinatorDashboard({ projects }) {
+  const userStr = localStorage.getItem('user');
+  const user = userStr ? JSON.parse(userStr) : { role: 'guest', name: 'Guest' };
+
   return (
-    <div className="animate-fade-in max-w-5xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-black text-gray-900 tracking-tight mb-1">لوحة المنسق</h1>
-        <p className="text-gray-500 font-medium">متابعة إنجاز المشاريع دون صلاحيات مالية.</p>
+    <div className="animate-fade-in max-w-6xl mx-auto space-y-10" dir="rtl">
+      
+      {/* Header & Reputation Badge */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div>
+          <h1 className="text-3xl font-black text-[#0D1B2A] tracking-tight mb-2">لوحة المنسق (Lead)</h1>
+          <p className="text-gray-500 font-medium">أهلاً طارق! أنت الآن تدير 3 فرق عمل بنجاح.</p>
+        </div>
+        <div className="bg-white border-2 border-[#C9A84C] p-4 rounded-2xl flex items-center gap-4 shadow-lg shadow-[#C9A84C]/10">
+          <div className="bg-[#0D1B2A] p-3 rounded-xl">
+            <KafilMark size={28} />
+          </div>
+          <div>
+            <p className="text-[10px] font-black text-[#C9A84C] uppercase tracking-widest">Kafil Verified Lead</p>
+            <p className="text-lg font-black text-[#0D1B2A]">⭐ 4.9 <span className="text-sm font-bold text-gray-400 mr-2">| 24 مشروع</span></p>
+          </div>
+        </div>
       </div>
       
       <h2 className="text-xl font-bold text-gray-800 mb-6">متابعة المشاريع ({projects.length})</h2>

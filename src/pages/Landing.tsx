@@ -18,6 +18,7 @@ import {
   Moon,
   Sun
 } from 'lucide-react';
+import KafilLogo, { KafilMark } from '@/components/KafilLogo';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import gsap from 'gsap';
@@ -290,7 +291,7 @@ export default function Landing() {
       >
         <Link to="/" className="text-2xl font-black text-[#0D1B2A] dark:text-white flex items-center gap-3 tracking-tighter hover:opacity-80 transition-opacity">
           <div className="bg-[#0D1B2A] p-1.5 rounded-xl shadow-lg shadow-blue-900/20">
-            <ShieldCheck className="text-white" size={24}/>
+            <KafilMark className="text-white" size={24}/>
           </div>
           كفيل
         </Link>
@@ -377,16 +378,16 @@ export default function Landing() {
                 {t.hero.startBtn} <ArrowLeft size={22} className="transform group-hover:-translate-x-2 transition-transform duration-300"/>
               </Link>
               <a href="#how-it-works" className="hero-btn bg-black/5 dark:bg-white/5 backdrop-blur-md text-[#0D1B2A] dark:text-white font-bold px-10 py-4 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-all border border-black/10 dark:border-white/10 text-lg flex items-center justify-center gap-2">
-                <ShieldCheck size={20}/> {t.hero.howItWorksBtn}
+                <KafilMark size={20}/> {t.hero.howItWorksBtn}
               </a>
             </div>
 
             <div className="pt-16 border-t border-black/10 dark:border-white/5 mt-16 transition-colors">
                <div className="flex flex-wrap gap-8 justify-end">
                  {[
-                   { icon: Lock, label: "{t.hero.features[0]}", color: "text-blue-500 dark:text-blue-400", bg: "bg-blue-50 dark:bg-blue-400/10" },
-                   { icon: ShieldCheck, label: "{t.hero.features[1]}", color: "text-green-500 dark:text-green-400", bg: "bg-green-50 dark:bg-green-400/10" },
-                   { icon: UserCheck, label: "{t.hero.features[2]}", color: "text-amber-500 dark:text-amber-400", bg: "bg-amber-50 dark:bg-amber-400/10" }
+                   { icon: Lock, label: t.hero.features[0], color: "text-blue-500 dark:text-blue-400", bg: "bg-blue-50 dark:bg-blue-400/10" },
+                   { icon: ShieldCheck, label: t.hero.features[1], color: "text-green-500 dark:text-green-400", bg: "bg-green-50 dark:bg-green-400/10" },
+                   { icon: UserCheck, label: t.hero.features[2], color: "text-amber-500 dark:text-amber-400", bg: "bg-amber-50 dark:bg-amber-400/10" }
                  ].map((badge, i) => (
                    <motion.div 
                      key={i}
@@ -632,7 +633,7 @@ export default function Landing() {
             <motion.div className="kafeel-assembly-container absolute z-20 w-full max-w-xl bg-[#0D1B2A]/90 backdrop-blur-2xl p-12 rounded-[3rem] shadow-[0_0_100px_rgba(201,168,76,0.15)] border border-[#C9A84C]/30 opacity-0 scale-90">
                <div className="flex items-center gap-6 mb-10 text-[#C9A84C]">
                   <div className="p-4 bg-[#C9A84C]/10 rounded-2xl shadow-[0_0_20px_rgba(201,168,76,0.2)]">
-                    <ShieldCheck size={32} />
+                    <KafilMark size={32} />
                   </div>
                   <h3 className="text-4xl font-black text-white">مع كفيل</h3>
                </div>

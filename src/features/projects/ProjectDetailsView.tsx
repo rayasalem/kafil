@@ -4,6 +4,7 @@ import {
   Lock, Send, Gavel, X, FileText, Upload, TriangleAlert,
   Scale, CheckCircle2, ShieldCheck, User, ArrowLeft, Clock, CalendarDays
 } from 'lucide-react';
+import { AppleCloseButton } from '@/shared/components/ui/AppleCloseButton';
 import MoneyFlowBar from '@/features/escrow/MoneyFlowBar';
 import { api } from '@/services/api';
 import { toast } from 'sonner';
@@ -410,14 +411,11 @@ const ProjectDetails: FC = () => {
   return (
     <div className="relative min-h-screen">
       {/* Close Button - Outside the card */}
-      <button 
+      <AppleCloseButton 
         onClick={() => navigate(-1)}
-        className="fixed top-8 left-8 z-[60] w-12 h-12 rounded-full bg-[var(--color-kafil-midnight)]/10 backdrop-blur-xl flex items-center justify-center text-[var(--color-kafil-midnight)] hover:bg-[var(--color-kafil-midnight)] hover:text-white transition-all shadow-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-kafil-gold)]"
+        className="fixed top-8 left-8 z-[60]"
         aria-label="إغلاق والعودة للوحة التحكم"
-        style={{ border: '1px solid rgba(13,27,42,0.1)' }}
-      >
-        <X size={24} />
-      </button>
+      />
 
       <motion.div 
         layoutId={`project-card-${id}`}

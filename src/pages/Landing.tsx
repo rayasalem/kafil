@@ -760,42 +760,6 @@ export default function Landing() {
         </motion.div>
       </section>
 
-      {/* ❓ FAQ SECTION */}
-      <section id="faq" className="reveal-section py-32 bg-gray-50/30 dark:bg-[#0a1622] transition-colors duration-500">
-        <div className="max-w-4xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-black text-[#0D1B2A] dark:text-white mb-4 tracking-tight transition-colors">الأسئلة الشائعة</h2>
-            <p className="text-gray-500 dark:text-gray-400 font-bold transition-colors">كل ما تحتاج معرفته عن نظام كفيل والضمان المالي.</p>
-          </div>
-          <div className="space-y-4">
-            {faqs.map((faq, i) => (
-              <div key={i} className="bg-white dark:bg-[#0D1B2A] rounded-3xl border border-gray-100 dark:border-white/5 overflow-hidden transition-all hover:shadow-md">
-                <button 
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full p-6 text-right flex justify-between items-center"
-                >
-                  <span className="font-bold text-lg text-[#0D1B2A] dark:text-white">{faq.q}</span>
-                  <ChevronDown className={cn("text-gray-400 dark:text-gray-500 transition-transform", openFaq === i && "rotate-180")} />
-                </button>
-                <AnimatePresence>
-                  {openFaq === i && (
-                    <motion.div 
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="p-6 pt-0 text-gray-500 dark:text-gray-400 font-medium leading-relaxed border-t border-gray-50 dark:border-white/5 transition-colors">
-                        {faq.a}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* 💰 PRICING SECTION */}
       <section id="pricing" className="py-32 px-6 md:px-12 bg-white dark:bg-[#08111A] transition-colors duration-500">
@@ -967,6 +931,43 @@ export default function Landing() {
           <p className="text-center text-gray-400 dark:text-gray-500 font-medium text-sm mt-12 transition-colors">
             جميع الخطط تشمل خزنة Escrow مدمجة وحماية مالية كاملة للعملاء والمستقلين. العمولة على المعاملات <span className="font-black text-[#0D1B2A] dark:text-white">5%</span> فقط.
           </p>
+        </div>
+      </section>
+
+      {/* ❓ FAQ SECTION */}
+      <section id="faq" className="reveal-section py-32 bg-gray-50/30 dark:bg-[#0a1622] transition-colors duration-500">
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-black text-[#0D1B2A] dark:text-white mb-4 tracking-tight transition-colors">الأسئلة الشائعة</h2>
+            <p className="text-gray-500 dark:text-gray-400 font-bold transition-colors">كل ما تحتاج معرفته عن نظام كفيل والضمان المالي.</p>
+          </div>
+          <div className="space-y-4">
+            {faqs.map((faq, i) => (
+              <div key={i} className="bg-white dark:bg-[#0D1B2A] rounded-3xl border border-gray-100 dark:border-white/5 overflow-hidden transition-all hover:shadow-md">
+                <button 
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  className="w-full p-6 text-right flex justify-between items-center"
+                >
+                  <span className="font-bold text-lg text-[#0D1B2A] dark:text-white">{faq.q}</span>
+                  <ChevronDown className={cn("text-gray-400 dark:text-gray-500 transition-transform", openFaq === i && "rotate-180")} />
+                </button>
+                <AnimatePresence>
+                  {openFaq === i && (
+                    <motion.div 
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="p-6 pt-0 text-gray-500 dark:text-gray-400 font-medium leading-relaxed border-t border-gray-50 dark:border-white/5 transition-colors">
+                        {faq.a}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

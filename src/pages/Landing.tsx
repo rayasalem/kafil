@@ -38,23 +38,9 @@ export default function Landing() {
   const [isDark, setIsDark] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
 
-  // Track active section for Apple-style nav pill
+  // Initial section set
   useEffect(() => {
-    const handleScroll = () => {
-      const sections = ['home', 'how-it-works', 'about', 'ai-justice', 'pricing', 'faq'].map(id => document.getElementById(id));
-      let current = 'home';
-      for (const section of sections) {
-        if (section) {
-          const rect = section.getBoundingClientRect();
-          if (rect.top <= window.innerHeight / 3 && rect.bottom >= window.innerHeight / 3) {
-            current = section.id;
-          }
-        }
-      }
-      setActiveSection(current);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    setActiveSection('home');
   }, []);
 
   // Initialize Smooth Scrolling (Lenis)
@@ -241,6 +227,21 @@ export default function Landing() {
         trigger: "#pricing",
         start: "top 70%",
       }
+    });
+
+    // Premium GSAP Active Section Tracking for Nav Pill
+    const sections = ['home', 'how-it-works', 'about', 'ai-justice', 'pricing', 'faq'];
+    sections.forEach((id) => {
+      ScrollTrigger.create({
+        trigger: `#${id}`,
+        start: "top 40%",
+        end: "bottom 40%",
+        onToggle: (self) => {
+          if (self.isActive) setActiveSection(id);
+        },
+        onEnter: () => setActiveSection(id),
+        onEnterBack: () => setActiveSection(id),
+      });
     });
 
     // Escrow Vault Animation

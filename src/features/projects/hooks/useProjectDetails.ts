@@ -60,6 +60,18 @@ export function useProjectDetails(projectId: string | undefined) {
     }
   };
 
+  const acceptTask = async (taskId: string) => {
+    if (projectId) {
+      try {
+        await api.updateInviteStatus(projectId, taskId, 'Accepted', api.getCurrentUser()?.id);
+        toast.success('تم قبول المهمة! بالتوفيق في العمل 🚀');
+        loadProject();
+      } catch {
+        toast.error('فشل في قبول المهمة');
+      }
+    }
+  };
+
   const lookupFreelancer = async (query: string) => {
     setFreelancerQuery(query);
     setResolvedFreelancer(null);
@@ -79,6 +91,6 @@ export function useProjectDetails(projectId: string | undefined) {
     form: { name, setName, freelancerQuery, lookupFreelancer, resolvedFreelancer, payment, setPayment },
     modals: { disputeTarget, setDisputeTarget, selectedTask, setSelectedTask },
     stats: { totalPaid, totalAllocated, remainingBudget, openDisputesCount, isLocking, isReleasing },
-    actions: { addTask, completeTask }
+    actions: { addTask, completeTask, acceptTask }
   };
 }

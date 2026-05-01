@@ -10,13 +10,15 @@ interface TaskRowProps {
   t: Task;
   project: Project;
   onApprove: (id: string) => void;
+  onAccept?: (id: string) => void;
   onDispute: (t: Task) => void;
   onTaskClick: (t: Task) => void;
   userRole: string;
+  currentUserId?: string;
   isReleasing?: boolean;
 }
 
-export const TaskRow: FC<TaskRowProps> = ({ t, project, onApprove, onDispute, onTaskClick, userRole, isReleasing }) => {
+export const TaskRow: FC<TaskRowProps> = ({ t, project, onApprove, onAccept, onDispute, onTaskClick, userRole, currentUserId, isReleasing }) => {
   const { lang, isRtl } = useLanguage();
   const tr = translations.dashboard[lang].client.projectDetails.taskRow;
   
@@ -83,6 +85,14 @@ export const TaskRow: FC<TaskRowProps> = ({ t, project, onApprove, onDispute, on
               className="flex items-center gap-2 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-all hover:-translate-y-0.5 shadow-lg whitespace-nowrap bg-[#1A7F74] disabled:opacity-75"
             >
               {isReleasing ? <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin inline-block"></span> {tr.releasing}</> : <><CheckCircle2 size={15} /> {tr.releaseBtn}</>}
+            </button>
+          )}
+          {!isPaid && t.inviteStatus === 'Pending' && (userRole === 'freelancer' || t.assignedTo === currentUserId) && onAccept && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onAccept(t.id); }}
+              className="flex items-center gap-2 text-white font-black px-4 py-2.5 rounded-xl text-sm transition-all hover:scale-105 shadow-xl bg-blue-600"
+            >
+              <CheckCircle2 size={15} /> {lang === 'ar' ? 'قبول المهمة' : 'Accept Task'}
             </button>
           )}
           {!isPaid && !isDisputed && (userRole === 'client' || userRole === 'admin' || userRole === 'freelancer') && (

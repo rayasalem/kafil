@@ -57,10 +57,10 @@ const TRANSLATIONS = {
 };
 
 const MOCK_USERS = [
-  { labelEn: 'Admin', labelAr: 'مدير', role: 'admin', email: 'admin@kafeel.com', password: '123456', bg: 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100' },
-  { labelEn: 'Client', labelAr: 'عميل', role: 'client', email: 'client1@kafeel.com', password: '123456', bg: 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100' },
-  { labelEn: 'Freelancer', labelAr: 'مستقل', role: 'freelancer', email: 'freelancer1@kafeel.com', password: '123456', bg: 'bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100' },
-  { labelEn: 'Coordinator', labelAr: 'منسق', role: 'coordinator', email: 'coordinator1@kafeel.com', password: '123456', bg: 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' },
+  { labelEn: 'Admin', labelAr: 'المدير العام', role: 'admin', email: 'admin@kafeel.com', password: '123456', bg: 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100' },
+  { labelEn: 'Ahmed (Client)', labelAr: 'أحمد (العميل)', role: 'client', email: 'client1@kafeel.com', password: '123456', bg: 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100' },
+  { labelEn: 'Omar (Freelancer)', labelAr: 'عمر (المستقل)', role: 'freelancer', email: 'freelancer1@kafeel.com', password: '123456', bg: 'bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100' },
+  { labelEn: 'Tariq (Coordinator)', labelAr: 'طارق (المنسق)', role: 'coordinator', email: 'coordinator1@kafeel.com', password: '123456', bg: 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' },
 ];
 
 const Login: FC = () => {
@@ -95,8 +95,8 @@ const Login: FC = () => {
   };
 
   useEffect(() => {
-    // Reset DB on login page load to make sure the hackathon mock emails exist 
-    api.resetDb();
+    // Only reset if explicitly needed, otherwise let localStorage persist
+    // api.resetDb(); 
   }, []);
 
   return (

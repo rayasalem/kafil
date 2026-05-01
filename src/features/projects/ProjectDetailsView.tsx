@@ -144,9 +144,11 @@ const ProjectDetailsView: FC = () => {
                   t={task}
                   project={project}
                   onApprove={actions.completeTask}
+                  onAccept={actions.acceptTask}
                   onDispute={(taskObj) => modals.setDisputeTarget({ project, task: taskObj })}
                   onTaskClick={modals.setSelectedTask}
                   userRole={userRole}
+                  currentUserId={user?.id}
                   isReleasing={stats.isReleasing === task.id}
                 />
                 {(task.paymentStatus || task.timeline) && (

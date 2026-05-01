@@ -19,8 +19,8 @@ export const AppleCloseButton: React.FC<AppleCloseButtonProps> = ({
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  // Ultra-Smooth Spring Config
-  const springConfig = { damping: 35, stiffness: 200, mass: 1 };
+  // Ultra-Smooth, Slow Spring Config for Apple feel
+  const springConfig = { damping: 45, stiffness: 120, mass: 1.2 };
   const translateX = useSpring(mouseX, springConfig);
   const translateY = useSpring(mouseY, springConfig);
 
@@ -29,8 +29,8 @@ export const AppleCloseButton: React.FC<AppleCloseButtonProps> = ({
     const rect = buttonRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left - rect.width / 2;
     const y = e.clientY - rect.top - rect.height / 2;
-    mouseX.set(x * 0.35);
-    mouseY.set(y * 0.35);
+    mouseX.set(x * 0.3);
+    mouseY.set(y * 0.3);
   };
 
   const handleMouseLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -43,15 +43,15 @@ export const AppleCloseButton: React.FC<AppleCloseButtonProps> = ({
     <div className={cn("relative z-[70]", className)}>
       {/* 
         THE ORBITAL GLOW
-        Smooth aura breathing behind the button
       */}
       <motion.div
         animate={{
-          scale: isHovered ? 1.4 : 1,
-          opacity: isHovered ? 0.4 : 0.15,
+          scale: isHovered ? 1.5 : 1,
+          opacity: isHovered ? 0.35 : 0.1,
         }}
+        transition={{ type: 'spring', stiffness: 80, damping: 25 }}
         style={{ x: translateX, y: translateY }}
-        className="absolute inset-0 rounded-full bg-gradient-to-tr from-[var(--color-kafil-gold)] to-[var(--color-kafil-teal)] blur-2xl pointer-events-none"
+        className="absolute inset-0 rounded-full bg-gradient-to-tr from-[var(--color-kafil-gold)] to-[var(--color-kafil-teal)] blur-3xl pointer-events-none"
       />
 
       <motion.button
@@ -59,30 +59,36 @@ export const AppleCloseButton: React.FC<AppleCloseButtonProps> = ({
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={handleMouseLeave}
-        whileHover={{ scale: 1.08 }}
-        whileTap={{ scale: 0.94 }}
         
-        // SEQUENCED ENTRANCE: Pop then Spin
+        // HOVER SEQUENCE
+        animate={{
+          scale: isHovered ? 1.1 : 1,
+        }}
+        whileTap={{ scale: 0.96 }}
+        
+        // ENTRANCE SEQUENCE
         initial={{ scale: 0, rotate: -180, opacity: 0 }}
-        animate={{ scale: 1, rotate: 0, opacity: 1 }}
+        animate={{ 
+          scale: isHovered ? 1.1 : 1, // Combined with hover state
+          rotate: 0, 
+          opacity: 1 
+        }}
         transition={{
-          // Scale & Opacity happen first
-          scale: { type: 'spring', stiffness: 200, damping: 25 },
-          opacity: { duration: 0.4 },
-          // Rotation is delayed for a "locking into place" feel
-          rotate: { type: 'spring', stiffness: 150, damping: 20, delay: 0.3 }
+          scale: { type: 'spring', stiffness: 100, damping: 30 },
+          opacity: { duration: 0.6 },
+          rotate: { type: 'spring', stiffness: 100, damping: 20, delay: 0.4 }
         }}
 
         style={{ x: translateX, y: translateY }}
         className={cn(
           "group relative flex items-center justify-center rounded-full overflow-hidden",
-          "w-14 h-14 shadow-[0_12px_40px_rgba(0,0,0,0.15)]",
+          "w-14 h-14 shadow-[0_12px_40px_rgba(0,0,0,0.1)]",
           "focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-kafil-gold)]/50",
         )}
         {...props}
       >
         {/* DYNAMIC GLASS BACKDROP */}
-        <div className="absolute inset-0 bg-[var(--color-kafil-midnight)]/10 backdrop-blur-[32px] transition-all duration-700 group-hover:bg-[var(--color-kafil-midnight)]/20" />
+        <div className="absolute inset-0 bg-[var(--color-kafil-midnight)]/10 backdrop-blur-[40px] transition-all duration-1000 group-hover:bg-[var(--color-kafil-midnight)]/20" />
         
         {/* ANIMATED BORDER LIGHT SWEEP */}
         <motion.div 
@@ -90,23 +96,29 @@ export const AppleCloseButton: React.FC<AppleCloseButtonProps> = ({
             rotate: [0, 360],
           }}
           transition={{
-            duration: 6,
+            duration: 8,
             repeat: Infinity,
             ease: "linear"
           }}
-          className="absolute inset-[-50%] bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+          className="absolute inset-[-50%] bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"
         />
 
         {/* STRUCTURAL STROKE */}
-        <div className="absolute inset-0 rounded-full border border-white/20 shadow-[inset_0_1px_2px_rgba(255,255,255,0.4)]" />
+        <div className="absolute inset-0 rounded-full border border-white/10 shadow-[inset_0_1px_2px_rgba(255,255,255,0.3)]" />
         
-        {/* THE ICON */}
+        {/* SEQUENCED ICON HOVER */}
         <motion.div
           animate={{
             rotate: isHovered ? 90 : 0,
-            scale: isHovered ? 1.05 : 1
+            scale: isHovered ? 1.1 : 1
           }}
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          transition={{ 
+            type: 'spring', 
+            stiffness: 80, 
+            damping: 25, 
+            // DELAY the icon animation relative to the button scaling
+            delay: isHovered ? 0.15 : 0 
+          }}
           className="relative z-10 text-[var(--color-kafil-midnight)]"
         >
           <X size={iconSize} strokeWidth={3} />
@@ -116,11 +128,11 @@ export const AppleCloseButton: React.FC<AppleCloseButtonProps> = ({
         <AnimatePresence>
           {isHovered && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.1 }}
-              transition={{ duration: 0.3 }}
-              className="absolute inset-0 rounded-full border-2 border-[var(--color-kafil-gold)]/30"
+              exit={{ opacity: 0, scale: 1.05 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="absolute inset-0 rounded-full border border-[var(--color-kafil-gold)]/20"
             />
           )}
         </AnimatePresence>

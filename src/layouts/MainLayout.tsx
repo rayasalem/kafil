@@ -217,7 +217,7 @@ const MainLayout: FC = () => {
               initial={{ opacity: 0, filter: 'blur(10px)' }}
               animate={{ opacity: 1, filter: 'blur(0px)' }}
               exit={{ opacity: 0, filter: 'blur(10px)' }}
-              transition={{ type: 'spring', stiffness: 350, damping: 35, mass: 0.8 }}
+              transition={{ type: 'spring', stiffness: 200, damping: 30, mass: 1 }}
             >
               {outlet}
             </motion.div>

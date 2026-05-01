@@ -422,7 +422,7 @@ const ProjectDetails: FC = () => {
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        transition={{ type: 'spring', stiffness: 350, damping: 35, mass: 0.8 }}
+        transition={{ type: 'spring', stiffness: 200, damping: 30, mass: 1 }}
         className="max-w-5xl mx-auto bg-white rounded-[28px] overflow-hidden shadow-2xl relative z-50 mb-10" 
         dir="rtl"
       >

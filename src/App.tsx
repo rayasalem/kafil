@@ -33,30 +33,40 @@ const LoadingFallback: FC = () => (
   </div>
 );
 
+const AnimatedRoutes: FC = () => {
+  const location = useLocation();
+  
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route element={<Layout />}>
+          <Route path="/dashboard/admin" element={<AdminDashboard />} />
+          <Route path="/dashboard/client" element={<ClientDashboard />} />
+          <Route path="/dashboard/freelancer" element={<FreelancerDashboard />} />
+          <Route path="/dashboard/coordinator" element={<CoordinatorDashboard />} />
+          <Route path="/arbitration" element={<ArbitratorDashboard />} />
+          <Route path="/dashboard" element={<DashboardRedirect />} />
+          <Route path="/create" element={<CreateProject />} />
+          <Route path="/projects/:id" element={<ProjectDetails />} />
+          <Route path="/dispute/:taskId" element={<DisputeFlow />} />
+          <Route path="/arbitrate/:caseId" element={<ArbitratorCaseView />} />
+          <Route path="/disputes" element={<DisputesPage />} />
+        </Route>
+        {/* Catch-all route for 404 Not Found */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </AnimatePresence>
+  );
+};
+
 const App: FC = () => {
   return (
     <Router>
       <Suspense fallback={<LoadingFallback />}>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route element={<Layout />}>
-            <Route path="/dashboard/admin" element={<AdminDashboard />} />
-            <Route path="/dashboard/client" element={<ClientDashboard />} />
-            <Route path="/dashboard/freelancer" element={<FreelancerDashboard />} />
-            <Route path="/dashboard/coordinator" element={<CoordinatorDashboard />} />
-            <Route path="/arbitration" element={<ArbitratorDashboard />} />
-            <Route path="/dashboard" element={<DashboardRedirect />} />
-            <Route path="/create" element={<CreateProject />} />
-            <Route path="/projects/:id" element={<ProjectDetails />} />
-            <Route path="/dispute/:taskId" element={<DisputeFlow />} />
-            <Route path="/arbitrate/:caseId" element={<ArbitratorCaseView />} />
-            <Route path="/disputes" element={<DisputesPage />} />
-          </Route>
-          {/* Catch-all route for 404 Not Found */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AnimatedRoutes />
       </Suspense>
     </Router>
   );

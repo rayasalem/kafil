@@ -1,5 +1,12 @@
 import React, { useRef, useState } from 'react';
-import { motion, useMotionValue, useSpring, useTransform, HTMLMotionProps, AnimatePresence } from 'framer-motion';
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform,
+  HTMLMotionProps,
+  AnimatePresence,
+} from 'framer-motion';
 import { X } from 'lucide-react';
 import { cn } from '@/shared/utils/cn';
 
@@ -7,10 +14,10 @@ interface AppleCloseButtonProps extends HTMLMotionProps<'button'> {
   iconSize?: number;
 }
 
-export const AppleCloseButton: React.FC<AppleCloseButtonProps> = ({ 
-  className, 
-  iconSize = 22, 
-  ...props 
+export const AppleCloseButton: React.FC<AppleCloseButtonProps> = ({
+  className,
+  iconSize = 22,
+  ...props
 }) => {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -40,7 +47,7 @@ export const AppleCloseButton: React.FC<AppleCloseButtonProps> = ({
   };
 
   return (
-    <div className={cn("relative z-[70]", className)}>
+    <div className={cn('relative z-[70]', className)}>
       {/* 
         THE ORBITAL GLOW
       */}
@@ -51,7 +58,7 @@ export const AppleCloseButton: React.FC<AppleCloseButtonProps> = ({
         }}
         transition={{ type: 'spring', stiffness: 80, damping: 25 }}
         style={{ x: translateX, y: translateY }}
-        className="absolute inset-0 rounded-full bg-gradient-to-tr from-[var(--color-kafil-gold)] to-[var(--color-kafil-teal)] blur-3xl pointer-events-none"
+        className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-tr from-[var(--color-kafil-gold)] to-[var(--color-kafil-teal)] blur-3xl"
       />
 
       <motion.button
@@ -59,62 +66,59 @@ export const AppleCloseButton: React.FC<AppleCloseButtonProps> = ({
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={handleMouseLeave}
-        
         // HOVER SEQUENCE
         whileTap={{ scale: 0.96 }}
-        
         // ENTRANCE SEQUENCE
         initial={{ scale: 0, rotate: -180, opacity: 0 }}
-        animate={{ 
+        animate={{
           scale: isHovered ? 1.1 : 1, // Combined with hover state
-          rotate: 0, 
-          opacity: 1 
+          rotate: 0,
+          opacity: 1,
         }}
         transition={{
           scale: { type: 'spring', stiffness: 100, damping: 30 },
           opacity: { duration: 0.6 },
-          rotate: { type: 'spring', stiffness: 100, damping: 20, delay: 0.4 }
+          rotate: { type: 'spring', stiffness: 100, damping: 20, delay: 0.4 },
         }}
-
         style={{ x: translateX, y: translateY }}
         className={cn(
-          "group relative flex items-center justify-center rounded-full overflow-hidden",
-          "w-14 h-14 shadow-[0_12px_40px_rgba(0,0,0,0.1)]",
-          "focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-kafil-gold)]/50",
+          'group relative flex items-center justify-center overflow-hidden rounded-full',
+          'h-14 w-14 shadow-[0_12px_40px_rgba(0,0,0,0.1)]',
+          'focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-kafil-gold)]/50'
         )}
         {...props}
       >
         {/* DYNAMIC GLASS BACKDROP */}
         <div className="absolute inset-0 bg-[var(--color-kafil-midnight)]/10 backdrop-blur-[40px] transition-all duration-1000 group-hover:bg-[var(--color-kafil-midnight)]/20" />
-        
+
         {/* ANIMATED BORDER LIGHT SWEEP */}
-        <motion.div 
+        <motion.div
           animate={{
             rotate: [0, 360],
           }}
           transition={{
             duration: 8,
             repeat: Infinity,
-            ease: "linear"
+            ease: 'linear',
           }}
-          className="absolute inset-[-50%] bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+          className="absolute inset-[-50%] bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 transition-opacity duration-700 group-hover:opacity-100"
         />
 
         {/* STRUCTURAL STROKE */}
         <div className="absolute inset-0 rounded-full border border-white/10 shadow-[inset_0_1px_2px_rgba(255,255,255,0.3)]" />
-        
+
         {/* SEQUENCED ICON HOVER */}
         <motion.div
           animate={{
             rotate: isHovered ? 90 : 0,
-            scale: isHovered ? 1.1 : 1
+            scale: isHovered ? 1.1 : 1,
           }}
-          transition={{ 
-            type: 'spring', 
-            stiffness: 80, 
-            damping: 25, 
+          transition={{
+            type: 'spring',
+            stiffness: 80,
+            damping: 25,
             // DELAY the icon animation relative to the button scaling
-            delay: isHovered ? 0.15 : 0 
+            delay: isHovered ? 0.15 : 0,
           }}
           className="relative z-10 text-[var(--color-kafil-midnight)]"
         >
@@ -128,7 +132,7 @@ export const AppleCloseButton: React.FC<AppleCloseButtonProps> = ({
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.05 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
               className="absolute inset-0 rounded-full border border-[var(--color-kafil-gold)]/20"
             />
           )}

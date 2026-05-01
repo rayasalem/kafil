@@ -40,33 +40,45 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
       animate={
         isOpening
           ? {
-              scale: 1.035,
-              y: 0,
+              position: 'fixed',
+              top: '20%',
+              left: '50%',
+              x: '-50%',
+              width: '90vw',
+              maxWidth: '800px',
+              zIndex: 60,
+              scale: 1.05,
               opacity: 1,
-              boxShadow: '0 40px 100px -20px rgba(13,27,42,0.35)',
+              boxShadow: '0 40px 100px -20px rgba(13,27,42,0.4)',
             }
           : {
-              opacity: 1,
-              y: 0,
+              position: 'relative',
+              top: 'auto',
+              left: 'auto',
+              x: '0%',
+              width: 'auto',
+              maxWidth: 'none',
+              zIndex: 1,
               scale: 1,
-              boxShadow: '0 0 0 0 rgba(0,0,0,0)',
+              opacity: 1,
+              boxShadow: '0 0px 0px 0px rgba(0,0,0,0)',
             }
       }
-      whileHover={isOpening ? undefined : { y: -5, scale: 1.01 }}
+      whileHover={isOpening ? undefined : { y: -5, scale: 1.02 }}
       transition={{
         type: 'spring',
-        stiffness: 110,
-        damping: 22,
-        mass: 1.1,
-        opacity: { duration: 0.2 },
+        stiffness: 80,
+        damping: 15,
+        mass: 1,
       }}
-      className={`group relative z-10 transform-gpu overflow-hidden rounded-[28px] border border-[var(--color-kafil-sand)] bg-white transition-all duration-500 ease-out hover:border-[var(--color-kafil-gold)]/50 hover:shadow-2xl ${
-        isOpening ? 'z-60' : ''
-      } ${isDimming ? 'pointer-events-none scale-[0.985] opacity-30 blur-[2px]' : ''}`}
+      className={`group relative transform-gpu overflow-hidden rounded-[28px] border border-[var(--color-kafil-sand)] bg-white transition-all duration-500 ease-out hover:border-[var(--color-kafil-gold)]/50 hover:shadow-2xl ${
+        isDimming ? 'pointer-events-none scale-[0.9] opacity-0 blur-md transition-all duration-700' : ''
+      }`}
       aria-labelledby={`project-title-${p.id}`}
+      onClick={isOpening ? undefined : onViewDetails}
     >
       {/* Card Header */}
-      <header className="border-b border-[var(--color-kafil-sand)] p-6">
+      <header className="relative z-10 border-b border-[var(--color-kafil-sand)] p-6">
         <div className="mb-4 flex items-start justify-between">
           <div>
             <h3
@@ -90,7 +102,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
       </header>
 
       {/* Money Flow */}
-      <div className="border-b border-[var(--color-kafil-sand)] bg-gray-50/50 px-6 py-4">
+      <div className="relative z-10 border-b border-[var(--color-kafil-sand)] bg-gray-50/50 px-6 py-4">
         <div className="mb-2 flex justify-between text-[10px] font-black text-gray-400 uppercase">
           <span>التدفق المالي</span>
           <span>
@@ -126,15 +138,11 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
             <span className="inline-block h-2 w-2 rounded-sm bg-[var(--color-kafil-gold)]" />
             محجوز {formatCurrency(totalAllocated - totalPaid)}
           </span>
-          <span className="flex items-center gap-1 text-gray-400">
-            <span className="inline-block h-2 w-2 rounded-sm bg-gray-200" />
-            متاح {formatCurrency(p.budget - totalAllocated)}
-          </span>
         </div>
       </div>
 
       {/* Team Allocation */}
-      <div className="space-y-3 border-b border-[var(--color-kafil-sand)] px-6 py-4">
+      <div className="relative z-10 space-y-3 border-b border-[var(--color-kafil-sand)] px-6 py-4">
         <p className="mb-2 text-[10px] font-black text-gray-400 uppercase">توزيع الفريق</p>
         {p.tasks.map((t) => (
           <div
@@ -168,22 +176,14 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
                   />
                 </div>
               </div>
-              <span
-                className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-black ${
-                  t.paid
-                    ? 'bg-emerald-50 text-emerald-700'
-                    : t.status === 'In Progress'
-                      ? 'bg-blue-50 text-blue-700'
-                      : 'bg-gray-50 text-gray-400'
-                }`}
-              >
-                {t.paid ? '✔ مدفوع' : t.status === 'In Progress' ? '⏳ جاري' : '⏱ انتظار'}
-              </span>
             </div>
             {!t.paid && (
               <div className="flex justify-end opacity-0 transition-opacity duration-200 group-hover/task:opacity-100 focus-within:opacity-100">
                 <button
-                  onClick={() => onDispute(p, t)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDispute(p, t);
+                  }}
                   className="flex items-center gap-1.5 rounded-full border border-red-100 bg-red-50 px-3 py-1.5 text-[10px] font-black text-red-600 transition-all hover:border-red-200 hover:bg-red-100 focus:ring-2 focus:ring-red-500 focus:outline-none"
                   aria-label={`فتح نزاع ضد ${t.assignedTo} لمهمة ${t.name}`}
                 >
@@ -196,24 +196,40 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
       </div>
 
       {/* Actions Footer */}
-      <footer className="flex flex-wrap items-center gap-3 p-5">
+      <footer className="relative z-10 flex flex-wrap items-center gap-3 p-5">
         {submission && pendingTask && (
           <button
-            onClick={() => onApprove(p.id, pendingTask.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onApprove(p.id, pendingTask.id);
+            }}
             className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[var(--color-kafil-teal)] py-3 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:shadow-lg focus:ring-4 focus:ring-[var(--color-kafil-teal)]/50 focus:outline-none"
             style={{ boxShadow: '0 2px 12px rgba(26,127,116,0.3)' }}
           >
-            <ThumbsUp size={16} aria-hidden="true" /> اعتماد تسليم {submission.milestone}
+            <ThumbsUp size={16} aria-hidden="true" /> اعتماد وصرف الآن
           </button>
         )}
         <button
           type="button"
-          onClick={onViewDetails}
+          onClick={(e) => {
+            e.stopPropagation();
+            onViewDetails();
+          }}
           className="flex items-center gap-2 rounded-xl border border-[var(--color-kafil-sand)] px-4 py-3 text-sm font-bold text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-50 focus:ring-2 focus:ring-gray-400 focus:outline-none"
         >
           <Eye size={16} aria-hidden="true" /> عرض التفاصيل
         </button>
       </footer>
+
+      {/* Animated Expansion Overlay when clicked */}
+      {isOpening && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 50 }}
+          transition={{ duration: 0.6, ease: 'easeIn' }}
+          className="absolute top-1/2 left-1/2 z-0 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--color-kafil-gold)]/10"
+        />
+      )}
     </motion.article>
   );
 };

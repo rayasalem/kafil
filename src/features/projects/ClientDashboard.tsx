@@ -25,6 +25,7 @@ import { DisputeModal } from './components/ClientDashboard/DisputeModal';
 import { ApproveModal } from './components/ClientDashboard/ApproveModal';
 import { ProjectCard } from './components/ClientDashboard/ProjectCard';
 import { CreateProjectModal } from './components/ClientDashboard/CreateProjectModal';
+import DemoButton from '@/shared/components/DemoButton';
 
 // Mock data should be moved to API/Server in production. Keeping here for demo parity.
 const MOCK_MILESTONES: Record<string, { name: string; status: 'done' | 'review' | 'upcoming' }[]> =
@@ -68,7 +69,7 @@ const setAppScrollTop = (top: number) => {
 
 export default function ClientDashboard() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [openingProjectId, setOpeningProjectId] = useState<string | null>(null);
+  const [animatingProjectId, setAnimatingProjectId] = useState<string | null>(null);
   const [approveTarget, setApproveTarget] = useState<{ project: Project; task: Task } | null>(null);
   const [disputeTarget, setDisputeTarget] = useState<{ project: Project; task: Task } | null>(null);
   const containerRef = useRef(null);
@@ -158,11 +159,6 @@ export default function ClientDashboard() {
         { y: 30, opacity: 0 },
         { y: 0, opacity: 1, stagger: 0.1, duration: 0.8, ease: 'power3.out' }
       );
-      gsap.fromTo(
-        '.budget-flow',
-        { scale: 0.95, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 1, ease: 'expo.out', delay: 0.4 }
-      );
     },
     { scope: containerRef, dependencies: [isLoading] }
   );
@@ -174,26 +170,27 @@ export default function ClientDashboard() {
   };
 
   const handleOpenProjectDetails = (projectId: string) => {
-    // Save scroll position immediately (before animations) so we can restore it on return
+    // Save scroll position immediately
     const scroller = getAppScroller();
     const scrollTop = scroller ? scroller.scrollTop : window.scrollY;
     try {
       sessionStorage.setItem(`scroll:${location.pathname}`, scrollTop.toString());
       sessionStorage.setItem('scroll:skip-next-save', location.pathname);
     } catch (e) {
-      // ignore storage errors
+      // ignore
     }
 
-    setOpeningProjectId(projectId);
+    setAnimatingProjectId(projectId);
 
     if (routeTimerRef.current) {
       window.clearTimeout(routeTimerRef.current);
     }
 
+    // Delay for cinematic expansion effect
     routeTimerRef.current = window.setTimeout(() => {
       setAppScrollTop(0);
       navigate(`/projects/${projectId}`);
-    }, 240);
+    }, 1000); 
   };
 
   if (isError) {
@@ -217,10 +214,22 @@ export default function ClientDashboard() {
   return (
     <main
       ref={containerRef}
-      className="animate-fade-in mx-auto max-w-6xl space-y-10 focus:outline-none"
+      className="animate-fade-in relative mx-auto max-w-6xl space-y-10 focus:outline-none"
       dir="rtl"
       tabIndex={-1}
     >
+      <AnimatePresence>
+        {animatingProjectId && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-white/95 backdrop-blur-sm"
+            transition={{ duration: 0.8, delay: 0.3, ease: 'easeInOut' }}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <header className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
         <div>
@@ -228,17 +237,22 @@ export default function ClientDashboard() {
             الخزنة المركزية
           </h1>
           <p className="font-medium text-gray-500">
-            أهلاً {user.name}! جميع أموالك محمية تحت نظام الضمان.
+            أهلاً {user.name}! تابع استثماراتك المالية في مشاريعك بأقصى درجات الأمان.
           </p>
         </div>
-        <motion.button
-          layoutId="create-project-btn"
-          onClick={() => setIsCreateModalOpen(true)}
-          className="flex shrink-0 items-center gap-2 rounded-2xl bg-[var(--color-kafil-midnight)] px-6 py-3.5 font-black text-white transition-all hover:-translate-y-0.5 hover:shadow-xl focus:ring-4 focus:ring-[var(--color-kafil-gold)] focus:outline-none"
-          style={{ boxShadow: '0 4px 20px rgba(13,27,42,0.25)' }}
-        >
-          <Plus size={18} aria-hidden="true" /> إطلاق مشروع جديد
-        </motion.button>
+        <div className="flex items-center gap-4">
+          <div className="hidden w-56 md:block">
+            <DemoButton />
+          </div>
+          <motion.button
+            layoutId="create-project-btn"
+            onClick={() => setIsCreateModalOpen(true)}
+            className="flex shrink-0 items-center gap-2 rounded-2xl bg-[var(--color-kafil-midnight)] px-6 py-3.5 font-black text-white transition-all hover:-translate-y-0.5 hover:shadow-xl focus:ring-4 focus:ring-[var(--color-kafil-gold)] focus:outline-none"
+            style={{ boxShadow: '0 4px 20px rgba(13,27,42,0.25)' }}
+          >
+            <Plus size={18} aria-hidden="true" /> إطلاق مشروع جديد
+          </motion.button>
+        </div>
       </header>
 
       {isLoading ? (
@@ -257,147 +271,131 @@ export default function ClientDashboard() {
       ) : (
         <>
           {/* Stats */}
-          <section className="grid gap-4 md:grid-cols-4" aria-label="إحصائيات الخزنة">
-            <div className="stat-card flex items-center gap-4 rounded-3xl border border-[var(--color-kafil-sand)] bg-white p-6 shadow-sm">
-              <div
-                className="rounded-xl border border-[var(--color-kafil-sand)] bg-gray-50 p-3"
-                aria-hidden="true"
-              >
-                <Briefcase size={22} className="text-[var(--color-kafil-midnight)]" />
-              </div>
-              <div>
-                <h2 className="m-0 text-[10px] font-black text-gray-400 uppercase">
-                  إجمالي الميزانيات
-                </h2>
-                <p className="text-2xl font-black text-[var(--color-kafil-midnight)]">
-                  {formatCurrency(totalBudget)}
-                </p>
-              </div>
+          <section className="grid gap-5 md:grid-cols-4" aria-label="إحصائيات الخزنة">
+            <div className="stat-card relative flex h-36 flex-col justify-between overflow-hidden rounded-3xl border border-[var(--color-kafil-sand)] bg-white p-6 shadow-sm">
+              <div className="absolute top-0 left-0 h-full w-1 border-l-4 border-gray-100"></div>
+              <p className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                <Briefcase size={16} /> إجمالي الميزانيات
+              </p>
+              <p className="text-4xl font-black text-[var(--color-kafil-midnight)]">
+                {formatCurrency(totalBudget)}
+              </p>
             </div>
 
-            <div className="stat-card flex items-center gap-4 rounded-3xl bg-[var(--color-kafil-midnight)] p-6 shadow-lg">
-              <div className="rounded-xl bg-white/10 p-3" aria-hidden="true">
-                <Lock size={22} className="text-[var(--color-kafil-gold)]" />
-              </div>
-              <div>
-                <h2 className="m-0 text-[10px] font-black text-blue-200/60 uppercase">
-                  في الضمان (Escrow)
-                </h2>
-                <p className="text-2xl font-black text-white">{formatCurrency(totalLocked)}</p>
-              </div>
+            <div className="stat-card relative z-10 flex h-36 scale-100 transform flex-col justify-between overflow-hidden rounded-3xl bg-[var(--color-kafil-midnight)] p-6 shadow-lg md:scale-105">
+              <div className="absolute top-0 right-0 -z-10 h-32 w-32 rounded-full bg-blue-800 opacity-20 blur-2xl"></div>
+              <p className="flex items-center gap-2 text-[10px] font-black text-[var(--color-kafil-gold)] uppercase tracking-widest">
+                <Lock size={16} /> في الضمان (Escrow)
+              </p>
+              <p className="text-4xl font-black text-white">{formatCurrency(totalLocked)}</p>
             </div>
 
-            <div className="stat-card flex items-center gap-4 rounded-3xl border border-[var(--color-kafil-sand)] bg-white p-6 shadow-sm">
-              <div className="rounded-xl bg-emerald-50 p-3" aria-hidden="true">
-                <CheckCircle size={22} className="text-emerald-600" />
-              </div>
-              <div>
-                <h2 className="m-0 text-[10px] font-black text-gray-400 uppercase">
-                  المدفوعات المحررة
-                </h2>
-                <p className="text-2xl font-black text-[var(--color-kafil-midnight)]">
-                  {formatCurrency(totalPaid)}
-                </p>
-              </div>
+            <div className="stat-card relative flex h-36 flex-col justify-between overflow-hidden rounded-3xl border border-[var(--color-kafil-sand)] bg-white p-6 shadow-sm">
+              <div className="absolute top-0 right-0 h-full w-1 bg-emerald-500"></div>
+              <p className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                <CheckCircle size={16} className="text-emerald-500" /> المدفوعات المحررة
+              </p>
+              <p className="text-4xl font-black text-[var(--color-kafil-midnight)]">
+                {formatCurrency(totalPaid)}
+              </p>
             </div>
 
             <div
-              className={`stat-card flex items-center gap-4 rounded-3xl border p-6 shadow-sm ${pendingApprovals > 0 ? 'border-amber-200 bg-amber-50' : 'border-[var(--color-kafil-sand)] bg-white'}`}
+              className={`stat-card flex h-36 flex-col justify-between overflow-hidden rounded-3xl border p-6 shadow-sm ${pendingApprovals > 0 ? 'border-amber-200 bg-amber-50' : 'border-[var(--color-kafil-sand)] bg-white'}`}
             >
-              <div
-                className={`rounded-xl p-3 ${pendingApprovals > 0 ? 'bg-amber-100' : 'bg-gray-50'}`}
-                aria-hidden="true"
-              >
+              <p className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">
                 <Clock
-                  size={22}
+                  size={16}
                   className={pendingApprovals > 0 ? 'text-amber-600' : 'text-gray-400'}
-                />
-              </div>
-              <div>
-                <h2 className="m-0 text-[10px] font-black text-gray-400 uppercase">
-                  تسليمات بانتظار الاعتماد
-                </h2>
-                <p
-                  className={`text-2xl font-black ${pendingApprovals > 0 ? 'text-amber-700' : 'text-[var(--color-kafil-midnight)]'}`}
-                >
-                  {pendingApprovals}
-                </p>
-              </div>
+                />{' '}
+                انتظار الاعتماد
+              </p>
+              <p
+                className={`text-4xl font-black ${pendingApprovals > 0 ? 'text-amber-700' : 'text-[var(--color-kafil-midnight)]'}`}
+              >
+                {pendingApprovals}
+              </p>
             </div>
           </section>
 
           {/* Budget Flow Visualizer */}
           <section
-            className="budget-flow rounded-3xl border border-[var(--color-kafil-sand)] bg-white p-7 shadow-sm"
+            className="budget-flow rounded-[2.5rem] border border-[var(--color-kafil-sand)] bg-white p-10 shadow-sm"
             aria-labelledby="budget-flow-title"
           >
             <h2
               id="budget-flow-title"
-              className="mb-5 flex items-center gap-2 text-base font-black text-[var(--color-kafil-midnight)]"
+              className="mb-10 flex items-center gap-3 text-xl font-black text-[var(--color-kafil-midnight)]"
             >
-              <Wallet size={18} className="text-[var(--color-kafil-gold)]" aria-hidden="true" />{' '}
-              مسار ميزانيتك
+              <Wallet size={24} className="text-[var(--color-kafil-gold)]" aria-hidden="true" />{' '}
+              تدفق مسار المدفوعات
             </h2>
             <div
-              className="mx-auto flex max-w-2xl flex-col items-center justify-between gap-4 md:flex-row"
+              className="relative mx-auto flex max-w-4xl flex-col items-center justify-between gap-4 md:flex-row"
               aria-hidden="true"
             >
-              <div className="min-w-[130px] rounded-2xl border border-[var(--color-kafil-sand)] bg-gray-50 px-8 py-5 text-center">
-                <p className="mb-1 text-xs font-bold text-gray-400">رأس المال</p>
+              <div className="absolute top-1/2 right-8 left-8 -z-10 mt-[-2px] hidden h-1 bg-gray-100 md:block"></div>
+              
+              <div className="z-10 min-w-[160px] rounded-2xl border border-[var(--color-kafil-sand)] bg-gray-50 px-8 py-6 text-center shadow-sm">
+                <p className="mb-2 text-xs font-bold text-gray-400">رأس المال</p>
                 <p className="text-2xl font-black text-[var(--color-kafil-midnight)]">
                   {formatCurrency(totalBudget)}
                 </p>
               </div>
-              <TrendingUp size={20} className="hidden rotate-180 text-gray-200 md:block" />
-              <div className="min-w-[150px] scale-105 rounded-2xl border-2 border-[var(--color-kafil-gold)] bg-[var(--color-kafil-gold)]/5 px-8 py-5 text-center">
-                <p className="mb-1 flex items-center justify-center gap-1 text-xs font-bold text-[var(--color-kafil-gold)]">
-                  <Lock size={10} /> في الضمان
+
+              <TrendingUp size={24} className="hidden rotate-180 text-gray-200 md:block" />
+
+              <div className="z-10 min-w-[200px] scale-105 rounded-2xl border-2 border-[var(--color-kafil-gold)] bg-[var(--color-kafil-gold)]/5 px-8 py-6 text-center shadow-lg shadow-[var(--color-kafil-gold)]/10">
+                <p className="mb-2 flex items-center justify-center gap-1 text-xs font-bold text-[var(--color-kafil-gold)]">
+                  <Lock size={12} /> قيد الاحتجاز (Escrow)
                 </p>
-                <p className="text-2xl font-black text-[var(--color-kafil-midnight)]">
+                <p className="text-3xl font-black text-[var(--color-kafil-midnight)]">
                   {formatCurrency(totalLocked)}
                 </p>
               </div>
-              <TrendingUp size={20} className="hidden rotate-180 text-gray-200 md:block" />
-              <div className="min-w-[130px] rounded-2xl border border-emerald-200 bg-emerald-50 px-8 py-5 text-center">
-                <p className="mb-1 text-xs font-bold text-emerald-600">صُرف للمستقلين</p>
+
+              <TrendingUp size={24} className="hidden rotate-180 text-gray-200 md:block" />
+
+              <div className="z-10 min-w-[160px] rounded-2xl border border-emerald-200 bg-emerald-50 px-8 py-6 text-center shadow-sm">
+                <p className="mb-2 text-xs font-bold text-emerald-600">مصروفة للمستقلين</p>
                 <p className="text-2xl font-black text-emerald-700">{formatCurrency(totalPaid)}</p>
               </div>
             </div>
           </section>
 
           {/* Projects */}
-          <section className="space-y-5" aria-labelledby="projects-title">
-            <div className="flex items-center justify-between">
+          <section className="space-y-6" aria-labelledby="projects-title">
+            <div className="flex items-center justify-between px-2">
               <h2
                 id="projects-title"
-                className="text-xl font-bold text-[var(--color-kafil-midnight)]"
+                className="text-2xl font-black text-[var(--color-kafil-midnight)]"
               >
                 مشاريعك قيد التنفيذ ({projects.length})
               </h2>
               {pendingApprovals > 0 && (
                 <div
-                  className="flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-bold text-amber-700"
+                  className="flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-bold text-amber-700 shadow-sm"
                   role="status"
                 >
-                  <AlertTriangle size={12} aria-hidden="true" /> {pendingApprovals} تسليم يحتاج
+                  <AlertTriangle size={14} aria-hidden="true" /> {pendingApprovals} تسليم يحتاج
                   اعتمادك
                 </div>
               )}
             </div>
 
             {projects.length === 0 ? (
-              <div className="rounded-3xl border-2 border-dashed border-[var(--color-kafil-sand)] bg-white p-16 text-center">
-                <ShieldCheck size={48} className="mx-auto mb-4 text-gray-200" aria-hidden="true" />
-                <p className="mb-2 text-lg font-bold text-gray-400">لا توجد مشاريع بعد.</p>
+              <div className="rounded-[3rem] border-2 border-dashed border-[var(--color-kafil-sand)] bg-white p-20 text-center shadow-sm">
+                <ShieldCheck size={64} className="mx-auto mb-6 text-gray-100" aria-hidden="true" />
+                <p className="mb-6 text-xl font-bold text-gray-400">لا توجد مشاريع ممولة حالياً.</p>
                 <button
                   onClick={() => setIsCreateModalOpen(true)}
-                  className="font-bold text-[var(--color-kafil-gold)] hover:underline focus:ring-2 focus:ring-[var(--color-kafil-gold)] focus:outline-none"
+                  className="inline-flex items-center gap-2 rounded-2xl bg-[var(--color-kafil-gold)] px-8 py-4 font-black text-[var(--color-kafil-midnight)] shadow-xl shadow-[var(--color-kafil-gold)]/20 transition hover:-translate-y-1"
                 >
-                  ابدأ بإنشاء مشروعك الأول
+                  ابدأ بتمويل مشروعك الأول <Plus size={20} />
                 </button>
               </div>
             ) : (
-              <div className="grid gap-6 lg:grid-cols-2" role="list">
+              <div className="relative grid gap-6 lg:grid-cols-2" role="list">
                 {projects.map((p) => (
                   <ProjectCard
                     key={p.id}
@@ -407,8 +405,8 @@ export default function ClientDashboard() {
                     onApprove={handleApproveClick}
                     onDispute={(proj, task) => setDisputeTarget({ project: proj, task })}
                     onViewDetails={() => handleOpenProjectDetails(p.id)}
-                    isOpening={openingProjectId === p.id}
-                    isDimming={Boolean(openingProjectId) && openingProjectId !== p.id}
+                    isOpening={animatingProjectId === p.id}
+                    isDimming={Boolean(animatingProjectId) && animatingProjectId !== p.id}
                   />
                 ))}
               </div>

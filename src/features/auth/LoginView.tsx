@@ -1,6 +1,6 @@
 import { useState, FC, FormEvent, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ShieldCheck, Lock, ArrowLeft, ArrowRight, Mail, AlertCircle, Globe } from 'lucide-react';
+import { ShieldCheck, Lock, ArrowLeft, ArrowRight, Mail, AlertCircle, Globe, RefreshCcw } from 'lucide-react';
 import { UserRole } from '@/types';
 import { api } from '@/services/api';
 import { cn } from '@/shared/utils/cn';
@@ -101,13 +101,26 @@ const Login: FC = () => {
 
   return (
     <div className={cn("min-h-screen bg-gray-50 flex items-center justify-center p-6 font-sans transition-all", isRtl ? 'rtl' : 'ltr')} dir={isRtl ? 'rtl' : 'ltr'}>
-      <button 
-        onClick={toggleLang}
-        className="absolute top-6 right-6 lg:top-8 lg:right-8 flex items-center justify-center gap-2 bg-white border border-gray-200 rounded-full px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
-      >
-        <Globe size={16} />
-        {t.switchLang}
-      </button>
+      <div className="absolute top-6 right-6 lg:top-8 lg:right-8 flex items-center gap-3">
+        <button 
+          onClick={() => {
+            localStorage.clear();
+            api.resetDb();
+            window.location.reload();
+          }}
+          className="flex items-center justify-center gap-2 bg-red-50 border border-red-100 rounded-full px-4 py-2 text-xs font-bold text-red-600 hover:bg-red-100 transition-colors shadow-sm"
+        >
+          <RefreshCcw size={14} />
+          {isRtl ? "إعادة ضبط النظام (Reset)" : "Factory Reset"}
+        </button>
+        <button 
+          onClick={toggleLang}
+          className="flex items-center justify-center gap-2 bg-white border border-gray-200 rounded-full px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+        >
+          <Globe size={16} />
+          {t.switchLang}
+        </button>
+      </div>
 
       <div className="max-w-[28rem] w-full bg-white rounded-[2rem] shadow-xl shadow-blue-900/5 border border-gray-100 p-8 sm:p-10 relative overflow-hidden">
         <div className={cn("absolute top-0 w-32 h-32 bg-blue-50/50 -z-0", isRtl ? 'right-0 rounded-bl-full' : 'right-0 rounded-bl-full')}></div>

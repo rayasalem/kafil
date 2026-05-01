@@ -146,6 +146,21 @@
             { "status": "Initiated", "timestamp": "2026-04-10T11:00:00Z" },
             { "status": "Escrow Locked", "timestamp": "2026-04-10T11:10:00Z" }
           ]
+        },
+        {
+          "id": "task_3",
+          "name": "تطوير لوحة التحكم (Dashboard UI)",
+          "assignedTo": "user_freelancer_1",
+          "payment": 1200,
+          "status": "Pending",
+          "paymentStatus": "Escrow Locked",
+          "paid": false,
+          "inviteStatus": "Pending",
+          "deadline": "15 مايو 2026",
+          "timeline": [
+            { "status": "Initiated", "timestamp": "2026-04-15T12:00:00Z" },
+            { "status": "Escrow Locked", "timestamp": "2026-04-15T12:05:00Z" }
+          ]
         }
       ]
     }

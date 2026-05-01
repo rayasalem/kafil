@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Link, useNavigate, useLocation, useOutlet } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, LayoutGroup } from 'framer-motion';
 import {
   ShieldCheck, LogOut, LayoutDashboard, PlusCircle,
   Bell, Search, Settings, Gavel, Scale, AlertCircle
@@ -209,19 +209,21 @@ const MainLayout: FC = () => {
           </div>
         </header>
 
-        <div className="relative flex-1 overflow-hidden">
-          <AnimatePresence>
-            <motion.div
-              key={location.pathname}
-              className="absolute inset-0 p-6 md:p-10 overflow-y-auto w-full h-full"
-              initial={{ opacity: 0, filter: 'blur(10px)' }}
-              animate={{ opacity: 1, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, filter: 'blur(10px)' }}
-              transition={{ type: 'spring', stiffness: 200, damping: 30, mass: 1 }}
-            >
-              {outlet}
-            </motion.div>
-          </AnimatePresence>
+        <div className="relative flex-1 overflow-hidden bg-[#F9F4EE]">
+          <LayoutGroup>
+            <AnimatePresence mode="popLayout">
+              <motion.div
+                key={location.pathname}
+                className="absolute inset-0 p-6 md:p-10 overflow-y-auto w-full h-full"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+              >
+                {outlet}
+              </motion.div>
+            </AnimatePresence>
+          </LayoutGroup>
         </div>
       </main>
     </div>

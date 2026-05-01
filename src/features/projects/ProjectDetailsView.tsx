@@ -396,17 +396,10 @@ const ProjectDetails: FC = () => {
     setDisputeTarget({ project, task: t });
   };
 
-  if (!project) return (
-    <div className="p-10 text-center">
-      <div className="w-12 h-12 border-4 border-[#E8DDD0] border-t-[#C9A84C] rounded-full animate-spin mx-auto mb-4" />
-      <p className="font-bold text-gray-400">جاري تحميل الخزنة...</p>
-    </div>
-  );
-
-  const totalPaid = project.tasks.filter(t => t.paid).reduce((s, t) => s + t.payment, 0);
-  const totalAllocated = project.tasks.reduce((s, t) => s + t.payment, 0);
-  const remainingBudget = project.budget - totalAllocated;
-  const openDisputes = project.tasks.filter(t => t.status === 'Disputed').length;
+  const totalPaid = project ? project.tasks.filter(t => t.paid).reduce((s, t) => s + t.payment, 0) : 0;
+  const totalAllocated = project ? project.tasks.reduce((s, t) => s + t.payment, 0) : 0;
+  const remainingBudget = project ? project.budget - totalAllocated : 0;
+  const openDisputes = project ? project.tasks.filter(t => t.status === 'Disputed').length : 0;
 
   return (
     <div className="relative min-h-screen">
@@ -419,13 +412,22 @@ const ProjectDetails: FC = () => {
 
       <motion.div 
         layoutId={`project-card-${id}`}
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        transition={{ type: 'spring', stiffness: 200, damping: 30, mass: 1 }}
-        className="max-w-5xl mx-auto bg-white rounded-[28px] overflow-hidden shadow-2xl relative z-50 mb-10" 
+        layout
+        transition={{ type: 'spring', stiffness: 300, damping: 30, mass: 1 }}
+        className="max-w-5xl mx-auto bg-white rounded-[28px] overflow-hidden shadow-2xl relative z-50 mb-10 min-h-[400px]" 
         dir="rtl"
       >
+        {!project ? (
+          <div className="flex flex-col items-center justify-center p-20 min-h-[400px] text-center">
+            <div className="w-12 h-12 border-4 border-[#E8DDD0] border-t-[#C9A84C] rounded-full animate-spin mx-auto mb-4" />
+            <p className="font-bold text-gray-400">جاري تحميل الخزنة...</p>
+          </div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.4 }}
+          >
         {/* Project Header */}
       <div className="bg-white border-b border-[#E8DDD0] p-8 mb-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
@@ -542,6 +544,8 @@ const ProjectDetails: FC = () => {
           }}
           userRole={user.role}
         />
+      )}
+        </motion.div>
       )}
       </motion.div>
     </div>

@@ -403,12 +403,20 @@ const ProjectDetails: FC = () => {
 
   return (
     <div className="relative min-h-screen">
-      {/* Close Button - Outside the card */}
-      <AppleCloseButton 
-        onClick={() => navigate(-1)}
-        className="fixed top-8 left-8 z-[60]"
-        aria-label="إغلاق والعودة للوحة التحكم"
-      />
+      {/* Floating Close Button Overlay */}
+      <div className="absolute inset-x-0 top-0 max-w-5xl mx-auto z-[60] pointer-events-none">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3, duration: 0.3 }}
+          className="absolute top-6 left-6 pointer-events-auto"
+        >
+          <AppleCloseButton 
+            onClick={() => navigate(-1)}
+            aria-label="إغلاق والعودة للوحة التحكم"
+          />
+        </motion.div>
+      </div>
 
       <motion.div 
         layoutId={`project-card-${id}`}
@@ -427,10 +435,11 @@ const ProjectDetails: FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.4 }}
+            className="relative"
           >
         {/* Project Header */}
       <div className="bg-white border-b border-[#E8DDD0] p-8 mb-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 pl-12">
           <div>
             <div className="flex items-center gap-3 mb-2 flex-wrap">
               <h1 className="text-3xl font-extrabold text-[#0D1B2A] tracking-tight">{project.title}</h1>

@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { Project, Task, User as UserType } from '@/types';
 import { formatCurrency } from '@/shared/utils/format';
 import { cn } from '@/shared/utils/cn';
+import { motion } from 'framer-motion';
 
 /* ─── Dispute Modal (same spec §5.6) ─── */
 const DISPUTE_REASONS = [
@@ -406,10 +407,17 @@ const ProjectDetails: FC = () => {
   const openDisputes = project.tasks.filter(t => t.status === 'Disputed').length;
 
   return (
-    <div className="animate-fade-in max-w-5xl mx-auto" dir="rtl">
-
+    <motion.div 
+      layoutId={`project-card-${id}`}
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      className="max-w-5xl mx-auto bg-white rounded-[28px] overflow-hidden shadow-2xl relative z-50 mb-10" 
+      dir="rtl"
+    >
       {/* Project Header */}
-      <div className="bg-white border border-[#E8DDD0] rounded-3xl p-8 mb-8 shadow-sm">
+      <div className="bg-white border-b border-[#E8DDD0] p-8 mb-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
             <div className="flex items-center gap-3 mb-2 flex-wrap">
@@ -525,7 +533,7 @@ const ProjectDetails: FC = () => {
           userRole={user.role}
         />
       )}
-    </div>
+    </motion.div>
   );
 };
 

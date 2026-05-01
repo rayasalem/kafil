@@ -24,11 +24,12 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ p, milestones, submiss
   return (
     <motion.article 
       layout
+      layoutId={`project-card-${p.id}`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -5, scale: 1.01 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      className="bg-white border border-[var(--color-kafil-sand)] rounded-[28px] overflow-hidden hover:shadow-2xl hover:border-[var(--color-kafil-gold)]/50 transition-all duration-300 group"
+      className="bg-white border border-[var(--color-kafil-sand)] rounded-[28px] overflow-hidden hover:shadow-2xl hover:border-[var(--color-kafil-gold)]/50 transition-all duration-300 group relative z-10"
       aria-labelledby={`project-title-${p.id}`}
     >
       {/* Card Header */}

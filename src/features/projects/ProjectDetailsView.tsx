@@ -45,6 +45,8 @@ const ProjectDetailsView: FC = () => {
 
       <motion.div 
         layoutId={`project-card-${id}`}
+        initial={false}
+        transition={{ layout: { type: 'spring', stiffness: 130, damping: 18, mass: 1 } }}
         className="max-w-5xl mx-auto bg-white rounded-[28px] overflow-hidden shadow-2xl relative z-50 mb-10" 
         dir="rtl"
       >

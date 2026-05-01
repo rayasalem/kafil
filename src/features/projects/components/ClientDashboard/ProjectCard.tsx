@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import { Lock, Eye, Gavel, ThumbsUp } from 'lucide-react';
 import { Project, Task } from '@/types';
 import { formatCurrency } from '@/shared/utils/format';
@@ -12,9 +11,21 @@ interface ProjectCardProps {
   submission: { by: string; milestone: string; files: string[]; date: string } | null;
   onApprove: (projectId: string, taskId: string) => void;
   onDispute: (project: Project, task: Task) => void;
+  onViewDetails: () => void;
+  isOpening?: boolean;
+  isDimming?: boolean;
 }
 
-export const ProjectCard: React.FC<ProjectCardProps> = ({ p, milestones, submission, onApprove, onDispute }) => {
+export const ProjectCard: React.FC<ProjectCardProps> = ({
+  p,
+  milestones,
+  submission,
+  onApprove,
+  onDispute,
+  onViewDetails,
+  isOpening = false,
+  isDimming = false,
+}) => {
   const pendingTask = p.tasks.find(t => !t.paid && t.status === 'In Progress');
   const totalPaid = p.tasks.reduce((s, t) => t.paid ? s + t.payment : s, 0);
   const totalAllocated = p.tasks.reduce((s, t) => s + t.payment, 0);
@@ -26,10 +37,24 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ p, milestones, submiss
       layout
       layoutId={`project-card-${p.id}`}
       initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -5, scale: 1.01 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      className="bg-white border border-[var(--color-kafil-sand)] rounded-[28px] overflow-hidden hover:shadow-2xl hover:border-[var(--color-kafil-gold)]/50 transition-all duration-300 group relative z-10"
+      animate={isOpening ? {
+        scale: 1.045,
+        y: 0,
+        opacity: 1,
+        boxShadow: '0 40px 100px -20px rgba(13,27,42,0.35)'
+      } : {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        boxShadow: '0 0 0 0 rgba(0,0,0,0)'
+      }}
+      whileHover={isOpening ? undefined : { y: -5, scale: 1.01 }}
+      transition={{ type: 'spring', stiffness: 130, damping: 18, mass: 1 }}
+      className={`bg-white border border-[var(--color-kafil-sand)] rounded-[28px] overflow-hidden hover:shadow-2xl hover:border-[var(--color-kafil-gold)]/50 transition-all duration-300 group relative z-10 ${
+        isOpening
+          ? 'fixed top-1/2 left-1/2 z-60 w-[min(92vw,860px)] -translate-x-1/2 -translate-y-1/2'
+          : ''
+      } ${isDimming ? 'pointer-events-none opacity-20 blur-[1px] scale-[0.98]' : ''}`}
       aria-labelledby={`project-title-${p.id}`}
     >
       {/* Card Header */}
@@ -119,12 +144,13 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ p, milestones, submiss
             <ThumbsUp size={16} aria-hidden="true" /> اعتماد تسليم {submission.milestone}
           </button>
         )}
-        <Link
-          to={`/projects/${p.id}`}
+        <button
+          type="button"
+          onClick={onViewDetails}
           className="flex items-center gap-2 px-4 py-3 rounded-xl border border-[var(--color-kafil-sand)] text-sm font-bold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400"
         >
           <Eye size={16} aria-hidden="true" /> عرض التفاصيل
-        </Link>
+        </button>
       </footer>
     </motion.article>
   );

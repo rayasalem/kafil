@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Lock, CheckCircle, Briefcase, Wallet, Clock, AlertTriangle, Plus, ShieldCheck, TrendingUp
@@ -39,10 +39,21 @@ const MOCK_SUBMISSION: Record<string, { by: string; milestone: string; files: st
 
 export default function ClientDashboard() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [openingProjectId, setOpeningProjectId] = useState<string | null>(null);
   const [approveTarget, setApproveTarget] = useState<{ project: Project; task: Task } | null>(null);
   const [disputeTarget, setDisputeTarget] = useState<{ project: Project; task: Task } | null>(null);
   const containerRef = useRef(null);
+  const routeTimerRef = useRef<number | null>(null);
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    return () => {
+      if (routeTimerRef.current) {
+        window.clearTimeout(routeTimerRef.current);
+      }
+    };
+  }, []);
 
   // In production, use a dedicated useAuth() hook.
   const user = useMemo<User>(() => {
@@ -111,6 +122,18 @@ export default function ClientDashboard() {
     const project = projects.find(p => p.id === projectId);
     const task = project?.tasks.find(t => t.id === taskId);
     if (project && task) setApproveTarget({ project, task });
+  };
+
+  const handleOpenProjectDetails = (projectId: string) => {
+    setOpeningProjectId(projectId);
+
+    if (routeTimerRef.current) {
+      window.clearTimeout(routeTimerRef.current);
+    }
+
+    routeTimerRef.current = window.setTimeout(() => {
+      navigate(`/projects/${projectId}`);
+    }, 850);
   };
 
   if (isError) {
@@ -247,6 +270,9 @@ export default function ClientDashboard() {
                     submission={MOCK_SUBMISSION[p.id] || null}
                     onApprove={handleApproveClick} 
                     onDispute={(proj, task) => setDisputeTarget({ project: proj, task })} 
+                    onViewDetails={() => handleOpenProjectDetails(p.id)}
+                    isOpening={openingProjectId === p.id}
+                    isDimming={Boolean(openingProjectId) && openingProjectId !== p.id}
                   />
                 ))}
               </div>
@@ -254,6 +280,19 @@ export default function ClientDashboard() {
           </section>
         </>
       )}
+
+      <AnimatePresence>
+        {openingProjectId && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+            className="fixed inset-0 z-40 bg-[rgba(13,27,42,0.22)] backdrop-blur-[6px]"
+            aria-hidden="true"
+          />
+        )}
+      </AnimatePresence>
 
       {/* Approve Modal */}
       <AnimatePresence>

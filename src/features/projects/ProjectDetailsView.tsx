@@ -1,5 +1,5 @@
 import { useEffect, useState, FC, FormEvent } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   Lock, Send, Gavel, X, FileText, Upload, TriangleAlert,
   Scale, CheckCircle2, ShieldCheck, User, ArrowLeft, Clock, CalendarDays
@@ -346,6 +346,7 @@ const TaskRow: FC<{
 /* ─── Main Page ─── */
 const ProjectDetails: FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [project, setProject] = useState<Project | null>(null);
   const [name, setName] = useState('');
   const [freelancerQuery, setFreelancerQuery] = useState('');
@@ -416,6 +417,15 @@ const ProjectDetails: FC = () => {
       className="max-w-5xl mx-auto bg-white rounded-[28px] overflow-hidden shadow-2xl relative z-50 mb-10" 
       dir="rtl"
     >
+      {/* Close Button */}
+      <button 
+        onClick={() => navigate(-1)}
+        className="absolute top-6 left-6 z-50 w-10 h-10 rounded-full bg-gray-100/50 backdrop-blur-md flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-all focus:outline-none focus:ring-2 focus:ring-[var(--color-kafil-gold)]"
+        aria-label="إغلاق والعودة للوحة التحكم"
+      >
+        <X size={20} />
+      </button>
+
       {/* Project Header */}
       <div className="bg-white border-b border-[#E8DDD0] p-8 mb-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">

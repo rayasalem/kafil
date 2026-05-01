@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -116,27 +116,6 @@ export default function ClientDashboard() {
     },
   });
 
-  useLayoutEffect(() => {
-    // Attempt to restore scroll position immediately on mount to prevent visual jumps
-    const savedScrollPos = sessionStorage.getItem('clientDashboardScroll');
-    if (!savedScrollPos) return;
-
-    const scroller = document.getElementById('app-scroll-container');
-    const targetTop = parseInt(savedScrollPos, 10);
-
-    if (scroller) {
-      setTimeout(() => {
-        scroller.scrollTop = targetTop;
-      }, 10);
-    } else {
-      setTimeout(() => {
-        window.scrollTo({ top: targetTop, behavior: 'instant' });
-      }, 10);
-    }
-
-    sessionStorage.removeItem('clientDashboardScroll');
-  }, [projects.length]);
-
   // Memoized derived state to prevent re-calculations on every render
   const { totalBudget, totalPaid, totalLocked, pendingApprovals } = useMemo(() => {
     let budget = 0;
@@ -182,10 +161,6 @@ export default function ClientDashboard() {
   };
 
   const handleOpenProjectDetails = (projectId: string) => {
-    // Save scroll position from the layout's scroll container before animating out
-    const scroller = document.getElementById('app-scroll-container');
-    const scrollTop = scroller ? scroller.scrollTop : window.scrollY;
-    sessionStorage.setItem('clientDashboardScroll', scrollTop.toString());
     setOpeningProjectId(projectId);
 
     if (routeTimerRef.current) {

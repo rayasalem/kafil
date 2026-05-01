@@ -1,9 +1,17 @@
-import { FC } from 'react';
+import { FC, useEffect, useLayoutEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation, useOutlet } from 'react-router-dom';
 import { AnimatePresence, motion, LayoutGroup } from 'framer-motion';
 import {
-  ShieldCheck, LogOut, LayoutDashboard, PlusCircle,
-  Bell, Search, Settings, Gavel, Scale, AlertCircle
+  ShieldCheck,
+  LogOut,
+  LayoutDashboard,
+  PlusCircle,
+  Bell,
+  Search,
+  Settings,
+  Gavel,
+  Scale,
+  AlertCircle,
 } from 'lucide-react';
 import { User } from '@/types';
 import { cn } from '@/shared/utils/cn';
@@ -12,13 +20,63 @@ const MainLayout: FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const outlet = useOutlet();
+  const lastPathRef = useRef(location.pathname);
   const userStr = localStorage.getItem('user');
-  const user: User = userStr ? JSON.parse(userStr) : { role: 'client', name: 'Guest', username: 'guest', id: '0' };
+  const user: User = userStr
+    ? JSON.parse(userStr)
+    : { role: 'client', name: 'Guest', username: 'guest', id: '0' };
 
   const handleLogout = () => {
     localStorage.removeItem('user');
     navigate('/login');
   };
+
+  useEffect(() => {
+    const scroller = document.getElementById('app-scroll-container');
+    const prevPath = lastPathRef.current;
+
+    // Only save scroll position when leaving a dashboard route
+    if (prevPath && prevPath !== location.pathname && prevPath.startsWith('/dashboard')) {
+      const prevTop = scroller ? scroller.scrollTop : window.scrollY;
+      sessionStorage.setItem(`scroll:${prevPath}`, prevTop.toString());
+      lastPathRef.current = location.pathname;
+    } else {
+      lastPathRef.current = location.pathname;
+    }
+  }, [location.pathname]);
+
+  useLayoutEffect(() => {
+    // Only restore scroll position when entering a dashboard route
+    if (!location.pathname.startsWith('/dashboard')) return;
+
+    const scroller = document.getElementById('app-scroll-container');
+    const saved = sessionStorage.getItem(`scroll:${location.pathname}`);
+    if (!saved) return;
+
+    const targetTop = parseInt(saved, 10);
+    let frame = 0;
+    const maxFrames = 8;
+
+    const applyScroll = () => {
+      frame += 1;
+
+      if (scroller) {
+        scroller.scrollTop = targetTop;
+        if (frame < maxFrames && Math.abs(scroller.scrollTop - targetTop) > 1) {
+          requestAnimationFrame(applyScroll);
+          return;
+        }
+      } else {
+        window.scrollTo({ top: targetTop, behavior: 'auto' });
+        if (frame < maxFrames && Math.abs(window.scrollY - targetTop) > 1) {
+          requestAnimationFrame(applyScroll);
+          return;
+        }
+      }
+    };
+
+    requestAnimationFrame(applyScroll);
+  }, [location.pathname]);
 
   const menuSections = [
     {
@@ -67,44 +125,49 @@ const MainLayout: FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex font-sans text-gray-900" style={{ background: '#F9F4EE' }} dir="rtl">
-
+    <div
+      className="flex min-h-screen font-sans text-gray-900"
+      style={{ background: '#F9F4EE' }}
+      dir="rtl"
+    >
       {/* ── SIDEBAR ── */}
-      <aside className="w-72 bg-[#0D1B2A] hidden lg:flex flex-col sticky top-0 h-screen z-20">
-
+      <aside className="sticky top-0 z-20 hidden h-screen w-72 flex-col bg-[#0D1B2A] lg:flex">
         {/* Logo */}
-        <div className="px-8 py-7 border-b border-white/5">
+        <div className="border-b border-white/5 px-8 py-7">
           <Link to="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#C9A84C] flex items-center justify-center">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#C9A84C]">
               <ShieldCheck size={22} className="text-[#0D1B2A]" />
             </div>
-            <span className="text-2xl font-black text-white tracking-tight">كفيل</span>
+            <span className="text-2xl font-black tracking-tight text-white">كفيل</span>
           </Link>
         </div>
 
         {/* Nav sections */}
-        <nav className="flex-1 px-4 py-6 space-y-6 overflow-y-auto">
-          {menuSections.map(section => {
+        <nav className="flex-1 space-y-6 overflow-y-auto px-4 py-6">
+          {menuSections.map((section) => {
             const visibleItems = section.items.filter(
-              item => !item.roles || item.roles.includes(user.role)
+              (item) => !item.roles || item.roles.includes(user.role)
             );
             if (visibleItems.length === 0) return null;
 
             return (
               <div key={section.label}>
-                <p className="text-[10px] font-black text-white/25 uppercase tracking-widest px-4 mb-2">
+                <p className="mb-2 px-4 text-[10px] font-black tracking-widest text-white/25 uppercase">
                   {section.label}
                 </p>
                 <div className="space-y-1">
-                  {visibleItems.map(item => {
-                    const isActive = location.pathname === item.path ||
-                      (item.path !== '/create' && location.pathname.startsWith(item.path) && item.path !== `/dashboard/${user.role}`);
+                  {visibleItems.map((item) => {
+                    const isActive =
+                      location.pathname === item.path ||
+                      (item.path !== '/create' &&
+                        location.pathname.startsWith(item.path) &&
+                        item.path !== `/dashboard/${user.role}`);
                     return (
                       <Link
                         key={item.path}
                         to={item.path}
                         className={cn(
-                          'flex items-center gap-3 px-4 py-3 rounded-2xl font-bold text-sm transition-all relative',
+                          'relative flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold transition-all',
                           isActive
                             ? 'bg-[#C9A84C] text-[#0D1B2A] shadow-lg shadow-[#C9A84C]/20'
                             : 'text-white/50 hover:bg-white/5 hover:text-white/80'
@@ -115,15 +178,17 @@ const MainLayout: FC = () => {
                         </span>
                         <span className="flex-1">{item.name}</span>
                         {'badge' in item && item.badge && (
-                          <span className={cn(
-                            'w-5 h-5 rounded-full text-[10px] font-black flex items-center justify-center',
-                            isActive ? 'bg-[#0D1B2A] text-[#C9A84C]' : 'bg-red-500 text-white'
-                          )}>
+                          <span
+                            className={cn(
+                              'flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black',
+                              isActive ? 'bg-[#0D1B2A] text-[#C9A84C]' : 'bg-red-500 text-white'
+                            )}
+                          >
                             {item.badge}
                           </span>
                         )}
                         {isActive && (
-                          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[#0D1B2A] rounded-full" />
+                          <div className="absolute top-1/2 right-0 h-6 w-1 -translate-y-1/2 rounded-full bg-[#0D1B2A]" />
                         )}
                       </Link>
                     );
@@ -135,20 +200,23 @@ const MainLayout: FC = () => {
         </nav>
 
         {/* Bottom: escrow card + logout */}
-        <div className="p-4 border-t border-white/5">
-          <div className="rounded-2xl p-5 mb-3 border border-[#C9A84C]/20" style={{ background: 'rgba(201,168,76,0.06)' }}>
-            <p className="text-[10px] font-black text-[#C9A84C] uppercase tracking-widest mb-1">
+        <div className="border-t border-white/5 p-4">
+          <div
+            className="mb-3 rounded-2xl border border-[#C9A84C]/20 p-5"
+            style={{ background: 'rgba(201,168,76,0.06)' }}
+          >
+            <p className="mb-1 text-[10px] font-black tracking-widest text-[#C9A84C] uppercase">
               نظام الضمان
             </p>
-            <p className="text-xs font-bold text-white/70 mb-3">حسابك مؤمن بنسبة 100%</p>
-            <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
-              <div className="bg-[#C9A84C] h-full w-full" />
+            <p className="mb-3 text-xs font-bold text-white/70">حسابك مؤمن بنسبة 100%</p>
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+              <div className="h-full w-full bg-[#C9A84C]" />
             </div>
           </div>
 
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-bold text-sm text-red-400 hover:bg-red-500/10 transition-all"
+            className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold text-red-400 transition-all hover:bg-red-500/10"
           >
             <LogOut size={18} /> تسجيل الخروج
           </button>
@@ -156,66 +224,76 @@ const MainLayout: FC = () => {
       </aside>
 
       {/* ── MAIN ── */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
-
+      <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
         {/* TOPBAR */}
-        <header className="h-18 bg-white/80 backdrop-blur-md border-b border-[#E8DDD0] flex items-center justify-between px-6 md:px-10 sticky top-0 z-10" style={{ minHeight: '72px' }}>
-          <div className="hidden md:flex items-center gap-3 bg-gray-50 px-4 py-2.5 rounded-2xl border border-[#E8DDD0] w-full max-w-md focus-within:ring-2 focus-within:ring-[#C9A84C]/20 transition-all">
+        <header
+          className="sticky top-0 z-10 flex h-18 items-center justify-between border-b border-[#E8DDD0] bg-white/80 px-6 backdrop-blur-md md:px-10"
+          style={{ minHeight: '72px' }}
+        >
+          <div className="hidden w-full max-w-md items-center gap-3 rounded-2xl border border-[#E8DDD0] bg-gray-50 px-4 py-2.5 transition-all focus-within:ring-2 focus-within:ring-[#C9A84C]/20 md:flex">
             <Search size={18} className="text-gray-400" />
-            <input type="text" placeholder="ابحث عن مشاريع أو مهام..." className="bg-transparent border-0 outline-none w-full text-sm font-medium" />
+            <input
+              type="text"
+              placeholder="ابحث عن مشاريع أو مهام..."
+              className="w-full border-0 bg-transparent text-sm font-medium outline-none"
+            />
           </div>
 
-          <div className="flex items-center gap-3 mr-auto lg:mr-0">
+          <div className="mr-auto flex items-center gap-3 lg:mr-0">
             {/* Disputes quick link — all roles */}
             <Link
               to="/disputes"
               className={cn(
-                'hidden md:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all border',
+                'hidden items-center gap-2 rounded-xl border px-4 py-2 text-sm font-bold transition-all md:flex',
                 location.pathname === '/disputes'
-                  ? 'bg-[#C9A84C] text-[#0D1B2A] border-[#C9A84C]'
-                  : 'bg-white border-[#E8DDD0] text-gray-500 hover:border-[#C9A84C]/40 hover:text-[#0D1B2A]'
+                  ? 'border-[#C9A84C] bg-[#C9A84C] text-[#0D1B2A]'
+                  : 'border-[#E8DDD0] bg-white text-gray-500 hover:border-[#C9A84C]/40 hover:text-[#0D1B2A]'
               )}
             >
               <Gavel size={16} />
               النزاعات
-              <span className="bg-red-500 text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center">
+              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-black text-white">
                 2
               </span>
             </Link>
 
-            <button className="w-11 h-11 bg-white border border-[#E8DDD0] rounded-xl flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-all relative">
+            <button className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-[#E8DDD0] bg-white text-gray-500 transition-all hover:bg-gray-50">
               <Bell size={20} />
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
+              <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full border-2 border-white bg-red-500" />
             </button>
 
-            <button className="w-11 h-11 bg-white border border-[#E8DDD0] rounded-xl flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-all">
+            <button className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#E8DDD0] bg-white text-gray-500 transition-all hover:bg-gray-50">
               <Settings size={20} />
             </button>
 
-            <div className="h-8 w-px bg-[#E8DDD0] mx-1 hidden md:block" />
+            <div className="mx-1 hidden h-8 w-px bg-[#E8DDD0] md:block" />
 
-            <div className="flex items-center gap-3 bg-white border border-[#E8DDD0] pl-4 pr-1.5 py-1.5 rounded-2xl shadow-sm">
-              <div className="text-right hidden md:block">
-                <p className="text-xs font-black text-[#0D1B2A] leading-tight">{user.name}</p>
-                <p className="text-[10px] font-bold text-[#C9A84C] uppercase tracking-widest">
+            <div className="flex items-center gap-3 rounded-2xl border border-[#E8DDD0] bg-white py-1.5 pr-1.5 pl-4 shadow-sm">
+              <div className="hidden text-right md:block">
+                <p className="text-xs leading-tight font-black text-[#0D1B2A]">{user.name}</p>
+                <p className="text-[10px] font-bold tracking-widest text-[#C9A84C] uppercase">
                   {roleLabel[user.role] || user.role}
                 </p>
               </div>
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm border-2 border-white shadow-sm"
-                style={{ background: '#0D1B2A', color: '#C9A84C' }}>
+              <div
+                className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-white text-sm font-black shadow-sm"
+                style={{ background: '#0D1B2A', color: '#C9A84C' }}
+              >
                 {user.name.charAt(0)}
               </div>
             </div>
           </div>
         </header>
 
-        <div className="relative flex-1 overflow-hidden bg-[#F9F4EE]">
+        <div
+          id="app-scroll-container"
+          className="relative flex-1 overflow-y-auto bg-[#F9F4EE]"
+        >
           <LayoutGroup>
             <AnimatePresence mode="popLayout">
               <motion.div
                 key={location.pathname}
-                id="app-scroll-container"
-                className="absolute inset-0 p-6 md:p-10 overflow-y-auto w-full h-full"
+                className="min-h-full w-full p-6 md:p-10"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}

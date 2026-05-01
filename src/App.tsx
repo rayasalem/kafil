@@ -21,6 +21,7 @@ const DisputeFlow = lazy(() => import('@/pages/DisputeFlow'));
 const ArbitratorCaseView = lazy(() => import('@/pages/ArbitratorCaseView'));
 const DisputesPage = lazy(() => import('@/pages/DisputesPage'));
 const Settings = lazy(() => import('@/pages/Settings'));
+const PaymentMethods = lazy(() => import('@/features/payments/PaymentMethodsView'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
 const DashboardRedirect: FC = () => {
@@ -57,6 +58,7 @@ const AnimatedRoutes: FC = () => {
           <Route path="/arbitrate/:caseId" element={<ArbitratorCaseView />} />
           <Route path="/disputes" element={<DisputesPage />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/payment-methods" element={<PaymentMethods />} />
         </Route>
         {/* Catch-all route for 404 Not Found */}
         <Route path="*" element={<NotFound />} />

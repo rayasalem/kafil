@@ -8,6 +8,7 @@ export const layoutTranslations = {
       disputesTitle: 'النزاعات والتحكيم',
       myDisputes: 'نزاعاتي',
       arbitrationCenter: 'مركز التحكيم',
+      payments: 'وسائل الدفع',
     },
     header: {
       searchPlaceholder: 'ابحث عن مشروع أو مستقل...',
@@ -39,6 +40,7 @@ export const layoutTranslations = {
       disputesTitle: 'Disputes & Arbitration',
       myDisputes: 'My Disputes',
       arbitrationCenter: 'Arbitration Center',
+      payments: 'Payment Methods',
     },
     header: {
       searchPlaceholder: 'Search for project or freelancer...',

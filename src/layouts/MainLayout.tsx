@@ -2,10 +2,11 @@ import { FC, useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation, useOutlet } from 'react-router-dom';
 import { AnimatePresence, motion, LayoutGroup } from 'framer-motion';
 import {
-  ShieldCheck, LogOut, LayoutDashboard, PlusCircle,
+  LogOut, LayoutDashboard, PlusCircle,
   Bell, Search, Settings, Gavel, Scale, AlertCircle,
-  User as UserIcon, HelpCircle, Languages
+  User as UserIcon, HelpCircle, Languages, CreditCard
 } from 'lucide-react';
+import KafilLogo from '@/components/KafilLogo';
 import { User } from '@/types';
 import { cn } from '@/shared/utils/cn';
 import { DemoGuide } from '@/shared/components/DemoGuide';
@@ -63,6 +64,12 @@ const MainLayout: FC = () => {
           path: '/create',
           roles: ['client'],
         },
+        {
+          name: t.sidebar.payments,
+          icon: <CreditCard size={20} />,
+          path: '/payment-methods',
+          roles: ['client', 'freelancer', 'coordinator', 'arbitrator'],
+        },
       ],
     },
     {
@@ -95,11 +102,8 @@ const MainLayout: FC = () => {
 
         {/* Logo */}
         <div className="px-8 py-7 border-b border-white/5">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#C9A84C] flex items-center justify-center">
-              <ShieldCheck size={22} className="text-[#0D1B2A]" />
-            </div>
-            <span className="text-2xl font-black text-white tracking-tight">{t.header.logoText}</span>
+          <Link to="/" className="hover:opacity-80 transition-opacity block">
+            <KafilLogo size="md" variant="dark" />
           </Link>
         </div>
 

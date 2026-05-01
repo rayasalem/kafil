@@ -1,0 +1,183 @@
+{
+  "users": [
+    {
+      "id": "user_admin_1",
+      "username": "kafil_admin",
+      "email": "admin@kafeel.com",
+      "role": "admin",
+      "name": "كفيل — المدير",
+      "avatar": "KA",
+      "joinedAt": "2025-01-01",
+      "trustScore": 100,
+      "bio": "مدير منصة كفيل. يشرف على جميع العمليات والنزاعات.",
+      "skills": [],
+      "balance": 150000,
+      "lockedFunds": 0
+    },
+    {
+      "id": "user_client_1",
+      "username": "ahmed_k",
+      "email": "client1@kafeel.com",
+      "role": "client",
+      "name": "أحمد خالد",
+      "avatar": "AK",
+      "joinedAt": "2025-03-10",
+      "trustScore": 95,
+      "bio": "رائد أعمال في قطاع التقنية. أبحث عن مستقلين محترفين.",
+      "skills": [],
+      "balance": 12500,
+      "lockedFunds": 5000
+    },
+    {
+      "id": "user_client_2",
+      "username": "sara_n",
+      "email": "sara@startuphub.sa",
+      "role": "client",
+      "name": "سارة ناصر",
+      "avatar": "SN",
+      "joinedAt": "2025-04-01",
+      "trustScore": 98,
+      "bio": "مؤسسة شركة ناشئة للتطبيقات الجوالة.",
+      "skills": [],
+      "balance": 45000,
+      "lockedFunds": 12000
+    },
+    {
+      "id": "user_freelancer_1",
+      "username": "omar_dev",
+      "email": "freelancer1@kafeel.com",
+      "role": "freelancer",
+      "name": "عمر العلي",
+      "avatar": "OA",
+      "joinedAt": "2025-02-15",
+      "rating": 4.8,
+      "trustScore": 92,
+      "bio": "مطوّر واجهات أمامية متخصص في React و TypeScript.",
+      "skills": ["React", "TypeScript", "TailwindCSS", "Node.js"],
+      "balance": 2400,
+      "lockedFunds": 1000
+    },
+    {
+      "id": "user_freelancer_2",
+      "username": "lina_design",
+      "email": "lina@creative.sa",
+      "role": "freelancer",
+      "name": "لينا محمد",
+      "avatar": "LM",
+      "joinedAt": "2025-01-20",
+      "rating": 4.9,
+      "trustScore": 99,
+      "bio": "مصممة UI/UX محترفة، خبرة 5 سنوات في تصميم المنتجات الرقمية.",
+      "skills": ["Figma", "UI/UX", "Prototyping", "Design Systems"],
+      "balance": 8200,
+      "lockedFunds": 0
+    },
+    {
+      "id": "user_freelancer_3",
+      "username": "yasser_mobile",
+      "email": "yasser@appdev.sa",
+      "role": "freelancer",
+      "name": "ياسر سالم",
+      "avatar": "YS",
+      "joinedAt": "2025-03-05",
+      "rating": 4.6,
+      "trustScore": 88,
+      "bio": "مطوّر تطبيقات جوالة (iOS & Android) بخبرة 4 سنوات.",
+      "skills": ["Swift", "Kotlin", "Flutter", "Firebase"],
+      "balance": 1800,
+      "lockedFunds": 4000
+    },
+    {
+      "id": "user_coordinator_1",
+      "username": "tariq_pm",
+      "email": "coordinator1@kafeel.com",
+      "role": "coordinator",
+      "name": "طارق منصور",
+      "avatar": "TM",
+      "joinedAt": "2025-02-01",
+      "rating": 4.7,
+      "trustScore": 96,
+      "bio": "منسق مشاريع محترف، يدير فرق العمل الحر ويضمن التسليم في الوقت.",
+      "skills": ["Project Management", "Agile", "Scrum", "Communication"],
+      "balance": 0,
+      "lockedFunds": 0
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj_1",
+      "title": "موقع متجر إلكتروني — أحمد",
+      "description": "بناء متجر إلكتروني متكامل لبيع المنتجات التقنية.",
+      "budget": 3000,
+      "owner": "أحمد خالد",
+      "ownerUsername": "ahmed_k",
+      "ownerId": "user_client_1",
+      "escrow": true,
+      "category": "تطوير ويب",
+      "createdAt": "2026-04-01",
+      "tasks": [
+        {
+          "id": "task_1",
+          "name": "تصميم واجهة المستخدم (UI)",
+          "assignedTo": "user_freelancer_2",
+          "payment": 800,
+          "status": "Completed",
+          "paymentStatus": "Released",
+          "paid": true,
+          "inviteStatus": "Accepted",
+          "deadline": "10 أبريل 2026",
+          "timeline": [
+            { "status": "Initiated", "timestamp": "2026-04-01T10:00:00Z" },
+            { "status": "Escrow Locked", "timestamp": "2026-04-01T10:05:00Z" },
+            { "status": "Released", "timestamp": "2026-04-10T14:30:00Z" }
+          ]
+        },
+        {
+          "id": "task_2",
+          "name": "تطوير الواجهة الأمامية (Frontend)",
+          "assignedTo": "user_freelancer_1",
+          "payment": 1000,
+          "status": "In Progress",
+          "paymentStatus": "Escrow Locked",
+          "paid": false,
+          "inviteStatus": "Accepted",
+          "deadline": "25 أبريل 2026",
+          "timeline": [
+            { "status": "Initiated", "timestamp": "2026-04-10T11:00:00Z" },
+            { "status": "Escrow Locked", "timestamp": "2026-04-10T11:10:00Z" }
+          ]
+        }
+      ]
+    }
+  ],
+  "ledger": [
+    {
+      "id": "tx_1",
+      "type": "Deposit",
+      "amount": 3000,
+      "currency": "USD",
+      "fromId": "external",
+      "fromName": "External Bank (Visa)",
+      "toId": "user_client_1",
+      "toName": "أحمد خالد",
+      "timestamp": "2026-04-01T09:00:00Z",
+      "status": "Completed",
+      "referenceId": "proj_1",
+      "description": "Deposit for Project: موقع متجر إلكتروني"
+    },
+    {
+      "id": "tx_2",
+      "type": "Lock",
+      "amount": 800,
+      "currency": "USD",
+      "fromId": "user_client_1",
+      "fromName": "أحمد خالد",
+      "toId": "escrow",
+      "toName": "Kafeel Escrow Vault",
+      "timestamp": "2026-04-01T10:05:00Z",
+      "status": "Completed",
+      "referenceId": "task_1",
+      "description": "Escrow Lock for Task: تصميم واجهة المستخدم"
+    }
+  ]
+}

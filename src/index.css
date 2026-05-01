@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Design Tokens from UI/UX Spec */
+  --font-sans: "Alexandria", "Inter", system-ui, sans-serif;
+  
+  /* Brand Palette */
+  --color-kafil-midnight: #0D1B2A;
+  --color-kafil-gold: #C9A84C;
+  --color-kafil-gold-light: #D4B55E;
+  --color-kafil-teal: #1A7F74;
+  --color-kafil-cream: #F9F4EE;
+  --color-kafil-sand: #E8DDD0;
+
+  /* Semantic Statuses */
+  --color-status-green: #22C55E;
+  --color-status-yellow: #EAB308;
+  --color-status-red: #EF4444;
+  --color-status-blue: #3B82F6;
+
+  /* Green Variants */
+  --color-green-50: #f0fdf4;
+  --color-green-100: #dcfce7;
+  --color-green-200: #bbf7d0;
+  --color-green-300: #86efac;
+  --color-green-400: #4ade80;
+  --color-green-500: #22c55e;
+  --color-green-600: #16a34a;
+  --color-green-700: #15803d;
+  --color-green-800: #166534;
+  --color-green-900: #14532d;
+  --color-green-950: #052e16;
+
+  /* Blue Variants */
+  --color-blue-50: #eff6ff;
+  --color-blue-100: #dbeafe;
+  --color-blue-200: #bfdbfe;
+  --color-blue-300: #93c5fd;
+  --color-blue-400: #60a5fa;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
+  --color-blue-700: #1d4ed8;
+  --color-blue-800: #1e40af;
+  --color-blue-900: #1e3a8a;
+  --color-blue-950: #172554;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(13,27,42,0.08), 0 1px 2px rgba(13,27,42,0.06);
+  --shadow-modal: 0 20px 60px rgba(13,27,42,0.20), 0 4px 16px rgba(13,27,42,0.10);
+  --shadow-escrow: 0 0 0 3px rgba(201,168,76,0.25);
+}
+
+@layer base {
+  :root {
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    background-color: var(--color-kafil-cream);
+    color: var(--color-kafil-midnight);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.8; /* Optimized for Arabic letterforms */
+  }
+
+  /* Handle monetary amounts to always stay LTR for readability */
+  bdi, .currency {
+    direction: ltr;
+    unicode-bidi: isolate;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  .kafil-card {
+    background: white;
+    border: 1px solid var(--color-kafil-sand);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  }
+
+  .kafil-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(13,27,42,0.12);
+  }
+
+  .btn-gold {
+    background-color: var(--color-kafil-gold);
+    color: white;
+    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 12px rgba(201,168,76,0.35);
+  }
+
+  .btn-gold:hover {
+    background-color: var(--color-kafil-gold-light);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(201,168,76,0.45);
+  }
+}
+
+@layer utilities {
+  @keyframes vault-lock {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-vault-lock {
+    animation: vault-lock 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .animate-fade-up {
+    animation: fade-up 0.5s ease-out forwards;
+  }
+}

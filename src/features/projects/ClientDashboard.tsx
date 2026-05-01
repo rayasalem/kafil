@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Lock, CheckCircle, Briefcase, ChevronLeft, Wallet,
@@ -9,6 +9,9 @@ import { api } from '@/services/api';
 import { Project, Task, User } from '@/types';
 import { formatCurrency } from '@/shared/utils/format';
 import { toast } from 'sonner';
+import { motion, AnimatePresence } from 'framer-motion';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 
 // Mock milestone data per project
 const MOCK_MILESTONES: Record<string, { name: string; status: 'done' | 'review' | 'upcoming' }[]> = {
@@ -62,8 +65,8 @@ const DisputeModal = ({
 
   if (submitted) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(13,27,42,0.75)', backdropFilter: 'blur(6px)' }}>
-        <div className="bg-[#F9F4EE] w-full max-w-md rounded-3xl shadow-2xl p-8 text-center" dir="rtl">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(13,27,42,0.75)', backdropFilter: 'blur(6px)' }}>
+        <motion.div initial={{ scale: 0.95, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 10 }} className="bg-[#F9F4EE] w-full max-w-md rounded-3xl shadow-2xl p-8 text-center" dir="rtl">
           <div className="w-16 h-16 rounded-full bg-[#0D1B2A] flex items-center justify-center mx-auto mb-5">
             <Scale size={30} className="text-[#C9A84C]" />
           </div>
@@ -75,14 +78,14 @@ const DisputeModal = ({
             <p className="text-xs text-amber-600">تُستردّ كاملاً إذا صدر الحكم لصالحك.</p>
           </div>
           <button onClick={onClose} className="w-full py-3 rounded-xl font-black text-white" style={{ background: '#0D1B2A' }}>حسناً، فهمت</button>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(13,27,42,0.75)', backdropFilter: 'blur(6px)' }}>
-      <div className="bg-[#F9F4EE] w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl" dir="rtl">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(13,27,42,0.75)', backdropFilter: 'blur(6px)' }}>
+      <motion.div initial={{ scale: 0.95, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 10 }} className="bg-[#F9F4EE] w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl" dir="rtl">
 
         {/* Header */}
         <div className="bg-red-600 p-6 rounded-t-3xl flex items-start justify-between">
@@ -187,8 +190,8 @@ const DisputeModal = ({
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
@@ -224,8 +227,8 @@ const ApproveModal = ({
 }) => {
   const sub = MOCK_SUBMISSION[project.id];
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(13,27,42,0.7)', backdropFilter: 'blur(6px)' }}>
-      <div className="bg-[#F9F4EE] w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden" dir="rtl">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(13,27,42,0.7)', backdropFilter: 'blur(6px)' }}>
+      <motion.div initial={{ scale: 0.95, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 10 }} className="bg-[#F9F4EE] w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden" dir="rtl">
         <div className="bg-[#0D1B2A] p-6 flex justify-between items-start">
           <div>
             <p className="text-[10px] font-black text-[#C9A84C] uppercase tracking-widest mb-1">طلب اعتماد وصرف</p>
@@ -283,8 +286,8 @@ const ApproveModal = ({
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
@@ -298,7 +301,14 @@ const ProjectCard = ({ p, onApprove, onDispute }: ProjectCardProps) => {
   const lockedPct = p.budget ? ((totalAllocated - totalPaid) / p.budget) * 100 : 0;
 
   return (
-    <div className="bg-white border border-[#E8DDD0] rounded-[28px] overflow-hidden hover:shadow-xl hover:border-[#C9A84C]/30 transition-all duration-300 group">
+    <motion.div 
+      layout
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -5, scale: 1.01 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      className="bg-white border border-[#E8DDD0] rounded-[28px] overflow-hidden hover:shadow-2xl hover:border-[#C9A84C]/50 transition-all duration-300 group"
+    >
 
       {/* Card Header */}
       <div className="p-6 border-b border-[#E8DDD0]">
@@ -393,7 +403,7 @@ const ProjectCard = ({ p, onApprove, onDispute }: ProjectCardProps) => {
           <Eye size={16} /> عرض التفاصيل
         </Link>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -439,8 +449,21 @@ export default function ClientDashboard() {
   const totalLocked = projects.reduce((s, p) => s + p.tasks.filter(t => !t.paid).reduce((a, t) => a + t.payment, 0), 0);
   const pendingApprovals = projects.filter(p => MOCK_SUBMISSION[p.id]).length;
 
+  const containerRef = useRef(null);
+
+  useGSAP(() => {
+    gsap.fromTo('.stat-card', 
+      { y: 30, opacity: 0 }, 
+      { y: 0, opacity: 1, stagger: 0.1, duration: 0.8, ease: 'power3.out' }
+    );
+    gsap.fromTo('.budget-flow',
+      { scale: 0.95, opacity: 0 },
+      { scale: 1, opacity: 1, duration: 1, ease: 'expo.out', delay: 0.4 }
+    );
+  }, { scope: containerRef });
+
   return (
-    <div className="animate-fade-in max-w-6xl mx-auto space-y-10" dir="rtl">
+    <div ref={containerRef} className="animate-fade-in max-w-6xl mx-auto space-y-10" dir="rtl">
 
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -459,7 +482,7 @@ export default function ClientDashboard() {
 
       {/* Stats */}
       <div className="grid md:grid-cols-4 gap-4">
-        <div className="bg-white border border-[#E8DDD0] p-6 rounded-3xl flex items-center gap-4 shadow-sm">
+        <div className="stat-card bg-white border border-[#E8DDD0] p-6 rounded-3xl flex items-center gap-4 shadow-sm">
           <div className="bg-gray-50 p-3 rounded-xl border border-[#E8DDD0]">
             <Briefcase size={22} className="text-[#0D1B2A]" />
           </div>
@@ -469,7 +492,7 @@ export default function ClientDashboard() {
           </div>
         </div>
 
-        <div className="p-6 rounded-3xl flex items-center gap-4 shadow-lg" style={{ background: '#0D1B2A' }}>
+        <div className="stat-card p-6 rounded-3xl flex items-center gap-4 shadow-lg" style={{ background: '#0D1B2A' }}>
           <div className="bg-white/10 p-3 rounded-xl">
             <Lock size={22} className="text-[#C9A84C]" />
           </div>
@@ -479,7 +502,7 @@ export default function ClientDashboard() {
           </div>
         </div>
 
-        <div className="bg-white border border-[#E8DDD0] p-6 rounded-3xl flex items-center gap-4 shadow-sm">
+        <div className="stat-card bg-white border border-[#E8DDD0] p-6 rounded-3xl flex items-center gap-4 shadow-sm">
           <div className="bg-emerald-50 p-3 rounded-xl">
             <CheckCircle size={22} className="text-emerald-600" />
           </div>
@@ -489,7 +512,7 @@ export default function ClientDashboard() {
           </div>
         </div>
 
-        <div className={`p-6 rounded-3xl flex items-center gap-4 shadow-sm border ${pendingApprovals > 0 ? 'bg-amber-50 border-amber-200' : 'bg-white border-[#E8DDD0]'}`}>
+        <div className={`stat-card p-6 rounded-3xl flex items-center gap-4 shadow-sm border ${pendingApprovals > 0 ? 'bg-amber-50 border-amber-200' : 'bg-white border-[#E8DDD0]'}`}>
           <div className={`p-3 rounded-xl ${pendingApprovals > 0 ? 'bg-amber-100' : 'bg-gray-50'}`}>
             <Clock size={22} className={pendingApprovals > 0 ? 'text-amber-600' : 'text-gray-400'} />
           </div>
@@ -501,7 +524,7 @@ export default function ClientDashboard() {
       </div>
 
       {/* Budget Flow Visualizer */}
-      <div className="bg-white border border-[#E8DDD0] p-7 rounded-3xl shadow-sm">
+      <div className="budget-flow bg-white border border-[#E8DDD0] p-7 rounded-3xl shadow-sm">
         <h2 className="text-base font-black text-[#0D1B2A] mb-5 flex items-center gap-2">
           <Wallet size={18} className="text-[#C9A84C]" /> مسار ميزانيتك
         </h2>
@@ -550,22 +573,26 @@ export default function ClientDashboard() {
       </div>
 
       {/* Approve Modal */}
-      {approveTarget && (
-        <ApproveModal
-          project={approveTarget.project}
-          task={approveTarget.task}
-          onClose={() => setApproveTarget(null)}
-          onConfirm={handleConfirmApprove}
-        />
-      )}
+      <AnimatePresence>
+        {approveTarget && (
+          <ApproveModal
+            project={approveTarget.project}
+            task={approveTarget.task}
+            onClose={() => setApproveTarget(null)}
+            onConfirm={handleConfirmApprove}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Dispute Modal */}
-      {disputeTarget && (
-        <DisputeModal
-          target={disputeTarget}
-          onClose={() => setDisputeTarget(null)}
-        />
-      )}
+      <AnimatePresence>
+        {disputeTarget && (
+          <DisputeModal
+            target={disputeTarget}
+            onClose={() => setDisputeTarget(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -13,6 +13,18 @@ interface ClientDashboardProps {
   totalPaid: number;
 }
 
+const getAppScroller = () => document.getElementById('app-scroll-container') as HTMLElement | null;
+
+const setAppScrollTop = (top: number) => {
+  const scroller = getAppScroller();
+  if (scroller) {
+    scroller.scrollTop = top;
+    return;
+  }
+
+  window.scrollTo({ top, behavior: 'auto' });
+};
+
 const ClientDashboard: FC<ClientDashboardProps> = ({
   projects,
   totalBudget,
@@ -24,9 +36,20 @@ const ClientDashboard: FC<ClientDashboardProps> = ({
 
   const handleProjectClick = (e: MouseEvent, projectId: string) => {
     e.preventDefault();
+
+    const scroller = getAppScroller();
+    const scrollTop = scroller ? scroller.scrollTop : window.scrollY;
+    try {
+      sessionStorage.setItem('scroll:/dashboard/client', scrollTop.toString());
+      sessionStorage.setItem('scroll:skip-next-save', '/dashboard/client');
+    } catch {
+      // Ignore storage errors; the layout will still open project details at the top.
+    }
+
     setAnimatingProjectId(projectId);
     // Add a slightly longer delay for a smoother, more cinematic animation
     setTimeout(() => {
+      setAppScrollTop(0);
       navigate(`/projects/${projectId}`);
     }, 1200); // 1200ms provides enough time for the slow "grow to center" visual effect
   };

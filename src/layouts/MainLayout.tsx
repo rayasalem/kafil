@@ -1,4 +1,4 @@
-import { FC, useEffect, useLayoutEffect, useRef } from 'react';
+import { FC, useLayoutEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation, useOutlet } from 'react-router-dom';
 import { AnimatePresence, motion, LayoutGroup } from 'framer-motion';
 import {
@@ -31,50 +31,63 @@ const MainLayout: FC = () => {
     navigate('/login');
   };
 
-  useEffect(() => {
-    const scroller = document.getElementById('app-scroll-container');
-    const prevPath = lastPathRef.current;
-
-    // Only save scroll position when leaving a dashboard route
-    if (prevPath && prevPath !== location.pathname && prevPath.startsWith('/dashboard')) {
-      const prevTop = scroller ? scroller.scrollTop : window.scrollY;
-      sessionStorage.setItem(`scroll:${prevPath}`, prevTop.toString());
-      lastPathRef.current = location.pathname;
-    } else {
-      lastPathRef.current = location.pathname;
-    }
-  }, [location.pathname]);
-
   useLayoutEffect(() => {
+    const prevPath = lastPathRef.current;
+    const scroller = document.getElementById('app-scroll-container');
+
+    if (prevPath && prevPath !== location.pathname && prevPath.startsWith('/dashboard')) {
+      const skipSaveForPath = sessionStorage.getItem('scroll:skip-next-save');
+      if (skipSaveForPath === prevPath) {
+        sessionStorage.removeItem('scroll:skip-next-save');
+      } else {
+        const prevTop = scroller ? scroller.scrollTop : window.scrollY;
+        try {
+          sessionStorage.setItem(`scroll:${prevPath}`, prevTop.toString());
+        } catch {
+          // Ignore storage errors; scroll restoration is progressive enhancement.
+        }
+      }
+    }
+
+    lastPathRef.current = location.pathname;
+
     // Reset scroll to top for non-dashboard routes (project details, etc.)
     if (!location.pathname.startsWith('/dashboard')) {
-      const scroller = document.getElementById('app-scroll-container');
       let frame = 0;
       const maxFrames = 8;
+      let raf: number | null = null;
+
+      if (scroller) {
+        scroller.scrollTop = 0;
+      } else {
+        window.scrollTo({ top: 0, behavior: 'auto' });
+      }
 
       const resetScroll = () => {
         frame += 1;
         if (scroller) {
           scroller.scrollTop = 0;
           if (frame < maxFrames && scroller.scrollTop !== 0) {
-            requestAnimationFrame(resetScroll);
+            raf = requestAnimationFrame(resetScroll);
             return;
           }
         } else {
           window.scrollTo({ top: 0, behavior: 'auto' });
           if (frame < maxFrames && window.scrollY !== 0) {
-            requestAnimationFrame(resetScroll);
+            raf = requestAnimationFrame(resetScroll);
             return;
           }
         }
       };
 
-      requestAnimationFrame(resetScroll);
-      return;
+      raf = requestAnimationFrame(resetScroll);
+
+      return () => {
+        if (raf) cancelAnimationFrame(raf);
+      };
     }
 
     // Restore scroll position for dashboard routes
-    const scroller = document.getElementById('app-scroll-container');
     const saved = sessionStorage.getItem(`scroll:${location.pathname}`);
     if (!saved) return;
 

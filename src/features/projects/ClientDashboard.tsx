@@ -54,6 +54,18 @@ const MOCK_SUBMISSION: Record<
   },
 };
 
+const getAppScroller = () => document.getElementById('app-scroll-container') as HTMLElement | null;
+
+const setAppScrollTop = (top: number) => {
+  const scroller = getAppScroller();
+  if (scroller) {
+    scroller.scrollTop = top;
+    return;
+  }
+
+  window.scrollTo({ top, behavior: 'auto' });
+};
+
 export default function ClientDashboard() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [openingProjectId, setOpeningProjectId] = useState<string | null>(null);
@@ -163,10 +175,11 @@ export default function ClientDashboard() {
 
   const handleOpenProjectDetails = (projectId: string) => {
     // Save scroll position immediately (before animations) so we can restore it on return
-    const scroller = document.getElementById('app-scroll-container') as HTMLElement | null;
+    const scroller = getAppScroller();
     const scrollTop = scroller ? scroller.scrollTop : window.scrollY;
     try {
       sessionStorage.setItem(`scroll:${location.pathname}`, scrollTop.toString());
+      sessionStorage.setItem('scroll:skip-next-save', location.pathname);
     } catch (e) {
       // ignore storage errors
     }
@@ -178,6 +191,7 @@ export default function ClientDashboard() {
     }
 
     routeTimerRef.current = window.setTimeout(() => {
+      setAppScrollTop(0);
       navigate(`/projects/${projectId}`);
     }, 240);
   };

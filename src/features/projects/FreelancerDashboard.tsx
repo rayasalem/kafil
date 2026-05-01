@@ -5,7 +5,7 @@ import { gsap } from 'gsap';
 import { 
   Lock, CheckCircle, Upload, Send, X, Users, TrendingUp, 
   FileText, ChevronLeft, Star, Shield, AlertCircle, Clock, Zap,
-  Activity, ArrowUpRight, DollarSign, Target, Briefcase, CreditCard
+  Activity, ArrowUpRight, DollarSign, Target, Briefcase, CreditCard, ShieldCheck
 } from 'lucide-react';
 import { api } from '@/services/api';
 import { Project, User, Task } from '@/types';
@@ -498,66 +498,164 @@ export default function FreelancerDashboard() {
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               onClick={() => setSelectedInvitation(null)}
-              className="absolute inset-0 bg-[#0D1B2A]/70 backdrop-blur-[24px]" 
+              className="absolute inset-0 bg-[#0D1B2A]/80 backdrop-blur-[40px]" 
             />
             <motion.div 
-              initial={{ scale: 0.94, opacity: 0, y: 40 }}
+              initial={{ scale: 0.92, opacity: 0, y: 60 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.94, opacity: 0, y: 40 }}
+              exit={{ scale: 0.92, opacity: 0, y: 60 }}
               transition={APPLE_SPRINGS.standard}
-              className="bg-[#F9F4EE] w-full max-w-3xl max-h-[85vh] overflow-y-auto rounded-[3.5rem] shadow-[0_60px_120px_-20px_rgba(0,0,0,0.6)] relative z-10 border border-white/20 noise-heavy" 
+              className="bg-[#F9F4EE] w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-[3rem] shadow-[0_80px_160px_-20px_rgba(0,0,0,0.7)] relative z-10 border border-white/20 flex flex-col" 
             >
-              <div className="sticky top-0 z-10 flex items-center justify-between p-10 border-b border-[#E8DDD0] bg-[#F9F4EE]/90 backdrop-blur-2xl">
-                <div className="space-y-1">
-                  <p className="text-[10px] font-black text-[#C9A84C] uppercase tracking-[0.4em] mb-2">مراجعة العقد التعاقدي</p>
-                  <h2 className="text-3xl font-black text-[#0D1B2A] tracking-tighter leading-tight">{selectedInvitation.projectName}</h2>
+              {/* Modal Header: Secure Context */}
+              <div className="p-10 border-b border-[#E8DDD0] bg-white/60 backdrop-blur-2xl flex justify-between items-center relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-full h-1 bg-gradient-to-l from-[#C9A84C] to-transparent opacity-50" />
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3">
+                     <div className="px-3 py-1 bg-[#0D1B2A] text-white text-[9px] font-black uppercase tracking-[0.3em] rounded-lg shadow-lg shadow-[#0D1B2A]/20">عقد ضمار</div>
+                     <div className="flex items-center gap-1.5 text-emerald-600 text-[10px] font-black uppercase tracking-widest">
+                        <ShieldCheck size={12} fill="currentColor" className="opacity-20" /> الحماية مفعلة
+                     </div>
+                  </div>
+                  <h2 className="text-4xl font-black text-[#0D1B2A] tracking-tighter leading-tight">{selectedInvitation.projectName}</h2>
+                  <p className="text-gray-400 font-bold flex items-center gap-2 text-sm">
+                    رقم العملية: <span className="text-[#0D1B2A] font-mono tracking-widest">{selectedInvitation.id.toUpperCase()}</span>
+                  </p>
                 </div>
-                <button onClick={() => setSelectedInvitation(null)} className="w-14 h-14 rounded-[1.8rem] bg-white border border-[#E8DDD0] flex items-center justify-center hover:bg-red-50 hover:border-red-100 transition-all shadow-xl group">
-                  <X size={28} className="text-gray-400 group-hover:text-red-500 group-hover:rotate-90 transition-all duration-500" />
+                <button onClick={() => setSelectedInvitation(null)} className="w-16 h-16 rounded-[2rem] bg-white border border-[#E8DDD0] flex items-center justify-center hover:bg-red-50 transition-all shadow-2xl group">
+                  <X size={32} className="text-gray-300 group-hover:text-red-500 group-hover:rotate-90 transition-all duration-500" />
                 </button>
               </div>
 
-              <div className="p-10 space-y-12">
-                <div className="grid grid-cols-2 gap-6">
-                  <AppleMaterialCard className="p-8 bg-white border-white/60 shadow-sm">
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">المهمة المحددة</p>
-                    <p className="text-xl font-black text-[#0D1B2A] tracking-tight leading-tight">{selectedInvitation.taskName}</p>
-                  </AppleMaterialCard>
-                  <AppleMaterialCard variant="dark" className="p-8 shadow-2xl">
-                    <p className="text-[10px] font-black text-[#C9A84C]/60 uppercase tracking-widest mb-3">الميزانية المودعة</p>
-                    <p className="text-4xl font-black text-white tabular-nums tracking-tighter">{formatCurrency(selectedInvitation.budget)}</p>
-                  </AppleMaterialCard>
-                </div>
+              {/* Modal Body: Two-Column Precision */}
+              <div className="flex-1 overflow-y-auto p-10 custom-scrollbar">
+                <div className="grid lg:grid-cols-12 gap-10">
+                  
+                  {/* Left Column: Brief & Requirements */}
+                  <div className="lg:col-span-7 space-y-10">
+                    <motion.section 
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 }}
+                      className="space-y-4"
+                    >
+                       <h3 className="text-sm font-black text-[#0D1B2A] uppercase tracking-[0.2em] flex items-center gap-3">
+                         <FileText size={18} className="text-[#C9A84C]" /> وصف نطاق العمل
+                       </h3>
+                       <div className="bg-white border border-[#E8DDD0] p-8 rounded-[2.5rem] text-lg text-gray-600 leading-relaxed font-medium shadow-sm relative overflow-hidden group">
+                          <div className="absolute top-0 left-0 w-1 h-full bg-[#C9A84C] opacity-20 group-hover:opacity-100 transition-opacity" />
+                          {selectedInvitation.description}
+                       </div>
+                    </motion.section>
 
-                <div className="space-y-4">
-                   <h3 className="text-xl font-black text-[#0D1B2A] flex items-center gap-3">
-                     <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shadow-lg border border-gray-100"><FileText size={20} className="text-[#C9A84C]" /></div>
-                     نبذة عن المشروع
-                   </h3>
-                   <div className="bg-white/40 border border-white p-8 rounded-[2.5rem] text-lg text-gray-600 leading-relaxed font-medium shadow-inner">
-                      {selectedInvitation.description}
-                   </div>
-                </div>
-
-                <div className="space-y-6">
-                  <h3 className="text-xl font-black text-[#0D1B2A] flex items-center gap-3">
-                     <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shadow-lg border border-gray-100"><CheckCircle size={20} className="text-emerald-500" /></div>
-                     المتطلبات الأساسية
-                  </h3>
-                  <div className="grid gap-4">
-                    {selectedInvitation.requirements.map((req, idx) => (
-                      <div key={idx} className="flex items-center gap-5 bg-white border border-white p-6 rounded-3xl shadow-sm hover:shadow-md transition-shadow cursor-default">
-                         <div className="w-3 h-3 bg-[#C9A84C] rounded-full shadow-[0_0_15px_#C9A84C]" />
-                         <span className="font-bold text-gray-700 text-base">{req}</span>
+                    <motion.section 
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.2 }}
+                      className="space-y-6"
+                    >
+                      <h3 className="text-sm font-black text-[#0D1B2A] uppercase tracking-[0.2em] flex items-center gap-3">
+                         <Target size={18} className="text-emerald-500" /> مخرجات العقد الإلزامية
+                      </h3>
+                      <div className="grid gap-4">
+                        {selectedInvitation.requirements.map((req, idx) => (
+                          <motion.div 
+                            key={idx}
+                            whileHover={{ x: 8, scale: 1.01 }}
+                            className="flex items-center gap-6 bg-white border border-white p-6 rounded-[1.8rem] shadow-sm hover:shadow-md transition-all group"
+                          >
+                             <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-500 shadow-inner">
+                                <CheckCircle size={22} strokeWidth={2.5} />
+                             </div>
+                             <span className="font-black text-[#0D1B2A] text-lg tracking-tight">{req}</span>
+                          </motion.div>
+                        ))}
                       </div>
-                    ))}
+                    </motion.section>
+                  </div>
+
+                  {/* Right Column: Financial Vault */}
+                  <div className="lg:col-span-5 space-y-6">
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                    >
+                       <AppleMaterialCard variant="dark" className="p-10 h-fit shadow-2xl relative group overflow-hidden border-white/5">
+                          {/* Background Symbol */}
+                          <Lock size={200} className="absolute -bottom-10 -left-10 text-white/5 -rotate-12 pointer-events-none group-hover:scale-110 transition-transform duration-1000" />
+                          
+                          <div className="relative z-10 space-y-8">
+                             <div className="space-y-1">
+                                <span className="text-[10px] font-black text-[#C9A84C] uppercase tracking-[0.4em]">الميزانية المؤمنة</span>
+                                <div className="h-0.5 w-12 bg-[#C9A84C] rounded-full" />
+                             </div>
+                             
+                             <div className="space-y-2">
+                                <div className="flex items-baseline gap-4">
+                                   <span className="text-6xl font-black text-white tracking-tighter tabular-nums drop-shadow-2xl">
+                                      <RollingNumber value={selectedInvitation.budget} />
+                                   </span>
+                                   <span className="text-[#C9A84C] text-xl font-black uppercase tracking-widest">USD</span>
+                                </div>
+                                <p className="text-blue-200/40 text-[10px] font-bold uppercase tracking-[0.2em]">Kafil Escrow Protection</p>
+                             </div>
+
+                             <div className="bg-white/5 rounded-3xl p-6 border border-white/10 space-y-4">
+                                <div className="flex justify-between items-center">
+                                   <span className="text-xs font-bold text-gray-400">حالة الإيداع</span>
+                                   <span className="text-xs font-black text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-md">مكتمل</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                   <span className="text-xs font-bold text-gray-400">الموعد النهائي</span>
+                                   <span className="text-xs font-black text-white">{selectedInvitation.deadline}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                   <span className="text-xs font-bold text-gray-400">مرسل الطلب</span>
+                                   <span className="text-xs font-black text-white">{selectedInvitation.sender}</span>
+                                </div>
+                             </div>
+                          </div>
+                       </AppleMaterialCard>
+                    </motion.div>
+
+                    {/* Security Guarantee Card */}
+                    <motion.div 
+                      initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
+                      className="p-8 glass rounded-[2rem] border-emerald-500/20 bg-emerald-500/5 space-y-4"
+                    >
+                       <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
+                             <Shield size={16} fill="currentColor" />
+                          </div>
+                          <span className="text-xs font-black text-[#0D1B2A]">ضمان كفيل الذهبي</span>
+                       </div>
+                       <p className="text-xs font-medium text-emerald-800/70 leading-relaxed">
+                          هذه الميزانية مودعة حالياً في حساب الضمان التابع لكفيل. لا يمكن استردادها من قبل العميل إلا بموافقتك أو بقرار تحكيمي نهائي.
+                       </p>
+                    </motion.div>
                   </div>
                 </div>
               </div>
 
-              <div className="sticky bottom-0 bg-white/80 backdrop-blur-2xl p-10 border-t border-[#E8DDD0] flex gap-6">
-                <MagneticButton onClick={() => handleAcceptInvite(selectedInvitation)} className="flex-[2] py-6 text-xl">توقيع العقد وبدء التنفيذ</MagneticButton>
-                <MagneticButton onClick={() => setSelectedInvitation(null)} variant="secondary" className="flex-1 py-6 text-lg shadow-none">اعتذار عن العمل</MagneticButton>
+              {/* Modal Footer: Action Enclave */}
+              <div className="p-10 border-t border-[#E8DDD0] bg-white/80 backdrop-blur-3xl flex gap-6">
+                <MagneticButton 
+                  onClick={() => handleAcceptInvite(selectedInvitation)} 
+                  className="flex-[3] py-6 text-2xl h-20 shadow-[0_20px_40px_-10px_rgba(26,127,116,0.4)]"
+                >
+                  <div className="flex items-center gap-4">
+                     قبول العقد وبدء التنفيذ
+                     <ArrowUpRight size={24} />
+                  </div>
+                </MagneticButton>
+                <MagneticButton 
+                  onClick={() => setSelectedInvitation(null)} 
+                  variant="secondary" 
+                  className="flex-1 py-6 text-lg h-20 shadow-none border-gray-100"
+                >
+                  تجاهل العرض
+                </MagneticButton>
               </div>
             </motion.div>
           </div>

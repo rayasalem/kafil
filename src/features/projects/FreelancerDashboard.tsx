@@ -66,12 +66,8 @@ const AppleMaterialCard: FC<{
       className
     )}
   >
-    {/* Highlight Glare */}
     <div className="absolute inset-0 bg-gradient-to-br from-white/15 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-1000 z-10" />
-    
-    {/* Material Edge (Inner Border) */}
     <div className="absolute inset-[1px] rounded-[2.1rem] border border-white/20 pointer-events-none z-0" />
-    
     <div className="relative z-10 h-full">{children}</div>
   </motion.div>
 );
@@ -258,34 +254,39 @@ export default function FreelancerDashboard() {
             <div className="inline-flex items-center gap-2.5 px-4 py-1.5 glass rounded-full text-[10px] font-black uppercase tracking-[0.25em] text-[#C9A84C] mb-3 shadow-sm border-white/40">
               <Zap size={12} className="animate-pulse fill-[#C9A84C]/20" /> نظام التعاقد المباشر
             </div>
-            <h1 className="text-4xl font-black text-[#0D1B2A] tracking-tighter mb-3 leading-none">
-              مرحباً عمر <span className="text-[#C9A84C]">.</span>
+            <h1 className="text-2xl font-black text-[#0D1B2A] tracking-tighter mb-1.5 leading-none">
+              مركز التحكم <span className="text-[#C9A84C]">.</span>
             </h1>
-            <p className="text-base font-medium text-gray-400 flex items-center gap-2">
-              <Activity size={14} className="text-emerald-500" /> لوحة التحكم المالية قيد المزامنة الآن
-            </p>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-full border border-white bg-white/50 flex items-center justify-center font-black text-[8px] shadow-sm">
+                <span className="text-[#0D1B2A] opacity-70">{user.avatar}</span>
+              </div>
+              <p className="text-sm font-bold text-gray-400">
+                أهلاً <span className="text-[#0D1B2A]">{user.name}</span>
+              </p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-4 bg-white/20 backdrop-blur-xl border border-white/30 rounded-2xl px-5 py-2.5 shadow-2xl shadow-emerald-900/5 group transition-all hover:bg-white/30 cursor-default">
-             <div className="flex flex-col items-start gap-1">
-                <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3 bg-white/20 backdrop-blur-xl border border-white/30 rounded-xl px-4 py-2 shadow-xl shadow-emerald-900/5 group transition-all hover:bg-white/30 cursor-default">
+             <div className="flex flex-col items-start">
+                <div className="flex items-center gap-1.5 mb-0.5">
                    <div className="relative">
-                      <Shield size={14} className="text-emerald-500 relative z-10" fill="currentColor" fillOpacity={0.2} />
+                      <Shield size={10} className="text-emerald-500 relative z-10" fill="currentColor" fillOpacity={0.2} />
                       <motion.div 
-                        animate={{ scale: [1, 1.8, 1], opacity: [0.3, 0, 0.3] }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
-                        className="absolute inset-0 bg-emerald-400 rounded-full blur-md z-0" 
+                        animate={{ scale: [1, 1.5, 1], opacity: [0.3, 0, 0.3] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="absolute inset-0 bg-emerald-400 rounded-full blur-sm z-0" 
                       />
                    </div>
-                   <span className="text-[9px] font-black text-emerald-600/80 uppercase tracking-[0.25em]">Secure Enclave</span>
+                   <span className="text-[8px] font-black text-emerald-600/80 uppercase tracking-[0.2em]">Secure</span>
                 </div>
-                <div className="flex items-center gap-3">
-                   <p className="text-sm font-black text-[#0D1B2A] tracking-tight">العقد محمي نشط</p>
+                <div className="flex items-center gap-2">
+                   <p className="text-xs font-black text-[#0D1B2A] tracking-tight">العقد محمي</p>
                    <div className="flex gap-0.5">
                       {[1, 2, 3].map(i => (
                         <motion.div 
                           key={i}
-                          animate={{ height: [4, 10, 4] }}
+                          animate={{ height: [3, 8, 3] }}
                           transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
                           className="w-0.5 bg-emerald-500 rounded-full"
                         />
@@ -293,10 +294,10 @@ export default function FreelancerDashboard() {
                    </div>
                 </div>
              </div>
-             <div className="w-px h-8 bg-[#0D1B2A]/5 mx-2" />
-             <div className="flex flex-col items-end gap-1">
-                <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest">تغطية الضمان</span>
-                <span className="text-[12px] font-black text-[#0D1B2A]">100% مؤمن</span>
+             <div className="w-px h-6 bg-[#0D1B2A]/5 mx-1" />
+             <div className="flex flex-col items-end">
+                <span className="text-[7px] font-black text-gray-400 uppercase tracking-widest">التغطية</span>
+                <span className="text-[10px] font-black text-[#0D1B2A]">100%</span>
              </div>
           </div>
         </motion.header>
@@ -374,8 +375,8 @@ export default function FreelancerDashboard() {
                {/* Primary Column: The Work Horse */}
                <div className="lg:col-span-8 space-y-8">
                   <div className="flex items-center justify-between px-2">
-                    <h2 className="text-2xl font-black text-[#0D1B2A] tracking-tight flex items-center gap-3">
-                       <Briefcase size={22} className="text-[#0D1B2A]" /> العقود الحالية
+                    <h2 className="text-lg font-black text-[#0D1B2A] tracking-tight flex items-center gap-2">
+                       <Briefcase size={16} /> العقود الحالية
                     </h2>
                     <div className="flex items-center gap-4">
                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest bg-gray-100 px-3 py-1 rounded-full">{myTasks.length} تعاقدات</span>
@@ -446,8 +447,8 @@ export default function FreelancerDashboard() {
                {/* Secondary Column: The Opportunity Grid */}
                <div className="lg:col-span-4 space-y-8">
                   <div className="flex items-center justify-between px-2">
-                    <h2 className="text-2xl font-black text-[#0D1B2A] tracking-tight flex items-center gap-3">
-                       <Zap size={20} className="text-[#C9A84C]" fill="currentColor" /> الفرص الجديدة
+                    <h2 className="text-lg font-black text-[#0D1B2A] tracking-tight flex items-center gap-2">
+                       <Zap size={14} className="text-[#C9A84C]" fill="currentColor" /> الفرص
                     </h2>
                   </div>
 
@@ -498,51 +499,49 @@ export default function FreelancerDashboard() {
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               onClick={() => setSelectedInvitation(null)}
-              className="absolute inset-0 bg-[#0D1B2A]/80 backdrop-blur-[40px]" 
+              className="absolute inset-0 bg-[#0D1B2A]/70 backdrop-blur-[24px]" 
             />
             <motion.div 
               initial={{ scale: 0.92, opacity: 0, y: 60 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.92, opacity: 0, y: 60 }}
               transition={APPLE_SPRINGS.standard}
-              className="bg-[#F9F4EE] w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-[3rem] shadow-[0_80px_160px_-20px_rgba(0,0,0,0.7)] relative z-10 border border-white/20 flex flex-col" 
+              className="bg-[#F9F4EE] w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-[3rem] shadow-[0_80px_160px_-20px_rgba(0,0,0,0.7)] relative z-10 border border-white/20 flex flex-col noise-heavy" 
             >
               {/* Modal Header: Secure Context */}
-              <div className="p-10 border-b border-[#E8DDD0] bg-white/60 backdrop-blur-2xl flex justify-between items-center relative overflow-hidden">
+              <div className="p-8 border-b border-[#E8DDD0] bg-white/60 backdrop-blur-2xl flex justify-between items-center relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-full h-1 bg-gradient-to-l from-[#C9A84C] to-transparent opacity-50" />
-                <div className="space-y-2">
-                  <div className="flex items-center gap-3">
-                     <div className="px-3 py-1 bg-[#0D1B2A] text-white text-[9px] font-black uppercase tracking-[0.3em] rounded-lg shadow-lg shadow-[#0D1B2A]/20">عقد ضمار</div>
-                     <div className="flex items-center gap-1.5 text-emerald-600 text-[10px] font-black uppercase tracking-widest">
-                        <ShieldCheck size={12} fill="currentColor" className="opacity-20" /> الحماية مفعلة
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                     <div className="px-2 py-0.5 bg-[#0D1B2A] text-white text-[7px] font-black uppercase tracking-[0.3em] rounded-md">Guaranteed</div>
+                     <div className="flex items-center gap-1.5 text-emerald-600 text-[8px] font-black uppercase tracking-widest">
+                        <ShieldCheck size={10} fill="currentColor" className="opacity-20" /> Protected
                      </div>
                   </div>
-                  <h2 className="text-4xl font-black text-[#0D1B2A] tracking-tighter leading-tight">{selectedInvitation.projectName}</h2>
-                  <p className="text-gray-400 font-bold flex items-center gap-2 text-sm">
-                    رقم العملية: <span className="text-[#0D1B2A] font-mono tracking-widest">{selectedInvitation.id.toUpperCase()}</span>
-                  </p>
+                  <h2 className="text-xl font-black text-[#0D1B2A] tracking-tighter leading-tight">{selectedInvitation.projectName}</h2>
+                  <p className="text-gray-400 font-bold text-[10px]">ID: {selectedInvitation.id.toUpperCase()}</p>
                 </div>
-                <button onClick={() => setSelectedInvitation(null)} className="w-16 h-16 rounded-[2rem] bg-white border border-[#E8DDD0] flex items-center justify-center hover:bg-red-50 transition-all shadow-2xl group">
-                  <X size={32} className="text-gray-300 group-hover:text-red-500 group-hover:rotate-90 transition-all duration-500" />
+                <button onClick={() => setSelectedInvitation(null)} className="w-12 h-12 rounded-2xl bg-white border border-[#E8DDD0] flex items-center justify-center hover:bg-red-50 transition-all shadow-xl group">
+                  <X size={24} className="text-gray-300 group-hover:text-red-500 group-hover:rotate-90 transition-all duration-500" />
                 </button>
               </div>
 
               {/* Modal Body: Two-Column Precision */}
-              <div className="flex-1 overflow-y-auto p-10 custom-scrollbar">
+              <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
                 <div className="grid lg:grid-cols-12 gap-10">
                   
                   {/* Left Column: Brief & Requirements */}
-                  <div className="lg:col-span-7 space-y-10">
+                  <div className="lg:col-span-7 space-y-8">
                     <motion.section 
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.1 }}
                       className="space-y-4"
                     >
-                       <h3 className="text-sm font-black text-[#0D1B2A] uppercase tracking-[0.2em] flex items-center gap-3">
-                         <FileText size={18} className="text-[#C9A84C]" /> وصف نطاق العمل
+                       <h3 className="text-[9px] font-black text-[#0D1B2A] uppercase tracking-[0.2em] flex items-center gap-2">
+                         <FileText size={14} className="text-[#C9A84C]" /> نطاق العمل
                        </h3>
-                       <div className="bg-white border border-[#E8DDD0] p-8 rounded-[2.5rem] text-lg text-gray-600 leading-relaxed font-medium shadow-sm relative overflow-hidden group">
+                       <div className="bg-white border border-[#E8DDD0] p-6 rounded-[1.8rem] text-sm text-gray-600 leading-relaxed font-medium shadow-sm relative overflow-hidden group">
                           <div className="absolute top-0 left-0 w-1 h-full bg-[#C9A84C] opacity-20 group-hover:opacity-100 transition-opacity" />
                           {selectedInvitation.description}
                        </div>
@@ -552,22 +551,22 @@ export default function FreelancerDashboard() {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.2 }}
-                      className="space-y-6"
+                      className="space-y-4"
                     >
-                      <h3 className="text-sm font-black text-[#0D1B2A] uppercase tracking-[0.2em] flex items-center gap-3">
-                         <Target size={18} className="text-emerald-500" /> مخرجات العقد الإلزامية
+                      <h3 className="text-[9px] font-black text-[#0D1B2A] uppercase tracking-[0.2em] flex items-center gap-2">
+                         <Target size={14} className="text-emerald-500" /> مخرجات العقد
                       </h3>
-                      <div className="grid gap-4">
+                      <div className="grid gap-2">
                         {selectedInvitation.requirements.map((req, idx) => (
                           <motion.div 
                             key={idx}
-                            whileHover={{ x: 8, scale: 1.01 }}
-                            className="flex items-center gap-6 bg-white border border-white p-6 rounded-[1.8rem] shadow-sm hover:shadow-md transition-all group"
+                            whileHover={{ x: 6, scale: 1.01 }}
+                            className="flex items-center gap-4 bg-white border border-white p-4 rounded-xl shadow-sm group transition-all"
                           >
-                             <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-500 shadow-inner">
-                                <CheckCircle size={22} strokeWidth={2.5} />
+                             <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-500 shadow-inner">
+                                <CheckCircle size={14} strokeWidth={3} />
                              </div>
-                             <span className="font-black text-[#0D1B2A] text-lg tracking-tight">{req}</span>
+                             <span className="font-black text-[#0D1B2A] text-xs tracking-tight">{req}</span>
                           </motion.div>
                         ))}
                       </div>
@@ -581,57 +580,53 @@ export default function FreelancerDashboard() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 }}
                     >
-                       <AppleMaterialCard variant="dark" className="p-10 h-fit shadow-2xl relative group overflow-hidden border-white/5">
+                       <AppleMaterialCard variant="dark" className="p-8 h-fit shadow-2xl relative group overflow-hidden border-white/5">
                           {/* Background Symbol */}
-                          <Lock size={200} className="absolute -bottom-10 -left-10 text-white/5 -rotate-12 pointer-events-none group-hover:scale-110 transition-transform duration-1000" />
+                          <Lock size={160} className="absolute -bottom-10 -left-10 text-white/5 -rotate-12 pointer-events-none group-hover:scale-110 transition-transform duration-1000" />
                           
-                          <div className="relative z-10 space-y-8">
+                          <div className="relative z-10 space-y-6">
                              <div className="space-y-1">
-                                <span className="text-[10px] font-black text-[#C9A84C] uppercase tracking-[0.4em]">الميزانية المؤمنة</span>
-                                <div className="h-0.5 w-12 bg-[#C9A84C] rounded-full" />
+                                <span className="text-[9px] font-black text-[#C9A84C] uppercase tracking-[0.3em]">الميزانية المؤمنة</span>
+                                <div className="h-0.5 w-8 bg-[#C9A84C] rounded-full" />
                              </div>
                              
-                             <div className="space-y-2">
-                                <div className="flex items-baseline gap-4">
-                                   <span className="text-6xl font-black text-white tracking-tighter tabular-nums drop-shadow-2xl">
+                             <div className="space-y-1">
+                                <div className="flex items-baseline gap-3">
+                                   <span className="text-4xl font-black text-white tracking-tighter tabular-nums drop-shadow-2xl">
                                       <RollingNumber value={selectedInvitation.budget} />
                                    </span>
-                                   <span className="text-[#C9A84C] text-xl font-black uppercase tracking-widest">USD</span>
+                                   <span className="text-[#C9A84C] text-sm font-black uppercase tracking-widest opacity-80">USD</span>
                                 </div>
-                                <p className="text-blue-200/40 text-[10px] font-bold uppercase tracking-[0.2em]">Kafil Escrow Protection</p>
+                                <p className="text-blue-200/40 text-[8px] font-bold uppercase tracking-[0.2em]">Escrow Protected</p>
                              </div>
 
-                             <div className="bg-white/5 rounded-3xl p-6 border border-white/10 space-y-4">
-                                <div className="flex justify-between items-center">
-                                   <span className="text-xs font-bold text-gray-400">حالة الإيداع</span>
-                                   <span className="text-xs font-black text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-md">مكتمل</span>
+                             <div className="bg-white/5 rounded-2xl p-4 border border-white/10 space-y-3">
+                                <div className="flex justify-between items-center text-[10px]">
+                                   <span className="font-bold text-gray-500">حالة الإيداع</span>
+                                   <span className="font-black text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-md text-[8px]">مكتمل</span>
                                 </div>
-                                <div className="flex justify-between items-center">
-                                   <span className="text-xs font-bold text-gray-400">الموعد النهائي</span>
-                                   <span className="text-xs font-black text-white">{selectedInvitation.deadline}</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                   <span className="text-xs font-bold text-gray-400">مرسل الطلب</span>
-                                   <span className="text-xs font-black text-white">{selectedInvitation.sender}</span>
+                                <div className="flex justify-between items-center text-[10px]">
+                                   <span className="font-bold text-gray-400">الموعد</span>
+                                   <span className="font-black text-white">{selectedInvitation.deadline}</span>
                                 </div>
                              </div>
                           </div>
                        </AppleMaterialCard>
                     </motion.div>
 
-                    {/* Security Guarantee Card */}
+                    {/* Guarantee Hologram */}
                     <motion.div 
                       initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
-                      className="p-8 glass rounded-[2rem] border-emerald-500/20 bg-emerald-500/5 space-y-4"
+                      className="p-6 glass rounded-[1.8rem] border-emerald-500/20 bg-emerald-500/5 space-y-3"
                     >
                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
-                             <Shield size={16} fill="currentColor" />
+                          <div className="w-6 h-6 rounded-lg bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
+                             <Shield size={12} fill="currentColor" />
                           </div>
-                          <span className="text-xs font-black text-[#0D1B2A]">ضمان كفيل الذهبي</span>
+                          <span className="text-[10px] font-black text-[#0D1B2A]">ضمان كفيل الذهبي</span>
                        </div>
-                       <p className="text-xs font-medium text-emerald-800/70 leading-relaxed">
-                          هذه الميزانية مودعة حالياً في حساب الضمان التابع لكفيل. لا يمكن استردادها من قبل العميل إلا بموافقتك أو بقرار تحكيمي نهائي.
+                       <p className="text-[10px] font-medium text-emerald-800/70 leading-relaxed">
+                          الميزانية مودعة بالكامل. لا يمكن استردادها إلا بموافقتك.
                        </p>
                     </motion.div>
                   </div>
@@ -639,22 +634,22 @@ export default function FreelancerDashboard() {
               </div>
 
               {/* Modal Footer: Action Enclave */}
-              <div className="p-10 border-t border-[#E8DDD0] bg-white/80 backdrop-blur-3xl flex gap-6">
+              <div className="p-8 border-t border-[#E8DDD0] bg-white/80 backdrop-blur-3xl flex gap-4">
                 <MagneticButton 
                   onClick={() => handleAcceptInvite(selectedInvitation)} 
-                  className="flex-[3] py-6 text-2xl h-20 shadow-[0_20px_40px_-10px_rgba(26,127,116,0.4)]"
+                  className="flex-[3] py-4 text-sm h-14"
                 >
-                  <div className="flex items-center gap-4">
-                     قبول العقد وبدء التنفيذ
-                     <ArrowUpRight size={24} />
+                  <div className="flex items-center gap-3 relative z-10">
+                     توقيع العقد وبدء العمل
+                     <ArrowUpRight size={18} />
                   </div>
                 </MagneticButton>
                 <MagneticButton 
                   onClick={() => setSelectedInvitation(null)} 
                   variant="secondary" 
-                  className="flex-1 py-6 text-lg h-20 shadow-none border-gray-100"
+                  className="flex-1 py-4 text-sm h-14 shadow-none border-gray-100"
                 >
-                  تجاهل العرض
+                  تجاهل
                 </MagneticButton>
               </div>
             </motion.div>

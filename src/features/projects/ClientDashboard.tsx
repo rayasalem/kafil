@@ -8,7 +8,7 @@ import { api } from '@/services/api';
 import { Project, Task, User } from '@/types';
 import { formatCurrency } from '@/shared/utils/format';
 import { toast } from 'sonner';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
@@ -16,6 +16,7 @@ import { useGSAP } from '@gsap/react';
 import { DisputeModal } from './components/ClientDashboard/DisputeModal';
 import { ApproveModal } from './components/ClientDashboard/ApproveModal';
 import { ProjectCard } from './components/ClientDashboard/ProjectCard';
+import { CreateProjectModal } from './components/ClientDashboard/CreateProjectModal';
 
 // Mock data should be moved to API/Server in production. Keeping here for demo parity.
 const MOCK_MILESTONES: Record<string, { name: string; status: 'done' | 'review' | 'upcoming' }[]> = {
@@ -37,6 +38,7 @@ const MOCK_SUBMISSION: Record<string, { by: string; milestone: string; files: st
 };
 
 export default function ClientDashboard() {
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [approveTarget, setApproveTarget] = useState<{ project: Project; task: Task } | null>(null);
   const [disputeTarget, setDisputeTarget] = useState<{ project: Project; task: Task } | null>(null);
   const containerRef = useRef(null);
@@ -130,13 +132,14 @@ export default function ClientDashboard() {
           <h1 className="text-3xl font-black text-[var(--color-kafil-midnight)] tracking-tight mb-1">الخزنة المركزية</h1>
           <p className="text-gray-500 font-medium">أهلاً {user.name}! جميع أموالك محمية تحت نظام الضمان.</p>
         </div>
-        <Link
-          to="/create"
+        <motion.button
+          layoutId="create-project-btn"
+          onClick={() => setIsCreateModalOpen(true)}
           className="flex items-center gap-2 font-black px-6 py-3.5 rounded-2xl text-white transition-all hover:-translate-y-0.5 hover:shadow-xl shrink-0 bg-[var(--color-kafil-midnight)] focus:outline-none focus:ring-4 focus:ring-[var(--color-kafil-gold)]"
           style={{ boxShadow: '0 4px 20px rgba(13,27,42,0.25)' }}
         >
           <Plus size={18} aria-hidden="true" /> إطلاق مشروع جديد
-        </Link>
+        </motion.button>
       </header>
 
       {isLoading ? (
@@ -232,7 +235,7 @@ export default function ClientDashboard() {
               <div className="bg-white border-2 border-dashed border-[var(--color-kafil-sand)] rounded-3xl p-16 text-center">
                 <ShieldCheck size={48} className="mx-auto text-gray-200 mb-4" aria-hidden="true" />
                 <p className="text-gray-400 font-bold text-lg mb-2">لا توجد مشاريع بعد.</p>
-                <Link to="/create" className="text-[var(--color-kafil-gold)] font-bold hover:underline focus:outline-none focus:ring-2 focus:ring-[var(--color-kafil-gold)]">ابدأ بإنشاء مشروعك الأول</Link>
+                <button onClick={() => setIsCreateModalOpen(true)} className="text-[var(--color-kafil-gold)] font-bold hover:underline focus:outline-none focus:ring-2 focus:ring-[var(--color-kafil-gold)]">ابدأ بإنشاء مشروعك الأول</button>
               </div>
             ) : (
               <div className="grid lg:grid-cols-2 gap-6" role="list">
@@ -271,6 +274,16 @@ export default function ClientDashboard() {
           <DisputeModal
             target={disputeTarget}
             onClose={() => setDisputeTarget(null)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Create Project Modal */}
+      <AnimatePresence>
+        {isCreateModalOpen && (
+          <CreateProjectModal 
+            user={user} 
+            onClose={() => setIsCreateModalOpen(false)} 
           />
         )}
       </AnimatePresence>

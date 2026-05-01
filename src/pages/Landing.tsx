@@ -14,7 +14,9 @@ import {
   UserCheck, 
   MousePointer2,
   Sparkles,
-  Fingerprint
+  Fingerprint,
+  Moon,
+  Sun
 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
@@ -33,6 +35,7 @@ export default function Landing() {
   const heroRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [isDark, setIsDark] = useState(false);
 
   // Initialize Smooth Scrolling (Lenis)
   useEffect(() => {
@@ -214,16 +217,16 @@ export default function Landing() {
   ];
 
   return (
-    <div ref={containerRef} className="bg-white min-h-screen text-[#0D1B2A] font-sans selection:bg-blue-100 overflow-x-hidden" dir="rtl">
+    <div ref={containerRef} className={cn("min-h-screen font-sans selection:bg-blue-100 overflow-x-hidden transition-colors duration-500", isDark ? "dark bg-[#08111A] text-white" : "bg-white text-[#0D1B2A]")} dir="rtl">
       
       {/* 🟢 NAVIGATION - Apple-Inspired Interactive Nav */}
       <motion.nav 
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-        className="fixed w-full flex justify-between items-center p-4 md:px-12 z-50 bg-white/50 backdrop-blur-2xl border-b border-white/10"
+        className="fixed w-full flex justify-between items-center p-4 md:px-12 z-50 bg-white/50 dark:bg-[#0D1B2A]/50 backdrop-blur-2xl border-b border-white/10"
       >
-        <Link to="/" className="text-2xl font-black text-[#0D1B2A] flex items-center gap-3 tracking-tighter hover:opacity-80 transition-opacity">
+        <Link to="/" className="text-2xl font-black text-[#0D1B2A] dark:text-white flex items-center gap-3 tracking-tighter hover:opacity-80 transition-opacity">
           <div className="bg-[#0D1B2A] p-1.5 rounded-xl shadow-lg shadow-blue-900/20">
             <ShieldCheck className="text-white" size={24}/>
           </div>
@@ -240,7 +243,7 @@ export default function Landing() {
               transition={{ delay: 0.1 + i * 0.1, duration: 0.5 }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="px-6 py-2 rounded-full text-sm font-bold text-gray-600 hover:text-[#0D1B2A] transition-all duration-300 relative group"
+              className="px-6 py-2 rounded-full text-sm font-bold text-gray-600 dark:text-gray-300 hover:text-[#0D1B2A] dark:hover:text-white transition-all duration-300 relative group"
             >
               <span className="relative z-10">{link.name}</span>
               <motion.span 
@@ -250,8 +253,11 @@ export default function Landing() {
           ))}
         </div>
 
-        <div className="flex gap-4">
-          <Link to="/login" className="text-[#0D1B2A] font-bold px-6 py-2.5 hover:bg-gray-100 rounded-full transition-all text-sm">دخول</Link>
+        <div className="flex gap-4 items-center">
+          <button onClick={() => setIsDark(!isDark)} className="p-2 text-gray-600 dark:text-gray-300 hover:text-[#0D1B2A] dark:hover:text-white transition-colors">
+            {isDark ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+          <Link to="/login" className="text-[#0D1B2A] dark:text-white font-bold px-6 py-2.5 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-all text-sm">دخول</Link>
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -264,28 +270,28 @@ export default function Landing() {
       </motion.nav>
 
       {/* 🚀 HERO SECTION - Cinematic SVG */}
-      <section id="home" ref={heroRef} className="relative pt-40 pb-32 px-6 overflow-hidden min-h-[90vh] flex flex-col items-center justify-center bg-gradient-to-br from-[#0D1B2A] to-[#08111A]">
+      <section id="home" ref={heroRef} className="relative pt-40 pb-32 px-6 overflow-hidden min-h-[90vh] flex flex-col items-center justify-center bg-white dark:bg-[#08111A] dark:bg-gradient-to-br dark:from-[#0D1B2A] dark:to-[#08111A] transition-colors duration-500">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center relative z-10 w-full">
           <div className="space-y-8 text-right hero-text-content">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 bg-blue-900/40 text-blue-300 font-bold px-6 py-2 rounded-full text-sm border border-blue-500/30 backdrop-blur-sm shadow-[0_0_15px_rgba(59,130,246,0.15)]"
+              className="inline-flex items-center gap-2 bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 font-bold px-6 py-2 rounded-full text-sm border border-blue-200 dark:border-blue-500/30 backdrop-blur-sm shadow-[0_0_15px_rgba(59,130,246,0.15)] transition-colors"
             >
-              <Sparkles size={16} className="text-blue-400" /> معيار جديد للعمل الحر في الشرق الأوسط
+              <Sparkles size={16} className="text-blue-500 dark:text-blue-400 transition-colors" /> معيار جديد للعمل الحر في الشرق الأوسط
             </motion.div>
 
-            <h1 ref={titleRef} className="text-5xl md:text-[5rem] lg:text-[6rem] font-black text-white mb-8 leading-[1.1] tracking-tight">
+            <h1 ref={titleRef} className="text-4xl md:text-6xl lg:text-7xl font-black text-[#0D1B2A] dark:text-white mb-6 leading-[1.15] tracking-tight transition-colors">
               <div className="overflow-hidden">
                 احمِ أموالك.
               </div>
-              <div className="overflow-hidden text-transparent bg-clip-text bg-gradient-to-l from-[#C9A84C] via-[#E8DDD0] to-[#C9A84C] py-2">
+              <div className="overflow-hidden text-transparent bg-clip-text bg-gradient-to-l from-[#C9A84C] via-[#8B7333] dark:via-[#E8DDD0] to-[#C9A84C] py-2">
                 وضمان حقوقك.
               </div>
             </h1>
             
-            <p className="hero-sub text-xl text-gray-400 max-w-lg leading-relaxed font-medium">
+            <p className="hero-sub text-lg text-gray-500 dark:text-gray-400 max-w-lg leading-relaxed font-medium transition-colors">
               نظام ضمان احترافي (Escrow) مصمم خصيصاً للمستقلين العرب. نحول مجهودك الإبداعي إلى تعويض مضمون.
             </p>
             
@@ -293,29 +299,29 @@ export default function Landing() {
               <Link to="/register" className="hero-btn bg-[#C9A84C] text-[#0D1B2A] font-black px-10 py-4 rounded-full hover:bg-[#D4B55E] transition-all shadow-[0_0_30px_rgba(201,168,76,0.3)] hover:shadow-[0_0_40px_rgba(201,168,76,0.5)] flex items-center justify-center gap-3 text-lg group">
                 ابدأ الآن <ArrowLeft size={22} className="transform group-hover:-translate-x-2 transition-transform duration-300"/>
               </Link>
-              <a href="#how-it-works" className="hero-btn bg-white/5 backdrop-blur-md text-white font-bold px-10 py-4 rounded-full hover:bg-white/10 transition-all border border-white/10 text-lg flex items-center justify-center gap-2">
+              <a href="#how-it-works" className="hero-btn bg-black/5 dark:bg-white/5 backdrop-blur-md text-[#0D1B2A] dark:text-white font-bold px-10 py-4 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-all border border-black/10 dark:border-white/10 text-lg flex items-center justify-center gap-2">
                 <ShieldCheck size={20}/> كيف يعمل النظام
               </a>
             </div>
 
-            <div className="pt-16 border-t border-white/5 mt-16">
+            <div className="pt-16 border-t border-black/10 dark:border-white/5 mt-16 transition-colors">
                <div className="flex flex-wrap gap-8 justify-end">
                  {[
-                   { icon: Lock, label: "تشفير عسكري", color: "text-blue-400", bg: "bg-blue-400/10" },
-                   { icon: ShieldCheck, label: "ضمان مالي 100%", color: "text-green-400", bg: "bg-green-400/10" },
-                   { icon: UserCheck, label: "هوية موثقة", color: "text-amber-400", bg: "bg-amber-400/10" }
+                   { icon: Lock, label: "تشفير عسكري", color: "text-blue-500 dark:text-blue-400", bg: "bg-blue-50 dark:bg-blue-400/10" },
+                   { icon: ShieldCheck, label: "ضمان مالي 100%", color: "text-green-500 dark:text-green-400", bg: "bg-green-50 dark:bg-green-400/10" },
+                   { icon: UserCheck, label: "هوية موثقة", color: "text-amber-500 dark:text-amber-400", bg: "bg-amber-50 dark:bg-amber-400/10" }
                  ].map((badge, i) => (
                    <motion.div 
                      key={i}
                      initial={{ opacity: 0, y: 20 }}
                      animate={{ opacity: 1, y: 0 }}
                      transition={{ delay: 0.8 + i * 0.1 }}
-                     className="flex items-center gap-3 bg-white/5 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/10 hover:bg-white/10 transition-all group"
+                     className="flex items-center gap-3 bg-black/5 dark:bg-white/5 backdrop-blur-md px-5 py-3 rounded-2xl border border-black/5 dark:border-white/10 hover:bg-black/10 dark:hover:bg-white/10 transition-all group"
                    >
                      <div className={`p-2 rounded-xl ${badge.bg} ${badge.color} group-hover:scale-110 transition-transform`}>
                         <badge.icon size={20} />
                      </div>
-                     <span className="text-sm font-bold text-gray-400 group-hover:text-white transition-colors">{badge.label}</span>
+                     <span className="text-sm font-bold text-gray-600 dark:text-gray-400 group-hover:text-[#0D1B2A] dark:group-hover:text-white transition-colors">{badge.label}</span>
                    </motion.div>
                  ))}
                </div>
@@ -358,35 +364,35 @@ export default function Landing() {
               <span className="font-bold text-[#22C55E]">$5,000</span>
             </div>
 
-            <div className="escrow-vault bg-[#0D1B2A]/60 backdrop-blur-md rounded-[2rem] p-8 w-72 shadow-[0_0_40px_rgba(201,168,76,0.15)] relative z-20 border border-[#C9A84C]/30 opacity-0 transform scale-95 flex flex-col items-center justify-center text-center">
-              <div className="vault-icon w-24 h-24 rounded-full bg-[#0D1B2A] border-2 border-[#C9A84C] flex items-center justify-center mb-6 relative overflow-hidden">
+            <div className="escrow-vault bg-white/80 dark:bg-[#0D1B2A]/60 backdrop-blur-md rounded-[2rem] p-8 w-72 shadow-[0_0_40px_rgba(201,168,76,0.15)] relative z-20 border border-gray-200 dark:border-[#C9A84C]/30 opacity-0 transform scale-95 flex flex-col items-center justify-center text-center transition-colors">
+              <div className="vault-icon w-24 h-24 rounded-full bg-gray-50 dark:bg-[#0D1B2A] border-2 border-[#C9A84C] flex items-center justify-center mb-6 relative overflow-hidden transition-colors">
                 <Lock className="text-[#C9A84C] w-12 h-12 lock-icon" />
                 <div className="absolute inset-0 bg-[#C9A84C]/20 vault-pulse rounded-full"></div>
               </div>
               <span className="font-black text-[#C9A84C] text-xl mb-2">خزنة الضمان (Escrow)</span>
-              <span className="text-sm text-gray-400 px-4 leading-snug">بيئة آمنة تضمن حقوق الطرفين.</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400 px-4 leading-snug transition-colors">بيئة آمنة تضمن حقوق الطرفين.</span>
               <div className="w-full h-1.5 bg-white/10 rounded-full mt-6 overflow-hidden">
                 <div className="vault-progress h-full bg-[#C9A84C] w-0 shadow-[0_0_10px_#C9A84C]"></div>
               </div>
               <div className="mt-4 flex flex-col items-center space-y-1 opacity-0 outcome-text">
                 <span className="font-bold text-[#22C55E] text-sm">تم الإنجاز</span>
-                <span className="text-[10px] text-white/40 uppercase tracking-tighter">تم تحرير الدفعات بنجاح</span>
+                <span className="text-[10px] text-gray-400 dark:text-white/40 uppercase tracking-tighter transition-colors">تم تحرير الدفعات بنجاح</span>
               </div>
             </div>
 
             <div className="absolute bottom-10 w-full flex justify-between px-4 sm:px-10 z-10">
               <div className="alloc-node-1 flex flex-col items-center opacity-0 transform translate-y-10">
-                <div className="w-16 h-16 rounded-full bg-[#1A7F74]/20 border-2 border-[#1A7F74] flex items-center justify-center shadow-[0_0_20px_#1A7F74] text-[#1A7F74] mb-2 overflow-hidden ring-4 ring-black/40">
+                <div className="w-16 h-16 rounded-full bg-[#1A7F74]/10 dark:bg-[#1A7F74]/20 border-2 border-[#1A7F74] flex items-center justify-center shadow-[0_0_20px_#1A7F74] text-[#1A7F74] mb-2 overflow-hidden ring-4 ring-black/5 dark:ring-black/40 transition-colors">
                   <UserCheck className="w-8 h-8" />
                 </div>
-                <span className="text-sm font-bold text-gray-400">المصمم</span>
+                <span className="text-sm font-bold text-gray-500 dark:text-gray-400 transition-colors">المصمم</span>
                 <span className="font-bold text-[#1A7F74] text-lg">$2,000</span>
               </div>
               <div className="alloc-node-2 flex flex-col items-center opacity-0 transform translate-y-10">
-                <div className="w-16 h-16 rounded-full bg-[#3B82F6]/20 border-2 border-[#3B82F6] flex items-center justify-center shadow-[0_0_20px_#3B82F6] text-[#3B82F6] mb-2 overflow-hidden ring-4 ring-black/40">
+                <div className="w-16 h-16 rounded-full bg-[#3B82F6]/10 dark:bg-[#3B82F6]/20 border-2 border-[#3B82F6] flex items-center justify-center shadow-[0_0_20px_#3B82F6] text-[#3B82F6] mb-2 overflow-hidden ring-4 ring-black/5 dark:ring-black/40 transition-colors">
                   <BrainCircuit className="w-8 h-8" />
                 </div>
-                <span className="text-sm font-bold text-gray-400">المطور</span>
+                <span className="text-sm font-bold text-gray-500 dark:text-gray-400 transition-colors">المطور</span>
                 <span className="font-bold text-[#3B82F6] text-lg">$3,000</span>
               </div>
             </div>
@@ -395,10 +401,10 @@ export default function Landing() {
               <div className="w-32 h-32 rounded-full bg-[#22C55E]/10 border-2 border-[#22C55E] flex items-center justify-center shadow-[0_0_100px_rgba(34,197,94,0.3)] backdrop-blur-md mb-6">
                 <CheckCircle className="text-[#22C55E] w-16 h-16" />
               </div>
-              <div className="bg-white/5 backdrop-blur-md px-6 py-3 rounded-2xl border border-white/10 flex flex-col items-center">
-                <span className="text-xs uppercase tracking-widest text-white/60 mb-1 font-bold">نسبة العدالة</span>
+              <div className="bg-white/80 dark:bg-white/5 backdrop-blur-md px-6 py-3 rounded-2xl border border-gray-200 dark:border-white/10 flex flex-col items-center shadow-lg dark:shadow-none transition-colors">
+                <span className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/60 mb-1 font-bold transition-colors">نسبة العدالة</span>
                 <span className="text-4xl font-black text-[#22C55E]">100%</span>
-                <span className="text-xs text-white/80 mt-2">تسعير عادل للمنطقة</span>
+                <span className="text-xs text-gray-600 dark:text-white/80 mt-2 transition-colors">تسعير عادل للمنطقة</span>
               </div>
             </div>
           </div>
@@ -418,11 +424,11 @@ export default function Landing() {
             >
               <Lock size={16} /> حماية مطلقة للأموال
             </motion.div>
-            <h2 className="text-4xl md:text-6xl font-black mb-10 leading-tight">
+            <h2 className="text-3xl md:text-5xl font-black mb-8 leading-[1.2]">
               خزنة كفيل الرقمية<br />
               <span className="text-blue-400">حيث تنام أموالك بسلام.</span>
             </h2>
-            <p className="text-xl text-gray-400 mb-12 leading-relaxed">
+            <p className="text-lg text-gray-400 mb-12 leading-relaxed">
               عندما تودع ميزانية المشروع، لا تذهب لجيوبنا ولا لجيوب المستقل مباشرة. هي تظل في حساب بنكي مشفر ومؤمن، ولا يتم تحريرها إلا عندما تضغط أنت على "استلام العمل".
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -484,14 +490,14 @@ export default function Landing() {
       </section>
 
       {/* ❌ PROBLEM VS ✅ SOLUTION - Apple-Style Morph Narrative */}
-      <section id="about" className="relative h-[400vh] bg-[#F9F4EE] morph-bg transition-colors duration-1000">
+      <section id="about" className="relative min-h-screen bg-[#F9F4EE] dark:bg-[#08111A] morph-bg transition-colors duration-1000">
         <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden px-6">
           
           <div className="text-center mb-16 relative z-30">
-            <motion.h2 className="morph-headline text-5xl md:text-[6rem] lg:text-[7rem] font-black text-[#0D1B2A] mb-6 tracking-tighter">
+            <motion.h2 className="morph-headline text-4xl md:text-6xl lg:text-[5rem] font-black text-[#0D1B2A] dark:text-white mb-6 tracking-tighter">
               من الفوضى... إلى اليقين.
             </motion.h2>
-            <p className="text-xl md:text-2xl text-gray-500 max-w-3xl mx-auto font-medium leading-relaxed opacity-60">
+            <p className="text-lg md:text-xl text-gray-500 max-w-3xl mx-auto font-medium leading-relaxed opacity-60">
                اسحب للأسفل لترى كيف نحول المخاطر إلى ضمانات.
             </p>
           </div>
@@ -575,7 +581,7 @@ export default function Landing() {
       </section>
 
       {/* 🤖 AI JUSTICE - Cyberpunk Tech Aesthetic */}
-      <section id="ai-justice" className="reveal-section py-40 bg-white relative overflow-hidden">
+      <section id="ai-justice" className="reveal-section py-40 bg-white dark:bg-[#08111A] relative overflow-hidden transition-colors duration-500">
         <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-24 items-center">
           <div className="relative order-2 lg:order-1">
             <div className="absolute -inset-10 bg-blue-100/50 blur-[80px] rounded-full -z-10"></div>
@@ -583,7 +589,7 @@ export default function Landing() {
               initial={{ rotate: -5, scale: 0.9 }}
               whileInView={{ rotate: 0, scale: 1 }}
               transition={{ duration: 1, ease: "easeOut" }}
-              className="bg-white border-8 border-gray-100 rounded-[3rem] shadow-2xl overflow-hidden"
+              className="bg-white dark:bg-[#0D1B2A] border-8 border-gray-100 dark:border-white/5 rounded-[3rem] shadow-2xl overflow-hidden transition-colors"
             >
               <div className="bg-gray-900 p-6 flex gap-3 border-b border-gray-800">
                 <div className="w-3 h-3 rounded-full bg-red-500"></div>
@@ -592,16 +598,16 @@ export default function Landing() {
                 <span className="text-gray-500 text-[10px] font-mono mr-auto uppercase tracking-widest">ai-justice-engine.js</span>
               </div>
               <div className="p-8 space-y-6">
-                <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                <div className="bg-gray-50 dark:bg-white/5 p-6 rounded-2xl border border-gray-100 dark:border-white/10 transition-colors">
                    <div className="flex justify-between items-center mb-4">
-                      <span className="text-xs font-black text-blue-600 uppercase">تحليل الميزانية</span>
+                      <span className="text-xs font-black text-blue-600 dark:text-blue-400 uppercase">تحليل الميزانية</span>
                       <span className="text-xs font-bold text-gray-400">ID: #8829</span>
                    </div>
-                   <h4 className="font-bold text-xl mb-2 text-[#0D1B2A]">تصميم تطبيق كامل (iOS)</h4>
-                   <p className="text-2xl font-black text-[#0D1B2A] mb-4">$200.00</p>
-                   <div className="bg-red-50 border border-red-100 p-4 rounded-xl flex gap-4 items-start">
+                   <h4 className="font-bold text-xl mb-2 text-[#0D1B2A] dark:text-white">تصميم تطبيق كامل (iOS)</h4>
+                   <p className="text-2xl font-black text-[#0D1B2A] dark:text-white mb-4">$200.00</p>
+                   <div className="bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20 p-4 rounded-xl flex gap-4 items-start transition-colors">
                       <AlertTriangle className="text-red-500 shrink-0" size={20}/>
-                      <p className="text-sm font-bold text-red-900">تحذير: السعر أقل من متوسط السوق بنسبة 70%. هذا السعر قد يعتبر مجحفاً للمستقل.</p>
+                      <p className="text-sm font-bold text-red-900 dark:text-red-300">تحذير: السعر أقل من متوسط السوق بنسبة 70%. هذا السعر قد يعتبر مجحفاً للمستقل.</p>
                    </div>
                 </div>
                 <div className="flex items-center gap-4 text-gray-400 animate-pulse">
@@ -613,14 +619,14 @@ export default function Landing() {
           </div>
 
           <div className="order-1 lg:order-2">
-            <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 font-black px-5 py-2 rounded-full text-sm mb-8 border border-indigo-100">
+            <div className="inline-flex items-center gap-2 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 font-black px-5 py-2 rounded-full text-sm mb-8 border border-indigo-100 dark:border-indigo-500/20 transition-colors">
               <Zap size={16} /> مدعوم بـ GPT-4o
             </div>
-            <h2 className="text-4xl md:text-6xl font-black text-[#0D1B2A] mb-10 leading-tight tracking-tight">
+            <h2 className="text-3xl md:text-5xl font-black text-[#0D1B2A] dark:text-white mb-8 leading-[1.2] tracking-tight transition-colors">
               مقـيم العدالة<br />
-              <span className="text-indigo-600">كاشف الاستغلال.</span>
+              <span className="text-indigo-600 dark:text-indigo-400">كاشف الاستغلال.</span>
             </h2>
-            <p className="text-xl text-gray-500 mb-12 leading-relaxed font-medium">
+            <p className="text-lg text-gray-500 mb-12 leading-relaxed font-medium">
               أول نظام ذكاء اصطناعي في المنطقة يراقب تسعير المهام بشكل آلي. إذا حاول أي طرف استغلال الآخر بميزانيات غير منطقية، يتدخل النظام فوراً لتقديم نصيحة سعرية عادلة بناءً على متوسطات السوق.
             </p>
             <div className="space-y-6">
@@ -629,12 +635,12 @@ export default function Landing() {
                 { icon: Sparkles, title: 'تحليل العقود', desc: 'كشف الثغرات في وصف المشاريع قبل البدء لضمان وضوح المهام.' }
               ].map((item, i) => (
                 <div key={i} className="flex gap-6 group">
-                  <div className="w-14 h-14 bg-white border border-gray-100 shadow-sm rounded-2xl flex items-center justify-center text-[#0D1B2A] group-hover:bg-[#0D1B2A] group-hover:text-white transition-all duration-300 shrink-0">
+                  <div className="w-14 h-14 bg-white dark:bg-[#0D1B2A] border border-gray-100 dark:border-white/10 shadow-sm rounded-2xl flex items-center justify-center text-[#0D1B2A] dark:text-white group-hover:bg-[#0D1B2A] group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-[#0D1B2A] transition-all duration-300 shrink-0">
                     <item.icon size={24}/>
                   </div>
                   <div>
-                    <h4 className="font-bold text-xl mb-1 text-[#0D1B2A]">{item.title}</h4>
-                    <p className="text-gray-500 leading-relaxed">{item.desc}</p>
+                    <h4 className="font-bold text-xl mb-1 text-[#0D1B2A] dark:text-white">{item.title}</h4>
+                    <p className="text-gray-500 dark:text-gray-400 leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
               ))}
@@ -654,10 +660,10 @@ export default function Landing() {
           <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[100px] -z-10"></div>
           
           <div className="relative z-10">
-            <h2 className="text-5xl md:text-7xl font-black text-white mb-10 leading-tight tracking-tight">
+            <h2 className="text-4xl md:text-6xl lg:text-[4.5rem] font-black text-white mb-8 leading-[1.15] tracking-tight">
               جاهز لتبني مستقبلك<br />بكل أمان؟
             </h2>
-            <p className="text-xl md:text-2xl text-blue-200 mb-16 max-w-2xl mx-auto font-medium opacity-80">
+            <p className="text-lg md:text-xl text-blue-200 mb-16 max-w-2xl mx-auto font-medium opacity-80">
               انضم إلى آلاف العملاء والمستقلين الذين اختاروا "كفيل" كشريك موثوق لرحلتهم في عالم العمل الحر.
             </p>
             <div className="flex flex-col sm:flex-row justify-center items-center gap-8">
@@ -686,21 +692,21 @@ export default function Landing() {
       </section>
 
       {/* ❓ FAQ SECTION */}
-      <section id="faq" className="reveal-section py-32 bg-gray-50/30">
+      <section id="faq" className="reveal-section py-32 bg-gray-50/30 dark:bg-[#0a1622] transition-colors duration-500">
         <div className="max-w-4xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-black text-[#0D1B2A] mb-4 tracking-tight">الأسئلة الشائعة</h2>
-            <p className="text-gray-500 font-bold">كل ما تحتاج معرفته عن نظام كفيل والضمان المالي.</p>
+            <h2 className="text-4xl font-black text-[#0D1B2A] dark:text-white mb-4 tracking-tight transition-colors">الأسئلة الشائعة</h2>
+            <p className="text-gray-500 dark:text-gray-400 font-bold transition-colors">كل ما تحتاج معرفته عن نظام كفيل والضمان المالي.</p>
           </div>
           <div className="space-y-4">
             {faqs.map((faq, i) => (
-              <div key={i} className="bg-white rounded-3xl border border-gray-100 overflow-hidden transition-all hover:shadow-md">
+              <div key={i} className="bg-white dark:bg-[#0D1B2A] rounded-3xl border border-gray-100 dark:border-white/5 overflow-hidden transition-all hover:shadow-md">
                 <button 
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                   className="w-full p-6 text-right flex justify-between items-center"
                 >
-                  <span className="font-bold text-lg text-[#0D1B2A]">{faq.q}</span>
-                  <ChevronDown className={cn("text-gray-400 transition-transform", openFaq === i && "rotate-180")} />
+                  <span className="font-bold text-lg text-[#0D1B2A] dark:text-white">{faq.q}</span>
+                  <ChevronDown className={cn("text-gray-400 dark:text-gray-500 transition-transform", openFaq === i && "rotate-180")} />
                 </button>
                 <AnimatePresence>
                   {openFaq === i && (
@@ -710,7 +716,7 @@ export default function Landing() {
                       exit={{ height: 0, opacity: 0 }}
                       className="overflow-hidden"
                     >
-                      <div className="p-6 pt-0 text-gray-500 font-medium leading-relaxed border-t border-gray-50">
+                      <div className="p-6 pt-0 text-gray-500 dark:text-gray-400 font-medium leading-relaxed border-t border-gray-50 dark:border-white/5 transition-colors">
                         {faq.a}
                       </div>
                     </motion.div>
@@ -723,34 +729,34 @@ export default function Landing() {
       </section>
 
       {/* 🏁 FOOTER - Minimalist Apple Style */}
-      <footer className="bg-white pt-32 pb-16 px-6 md:px-12 border-t border-gray-100">
+      <footer className="bg-white dark:bg-[#08111A] pt-32 pb-16 px-6 md:px-12 border-t border-gray-100 dark:border-white/5 transition-colors duration-500">
         <div className="max-w-7xl mx-auto grid md:grid-cols-4 gap-20 mb-24">
           <div className="md:col-span-2">
-            <div className="text-3xl font-black text-[#0D1B2A] flex items-center gap-4 mb-8">
-               <div className="bg-[#0D1B2A] p-2 rounded-2xl">
-                <ShieldCheck className="text-white" size={28}/>
+            <div className="text-3xl font-black text-[#0D1B2A] dark:text-white flex items-center gap-4 mb-8 transition-colors">
+               <div className="bg-[#0D1B2A] dark:bg-white p-2 rounded-2xl transition-colors">
+                <ShieldCheck className="text-white dark:text-[#0D1B2A] transition-colors" size={28}/>
                </div>
                كفيل
             </div>
-            <p className="text-xl text-gray-500 max-w-md font-medium leading-relaxed">
+            <p className="text-xl text-gray-500 dark:text-gray-400 max-w-md font-medium leading-relaxed transition-colors">
               كفيل هو المعيار الجديد للأمان في العمل الحر. بنينا نظاماً يضمن حق الجميع، ويحول دون أي محاولة للاستغلال المالي.
             </p>
           </div>
           <div>
-            <h4 className="font-black text-[#0D1B2A] mb-8 text-lg">المنصة</h4>
-            <ul className="space-y-4 text-gray-500 font-bold">
+            <h4 className="font-black text-[#0D1B2A] dark:text-white mb-8 text-lg transition-colors">المنصة</h4>
+            <ul className="space-y-4 text-gray-500 dark:text-gray-400 font-bold transition-colors">
               <li><a href="#about" className="hover:text-blue-600 transition-colors">عن كفيل</a></li>
               <li><a href="#how-it-works" className="hover:text-blue-600 transition-colors">نظام الضمان</a></li>
               <li><a href="#ai-justice" className="hover:text-blue-600 transition-colors">مقـيم العدالة</a></li>
-              <li><a href="#faq" className="hover:text-blue-600 transition-colors">الأسئلة الشائعة</a></li>
+              <li><a href="#faq" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">الأسئلة الشائعة</a></li>
             </ul>
           </div>
           <div>
-            <h4 className="font-black text-[#0D1B2A] mb-8 text-lg">قانوني</h4>
-            <ul className="space-y-4 text-gray-500 font-bold">
-              <li><a href="#" className="hover:text-blue-600 transition-colors">الشروط والأحكام</a></li>
-              <li><a href="#" className="hover:text-blue-600 transition-colors">سياسة الخصوصية</a></li>
-              <li><a href="#" className="hover:text-blue-600 transition-colors">قواعد التحكيم</a></li>
+            <h4 className="font-black text-[#0D1B2A] dark:text-white mb-8 text-lg transition-colors">قانوني</h4>
+            <ul className="space-y-4 text-gray-500 dark:text-gray-400 font-bold transition-colors">
+              <li><a href="#" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">الشروط والأحكام</a></li>
+              <li><a href="#" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">سياسة الخصوصية</a></li>
+              <li><a href="#" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">قواعد التحكيم</a></li>
             </ul>
           </div>
         </div>
@@ -765,23 +771,23 @@ export default function Landing() {
             <motion.a 
               key={i} 
               href={`#${item.id}`} 
-              whileHover={{ y: -2, color: '#0D1B2A' }}
-              className="hover:text-blue-900 transition-colors relative group"
+              whileHover={{ y: -2, color: isDark ? '#fff' : '#0D1B2A' }}
+              className="hover:text-blue-900 dark:hover:text-white transition-colors relative group"
             >
               {item.name}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#C9A84C] transition-all group-hover:w-full"></span>
             </motion.a>
           ))}
         </div>
-        <div className="border-t border-gray-100 max-w-7xl mx-auto pt-12 flex flex-col md:flex-row justify-between items-center text-gray-400 font-bold text-sm">
+        <div className="border-t border-gray-100 dark:border-white/5 max-w-7xl mx-auto pt-12 flex flex-col md:flex-row justify-between items-center text-gray-400 dark:text-gray-500 font-bold text-sm transition-colors">
           <p>© {new Date().getFullYear()} كفيل - Kafeel. كل الحقوق محفوظة.</p>
           <div className="flex gap-10 mt-6 md:mt-0">
              {['Twitter (X)', 'LinkedIn', 'Instagram'].map((social) => (
                <motion.a 
                  key={social} 
                  href="#" 
-                 whileHover={{ scale: 1.1, color: '#0D1B2A' }}
-                 className="hover:text-[#0D1B2A] transition-colors"
+                 whileHover={{ scale: 1.1, color: isDark ? '#fff' : '#0D1B2A' }}
+                 className="hover:text-[#0D1B2A] dark:hover:text-white transition-colors"
                >
                  {social}
                </motion.a>

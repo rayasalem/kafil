@@ -45,7 +45,7 @@ const App: FC = () => {
             <Route path="/dashboard/client" element={<ClientDashboard />} />
             <Route path="/dashboard/freelancer" element={<FreelancerDashboard />} />
             <Route path="/dashboard/coordinator" element={<CoordinatorDashboard />} />
-            <Route path="/dashboard/arbitrator" element={<ArbitratorDashboard />} />
+            <Route path="/arbitration" element={<ArbitratorDashboard />} />
             <Route path="/dashboard" element={<DashboardRedirect />} />
             <Route path="/create" element={<CreateProject />} />
             <Route path="/projects/:id" element={<ProjectDetails />} />

@@ -2,22 +2,22 @@ import { useState, FC, FormEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ShieldCheck, Lock, User as UserIcon, ArrowLeft } from 'lucide-react';
 import { User } from '@/types';
+import { api } from '@/services/api';
 
 const Login: FC = () => {
   const [username, setUsername] = useState('');
   const [role, setRole] = useState<'client' | 'freelancer' | 'admin' | 'coordinator'>('client');
   const navigate = useNavigate();
 
-  const handleLogin = (e: FormEvent) => {
+  const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
-    const mockUser: User = {
-      id: Math.random().toString(36).substr(2, 9),
-      username: username,
-      role: role,
-      name: username.charAt(0).toUpperCase() + username.slice(1)
-    };
-    localStorage.setItem('user', JSON.stringify(mockUser));
-    navigate(`/dashboard/${role}`);
+    try {
+      const user = await api.login(username, '');
+      localStorage.setItem('user', JSON.stringify(user));
+      navigate(`/dashboard/${user.role}`);
+    } catch (err: any) {
+      alert(err.message || 'فشل تسجيل الدخول');
+    }
   };
 
   return (
@@ -49,24 +49,28 @@ const Login: FC = () => {
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2 mr-1">نوع الحساب (لأغراض العرض)</label>
-              <select 
-                className="w-full bg-gray-50 border-0 p-4 rounded-2xl focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all outline-none font-bold text-gray-700 appearance-none"
-                value={role}
-                onChange={(e) => setRole(e.target.value as any)}
-              >
-                <option value="client">صاحب مشروع (Client)</option>
-                <option value="freelancer">مستقل (Freelancer)</option>
-                <option value="coordinator">منسق (Coordinator)</option>
-                <option value="admin">مدير النظام (Admin)</option>
-              </select>
-            </div>
-
             <button type="submit" className="w-full bg-blue-900 text-white font-bold py-4 rounded-2xl hover:bg-blue-800 transition-all shadow-xl shadow-blue-900/20 flex items-center justify-center gap-3 text-lg group">
               دخول <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
             </button>
           </form>
+
+          <div className="mt-6 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+            <p className="text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest text-center">بيانات تجريبية (Hackathon Simulation)</p>
+            <div className="grid grid-cols-2 gap-2 text-[10px] font-bold text-gray-600">
+              <div className="bg-white p-1.5 rounded-lg border border-gray-100">
+                <span className="text-blue-600 block">Client:</span> ahmed_k
+              </div>
+              <div className="bg-white p-1.5 rounded-lg border border-gray-100">
+                <span className="text-purple-600 block">Freelancer:</span> omar_dev
+              </div>
+              <div className="bg-white p-1.5 rounded-lg border border-gray-100">
+                <span className="text-emerald-600 block">Coordinator:</span> tariq_pm
+              </div>
+              <div className="bg-white p-1.5 rounded-lg border border-gray-100">
+                <span className="text-red-600 block">Admin:</span> kafil_admin
+              </div>
+            </div>
+          </div>
 
           <div className="mt-10 pt-8 border-t border-gray-50 text-center">
             <p className="text-gray-500 font-medium">ليس لديك حساب؟ <Link to="/register" className="text-blue-600 font-bold hover:underline">أنشئ حساباً الآن</Link></p>

@@ -38,7 +38,7 @@ const MOCK_CASES: Record<string, {
     amount: 1200,
     hoursLeft: 11,
     requester: 'Ahmed K. (عميل)',
-    respondent: 'Omar T. (مطور)',
+    respondent: 'Omar (مطور)',
     filedDate: '30 أبريل 2026',
     aiSummary: `رفع المشتكي "Ahmed K." نزاعاً بشأن المرحلة الأولى من مشروع SaaS، مدّعياً أن الـ API المسلّمة لا تتوافق مع المواصفات المتفق عليها. يؤكد المدعى عليه "Omar T." أنه سلّم وفق المواصفات الأصلية وأن التغييرات طُلبت لاحقاً خارج النطاق المتفق عليه.`,
     evidence: ['api_docs.pdf', 'original_spec.docx'],
@@ -61,6 +61,9 @@ export default function ArbitratorCaseView() {
   const [submitted, setSubmitted] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
 
+  const userStr = localStorage.getItem('user');
+  const currentUser = userStr ? JSON.parse(userStr) : { role: 'guest', name: 'Guest' };
+
   const c = caseId ? MOCK_CASES[caseId] : null;
   if (!c) return (
     <div className="max-w-4xl mx-auto text-center py-20">
@@ -71,6 +74,9 @@ export default function ArbitratorCaseView() {
 
   const urgent = c.hoursLeft <= 12;
   const pct = ((48 - c.hoursLeft) / 48) * 100;
+
+  // Conflict of interest check
+  const isUserInvolved = c.requester.includes(currentUser.name) || c.respondent.includes(currentUser.name);
 
   if (submitted) {
     return (
@@ -202,116 +208,142 @@ export default function ArbitratorCaseView() {
         </div>
       </div>
 
-      {/* Vote Interface */}
-      <div className="bg-white border-2 border-[#0D1B2A] rounded-3xl p-6">
-        <h3 className="font-black text-[#0D1B2A] text-lg mb-2 flex items-center gap-2">
-          <Scale size={20} className="text-[#C9A84C]" /> تصويتك — سري ومستقل
-        </h3>
-        <p className="text-xs text-gray-400 font-medium mb-6">لا يمكنك رؤية أصوات المحكمين الآخرين. قرارك نهائي عند الإرسال.</p>
+      {/* Vote Interface / Role Block / Conflict of Interest Block */}
+      {currentUser.role === 'client' ? (
+        <div className="bg-gray-50 border-2 border-[#E8DDD0] rounded-3xl p-8 text-center shadow-sm">
+          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Scale size={32} className="text-gray-500" />
+          </div>
+          <h3 className="font-black text-[#0D1B2A] text-xl mb-2">صلاحية محظورة</h3>
+          <p className="text-sm font-bold text-gray-500 leading-relaxed max-w-lg mx-auto">
+            وفقاً لسياسة كفيل، العملاء لا يمكنهم المشاركة كأعضاء تحكيم في النزاعات. <br/>
+            يقتصر حق التصويت والتحكيم على المستقلين والمنسقين لضمان تقييم تقني ومهني محايد. يمكنك فقط متابعة تفاصيل القضية.
+          </p>
+        </div>
+      ) : isUserInvolved ? (
+        <div className="bg-red-50 border-2 border-red-200 rounded-3xl p-8 text-center shadow-sm">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <AlertTriangle size={32} className="text-red-600" />
+          </div>
+          <h3 className="font-black text-red-900 text-xl mb-2">تضارب مصالح (Conflict of Interest)</h3>
+          <p className="text-sm font-bold text-red-700 leading-relaxed max-w-lg mx-auto">
+            عذراً، لا يمكنك التحكيم أو التصويت في نزاع أنت طرف فيه (مشتكي أو مدعى عليه). <br/> 
+            نظام كفيل يضمن الحيادية التامة من خلال منع أطراف المشروع من التأثير على القرار. يمكنك فقط التحكيم في نزاعات المشاريع الأخرى.
+          </p>
+        </div>
+      ) : (
+        <div className="bg-white border-2 border-[#0D1B2A] rounded-3xl p-6">
+          <h3 className="font-black text-[#0D1B2A] text-lg mb-2 flex items-center gap-2">
+            <Scale size={20} className="text-[#C9A84C]" /> تصويتك — سري ومستقل
+          </h3>
+          <p className="text-xs text-gray-400 font-medium mb-6">لا يمكنك رؤية أصوات المحكمين الآخرين. قرارك نهائي عند الإرسال.</p>
 
-        <div className="space-y-3 mb-6">
-          {/* Option 1 */}
-          <button
-            onClick={() => setVote('requester')}
-            className={`w-full p-4 rounded-2xl border-2 text-right transition-all ${vote === 'requester' ? 'border-[#C9A84C] bg-[#C9A84C]/5' : 'border-[#E8DDD0] hover:border-gray-300'}`}
-          >
-            <div className="flex items-center gap-3">
-              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${vote === 'requester' ? 'border-[#C9A84C] bg-[#C9A84C]' : 'border-gray-300'}`}>
-                {vote === 'requester' && <CheckCircle size={12} className="text-white" fill="white" />}
+          <div className="space-y-3 mb-6">
+            {/* Option 1 */}
+            <button
+              onClick={() => setVote('requester')}
+              className={`w-full p-4 rounded-2xl border-2 text-right transition-all ${vote === 'requester' ? 'border-[#C9A84C] bg-[#C9A84C]/5' : 'border-[#E8DDD0] hover:border-gray-300'}`}
+            >
+              <div className="flex items-center gap-3">
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${vote === 'requester' ? 'border-[#C9A84C] bg-[#C9A84C]' : 'border-gray-300'}`}>
+                  {vote === 'requester' && <CheckCircle size={12} className="text-white" fill="white" />}
+                </div>
+                <div>
+                  <p className="font-black text-sm text-[#0D1B2A]">الحكم لصالح المشتكي — إفراج كامل ({c.requester.split(' ')[0]})</p>
+                  <p className="text-xs text-gray-400">سيحصل المشتكي على المبلغ كاملاً ${c.amount}</p>
+                </div>
               </div>
-              <div>
-                <p className="font-black text-sm text-[#0D1B2A]">الحكم لصالح المشتكي — إفراج كامل ({c.requester.split(' ')[0]})</p>
-                <p className="text-xs text-gray-400">سيحصل المشتكي على المبلغ كاملاً ${c.amount}</p>
-              </div>
-            </div>
-          </button>
+            </button>
 
-          {/* Option 2 */}
-          <button
-            onClick={() => setVote('respondent')}
-            className={`w-full p-4 rounded-2xl border-2 text-right transition-all ${vote === 'respondent' ? 'border-[#1A7F74] bg-[#1A7F74]/5' : 'border-[#E8DDD0] hover:border-gray-300'}`}
-          >
-            <div className="flex items-center gap-3">
-              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${vote === 'respondent' ? 'border-[#1A7F74] bg-[#1A7F74]' : 'border-gray-300'}`}>
-                {vote === 'respondent' && <CheckCircle size={12} className="text-white" fill="white" />}
+            {/* Option 2 */}
+            <button
+              onClick={() => setVote('respondent')}
+              className={`w-full p-4 rounded-2xl border-2 text-right transition-all ${vote === 'respondent' ? 'border-[#1A7F74] bg-[#1A7F74]/5' : 'border-[#E8DDD0] hover:border-gray-300'}`}
+            >
+              <div className="flex items-center gap-3">
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${vote === 'respondent' ? 'border-[#1A7F74] bg-[#1A7F74]' : 'border-gray-300'}`}>
+                  {vote === 'respondent' && <CheckCircle size={12} className="text-white" fill="white" />}
+                </div>
+                <div>
+                  <p className="font-black text-sm text-[#0D1B2A]">الحكم لصالح المدعى عليه — اعتماد الدفع ({c.respondent.split(' ')[0]})</p>
+                  <p className="text-xs text-gray-400">سيُصرف المبلغ للمدعى عليه كاملاً</p>
+                </div>
               </div>
-              <div>
-                <p className="font-black text-sm text-[#0D1B2A]">الحكم لصالح المدعى عليه — اعتماد الدفع ({c.respondent.split(' ')[0]})</p>
-                <p className="text-xs text-gray-400">سيُصرف المبلغ للمدعى عليه كاملاً</p>
-              </div>
-            </div>
-          </button>
+            </button>
 
-          {/* Option 3 — Partial */}
-          <button
-            onClick={() => setVote('partial')}
-            className={`w-full p-4 rounded-2xl border-2 text-right transition-all ${vote === 'partial' ? 'border-blue-400 bg-blue-50/50' : 'border-[#E8DDD0] hover:border-gray-300'}`}
-          >
-            <div className="flex items-center gap-3">
-              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${vote === 'partial' ? 'border-blue-500 bg-blue-500' : 'border-gray-300'}`}>
-                {vote === 'partial' && <CheckCircle size={12} className="text-white" fill="white" />}
-              </div>
-              <div className="flex-1">
-                <p className="font-black text-sm text-[#0D1B2A]">تقسيم جزئي</p>
-                <p className="text-xs text-gray-400 mb-3">حدد النسبة التي يحصل عليها المشتكي</p>
-                {vote === 'partial' && (
-                  <div onClick={e => e.stopPropagation()} className="space-y-2">
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs font-bold text-gray-500 w-24">المشتكي: {partialPct}%</span>
-                      <input
-                        type="range" min={10} max={90} step={5}
-                        value={partialPct}
-                        onChange={e => setPartialPct(Number(e.target.value))}
-                        className="flex-1 accent-[#C9A84C]"
-                      />
-                      <span className="text-xs font-bold text-gray-500 w-32 text-left">المدعى عليه: {100 - partialPct}%</span>
+            {/* Option 3 — Partial */}
+            <button
+              onClick={() => setVote('partial')}
+              className={`w-full p-4 rounded-2xl border-2 text-right transition-all ${vote === 'partial' ? 'border-blue-400 bg-blue-50/50' : 'border-[#E8DDD0] hover:border-gray-300'}`}
+            >
+              <div className="flex items-center gap-3">
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${vote === 'partial' ? 'border-blue-500 bg-blue-500' : 'border-gray-300'}`}>
+                  {vote === 'partial' && <CheckCircle size={12} className="text-white" fill="white" />}
+                </div>
+                <div className="flex-1">
+                  <p className="font-black text-sm text-[#0D1B2A]">تقسيم جزئي</p>
+                  <p className="text-xs text-gray-400 mb-3">حدد النسبة التي يحصل عليها المشتكي</p>
+                  {vote === 'partial' && (
+                    <div onClick={e => e.stopPropagation()} className="space-y-2">
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs font-bold text-gray-500 w-24">المشتكي: {partialPct}%</span>
+                        <input
+                          type="range" min={10} max={90} step={5}
+                          value={partialPct}
+                          onChange={e => setPartialPct(Number(e.target.value))}
+                          className="flex-1 accent-[#C9A84C]"
+                        />
+                        <span className="text-xs font-bold text-gray-500 w-32 text-left">المدعى عليه: {100 - partialPct}%</span>
+                      </div>
+                      <div className="flex gap-2 text-xs font-black">
+                        <span className="bg-[#C9A84C]/10 text-[#C9A84C] px-3 py-1 rounded-full">
+                          للمشتكي: ${Math.round(c.amount * partialPct / 100)}
+                        </span>
+                        <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
+                          للمدعى عليه: ${Math.round(c.amount * (100 - partialPct) / 100)}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex gap-2 text-xs font-black">
-                      <span className="bg-[#C9A84C]/10 text-[#C9A84C] px-3 py-1 rounded-full">
-                        للمشتكي: ${Math.round(c.amount * partialPct / 100)}
-                      </span>
-                      <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
-                        للمدعى عليه: ${Math.round(c.amount * (100 - partialPct) / 100)}
-                      </span>
-                    </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
-          </button>
-        </div>
+            </button>
+          </div>
 
-        {/* Warning */}
-        <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-xl p-3 mb-5">
-          <AlertTriangle size={14} className="text-amber-600 shrink-0 mt-0.5" />
-          <p className="text-xs text-amber-700">قرارك نهائي ولا يمكن التراجع عنه. أصوات المحكمين تُكشف فقط بعد انتهاء التصويت.</p>
-        </div>
+          {/* Warning */}
+          <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-xl p-3 mb-5">
+            <AlertTriangle size={14} className="text-amber-600 shrink-0 mt-0.5" />
+            <p className="text-xs text-amber-700">قرارك نهائي ولا يمكن التراجع عنه. أصوات المحكمين تُكشف فقط بعد انتهاء التصويت.</p>
+          </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            onClick={() => navigate(-1)}
-            className="py-3.5 rounded-xl border border-[#E8DDD0] text-gray-600 font-bold text-sm hover:bg-gray-50 transition-colors"
-          >
-            حفظ لاحقاً
-          </button>
-          <button
-            disabled={!vote}
-            onClick={() => setSubmitted(true)}
-            className="py-3.5 rounded-xl font-black text-sm text-white flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed"
-            style={{ background: '#0D1B2A', boxShadow: vote ? '0 4px 16px rgba(13,27,42,0.3)' : 'none' }}
-          >
-            <Gavel size={16} /> إرسال تصويتي
-          </button>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={() => navigate(-1)}
+              className="py-3.5 rounded-xl border border-[#E8DDD0] text-gray-600 font-bold text-sm hover:bg-gray-50 transition-colors"
+            >
+              حفظ لاحقاً
+            </button>
+            <button
+              disabled={!vote}
+              onClick={() => setSubmitted(true)}
+              className="py-3.5 rounded-xl font-black text-sm text-white flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed"
+              style={{ background: '#0D1B2A', boxShadow: vote ? '0 4px 16px rgba(13,27,42,0.3)' : 'none' }}
+            >
+              <Gavel size={16} /> إرسال تصويتي
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Reward note */}
-      <div className="flex items-center gap-3 bg-[#C9A84C]/5 border border-[#C9A84C]/20 rounded-2xl p-4">
-        <User size={16} className="text-[#C9A84C] shrink-0" />
-        <p className="text-xs font-medium text-gray-600">
-          مكافأتك: <span className="font-black text-[#0D1B2A]">$3.00</span> · تُصرف تلقائياً بعد صدور حكم الأغلبية
-        </p>
-      </div>
+      {/* Reward note - Only show if not a client and not involved */}
+      {currentUser.role !== 'client' && !isUserInvolved && (
+        <div className="flex items-center gap-3 bg-[#C9A84C]/5 border border-[#C9A84C]/20 rounded-2xl p-4">
+          <User size={16} className="text-[#C9A84C] shrink-0" />
+          <p className="text-xs font-medium text-gray-600">
+            مكافأتك: <span className="font-black text-[#0D1B2A]">$3.00</span> · تُصرف تلقائياً بعد صدور حكم الأغلبية
+          </p>
+        </div>
+      )}
 
     </div>
   );

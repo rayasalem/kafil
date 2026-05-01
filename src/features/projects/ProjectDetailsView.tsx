@@ -2,7 +2,7 @@ import { useEffect, useState, FC, FormEvent } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Lock, Send, Gavel, X, FileText, Upload, TriangleAlert,
-  Scale, CheckCircle2, ShieldCheck, User, ArrowLeft
+  Scale, CheckCircle2, ShieldCheck, User, ArrowLeft, Clock, CalendarDays
 } from 'lucide-react';
 import MoneyFlowBar from '@/features/escrow/MoneyFlowBar';
 import { api } from '@/services/api';
@@ -158,13 +158,93 @@ const DisputeModal: FC<{ target: DisputeTarget; onClose: () => void }> = ({ targ
   );
 };
 
+/* ─── Task Details Modal ─── */
+const TaskDetailsModal: FC<{ task: Task; onClose: () => void; onApprove: (id: string) => void; userRole: string }> = ({ task, onClose, onApprove, userRole }) => {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0D1B2A]/40 backdrop-blur-sm animate-fade-in" dir="rtl">
+      <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl border border-[#E8DDD0] overflow-hidden" onClick={e => e.stopPropagation()}>
+        <div className="bg-gray-50 border-b border-[#E8DDD0] px-6 py-5 flex justify-between items-center">
+          <h2 className="font-black text-gray-900 text-lg flex items-center gap-2">
+            <FileText size={20} className="text-[#C9A84C]" /> تفاصيل التسليم
+          </h2>
+          <button onClick={onClose} className="p-2 hover:bg-gray-200 rounded-full transition-colors text-gray-500"><X size={18} /></button>
+        </div>
+        
+        <div className="p-6 space-y-6">
+          <div>
+            <p className="text-xs font-bold text-gray-400 mb-1">المهمة</p>
+            <p className="font-black text-lg text-gray-900">{task.name}</p>
+          </div>
+          
+          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+            <div>
+              <p className="text-[10px] font-bold text-gray-400 mb-1">المستقل</p>
+              <p className="text-sm font-bold text-[#0D1B2A] flex items-center gap-1.5"><User size={14} className="text-[#C9A84C]" /> {task.assignedToName ?? task.assignedTo}</p>
+            </div>
+            <div className="text-left">
+              <p className="text-[10px] font-bold text-gray-400 mb-1">تاريخ التسليم المتوقع</p>
+              <p className="text-sm font-bold text-[#0D1B2A] flex items-center justify-end gap-1.5"><CalendarDays size={14} className="text-[#C9A84C]" /> {task.deadline ?? 'غير محدد'}</p>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-sm font-black text-[#0D1B2A] mb-3">الملفات المسلمة</p>
+            {task.deliverableFile ? (
+              <div className="p-4 border-2 border-dashed border-emerald-200 bg-emerald-50 rounded-xl flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="bg-white p-2 rounded-lg shadow-sm">
+                    <FileText size={20} className="text-emerald-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-emerald-800">{task.deliverableFile}</p>
+                    {task.submittedAt && <p className="text-[10px] text-emerald-600 font-medium">سُلم في: {new Date(task.submittedAt).toLocaleDateString('ar-SA')}</p>}
+                  </div>
+                </div>
+                <button className="text-xs font-bold text-emerald-700 bg-white px-3 py-1.5 rounded-lg border border-emerald-200 hover:bg-emerald-100 transition-colors">
+                  تحميل
+                </button>
+              </div>
+            ) : (
+              <div className="p-8 text-center border-2 border-dashed border-gray-200 bg-gray-50 rounded-xl">
+                <Upload size={24} className="mx-auto text-gray-300 mb-2" />
+                <p className="text-sm font-bold text-gray-400">لم يقم المستقل بتسليم أي ملفات بعد</p>
+              </div>
+            )}
+          </div>
+
+          {task.deliverableNote && (
+            <div>
+              <p className="text-sm font-black text-[#0D1B2A] mb-2">ملاحظات المستقل</p>
+              <div className="p-4 bg-[#F9F4EE] rounded-xl text-sm text-gray-700 leading-relaxed border border-[#E8DDD0]">
+                {task.deliverableNote}
+              </div>
+            </div>
+          )}
+
+          {task.deliverableFile && !task.paid && (userRole === 'client' || userRole === 'admin') && (
+            <div className="pt-4 border-t border-gray-100 flex gap-3">
+              <button 
+                onClick={() => { onApprove(task.id); onClose(); }} 
+                className="flex-1 py-4 bg-[#1A7F74] hover:bg-[#15665D] text-white font-bold rounded-xl transition-all shadow-lg flex items-center justify-center gap-2"
+              >
+                <CheckCircle2 size={18} /> اعتماد العمل وصرف {formatCurrency(task.payment)}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 /* ─── Task Row ─── */
 const TaskRow: FC<{
   t: Task; project: Project;
   onApprove: (id: string) => void;
   onDispute: (t: Task) => void;
+  onTaskClick: (t: Task) => void;
   userRole: string;
-}> = ({ t, project, onApprove, onDispute, userRole }) => {
+}> = ({ t, project, onApprove, onDispute, onTaskClick, userRole }) => {
   const isPaid = t.paid;
   const isDisputed = t.status === 'Disputed';
   const isProgress = t.status === 'In Progress';
@@ -173,10 +253,13 @@ const TaskRow: FC<{
   const statusColor = isPaid ? 'text-emerald-600' : isDisputed ? 'text-red-600' : 'text-amber-600';
 
   return (
-    <div className={cn(
-      'group relative bg-white border-2 p-6 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all hover:shadow-lg',
+    <div 
+      onClick={() => onTaskClick(t)}
+      className={cn(
+      'group relative bg-white border-2 p-6 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all hover:shadow-lg cursor-pointer',
       isPaid ? 'border-emerald-100 bg-emerald-50/20' :
-      isDisputed ? 'border-red-100 bg-red-50/10' : 'border-[#E8DDD0] hover:border-[#C9A84C]/30'
+      isDisputed ? 'border-red-100 bg-red-50/10' :
+      t.inviteStatus === 'Pending' ? 'border-blue-100 bg-blue-50/20 opacity-80' : 'border-[#E8DDD0] hover:border-[#C9A84C]/30'
     )}>
       {isPaid && (
         <div className="absolute top-0 right-8 -translate-y-1/2 bg-emerald-500 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm">
@@ -186,6 +269,11 @@ const TaskRow: FC<{
       {isDisputed && (
         <div className="absolute top-0 right-8 -translate-y-1/2 bg-red-500 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm">
           نزاع مفتوح
+        </div>
+      )}
+      {t.inviteStatus === 'Pending' && !isPaid && !isDisputed && (
+        <div className="absolute top-0 right-8 -translate-y-1/2 bg-blue-500 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm flex items-center gap-1">
+          <Clock size={10} /> دعوة معلقة
         </div>
       )}
 
@@ -201,7 +289,7 @@ const TaskRow: FC<{
           <h3 className="font-bold text-gray-900 text-lg mb-1 leading-tight">{t.name}</h3>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
             <span className="text-gray-400 flex items-center gap-1.5 font-medium">
-              <User size={14} className="text-gray-300" /> {t.assignedTo}
+              <User size={14} className="text-gray-300" /> {t.assignedToName ?? t.assignedTo}
             </span>
             <span className={cn('flex items-center gap-1.5 font-bold', statusColor)}>
               <span className="w-1.5 h-1.5 rounded-full bg-current" />
@@ -221,7 +309,7 @@ const TaskRow: FC<{
           {/* Client: approve */}
           {!isPaid && (userRole === 'client' || userRole === 'admin') && (
             <button
-              onClick={() => onApprove(t.id)}
+              onClick={(e) => { e.stopPropagation(); onApprove(t.id); }}
               className="flex items-center gap-2 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-all hover:-translate-y-0.5 shadow-lg whitespace-nowrap"
               style={{ background: '#1A7F74', boxShadow: '0 2px 12px rgba(26,127,116,0.3)' }}
             >
@@ -232,7 +320,7 @@ const TaskRow: FC<{
           {/* Client: open dispute */}
           {!isPaid && !isDisputed && (userRole === 'client' || userRole === 'admin') && (
             <button
-              onClick={() => onDispute(t)}
+              onClick={(e) => { e.stopPropagation(); onDispute(t); }}
               className="flex items-center gap-2 text-red-600 font-bold px-4 py-2.5 rounded-xl text-sm border-2 border-red-100 bg-white hover:bg-red-50 hover:border-red-300 transition-all whitespace-nowrap"
             >
               <Gavel size={15} /> فتح نزاع
@@ -259,9 +347,11 @@ const ProjectDetails: FC = () => {
   const { id } = useParams<{ id: string }>();
   const [project, setProject] = useState<Project | null>(null);
   const [name, setName] = useState('');
-  const [assignedTo, setAssignedTo] = useState('');
+  const [freelancerQuery, setFreelancerQuery] = useState('');
+  const [resolvedFreelancer, setResolvedFreelancer] = useState<{ name: string; email: string } | null>(null);
   const [payment, setPayment] = useState('');
   const [disputeTarget, setDisputeTarget] = useState<DisputeTarget | null>(null);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   const userStr = localStorage.getItem('user');
   const user: UserType = userStr ? JSON.parse(userStr) : { role: 'client', name: 'Guest', username: 'guest', id: '0' };
@@ -276,11 +366,14 @@ const ProjectDetails: FC = () => {
     e.preventDefault();
     if (id) {
       try {
-        await api.addTask(id, { name, assignedTo, payment: Number(payment) });
-        toast.success('تمت إضافة المهمة بنجاح');
-        setName(''); setAssignedTo(''); setPayment('');
+        await api.addTask(id, { name, freelancerQuery, payment: Number(payment) });
+        toast.success(`تمت إضافة المهمة وإرسال الدعوة إلى ${resolvedFreelancer?.name ?? freelancerQuery}`);
+        setName(''); setFreelancerQuery(''); setPayment(''); setResolvedFreelancer(null);
         loadProject();
-      } catch { toast.error('فشل إضافة المهمة'); }
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : 'فشل إضافة المهمة';
+        toast.error(msg);
+      }
     }
   };
 
@@ -347,17 +440,34 @@ const ProjectDetails: FC = () => {
             <input className="border-0 bg-gray-50 p-4 w-full rounded-xl focus:bg-[#C9A84C]/5 focus:ring-0 outline-none font-medium placeholder-gray-400"
               placeholder="وصف المهمة (مثال: برمجة الواجهة)" value={name} onChange={e => setName(e.target.value)} required />
           </div>
-          <div className="w-full lg:w-64">
-            <input className="border-0 bg-gray-50 p-4 w-full rounded-xl focus:bg-[#C9A84C]/5 focus:ring-0 outline-none font-medium placeholder-gray-400"
-              placeholder="اسم المستقل" value={assignedTo} onChange={e => setAssignedTo(e.target.value)} required />
+          <div className="w-full lg:w-72 relative">
+            <input
+              className="border-0 bg-gray-50 p-4 w-full rounded-xl focus:bg-[#C9A84C]/5 focus:ring-0 outline-none font-medium placeholder-gray-400"
+              placeholder="البريد الإلكتروني أو معرّف المستقل"
+              value={freelancerQuery}
+              onChange={async (e) => {
+                setFreelancerQuery(e.target.value);
+                setResolvedFreelancer(null);
+                if (e.target.value.length > 2) {
+                  const found = await api.lookupUser(e.target.value);
+                  if (found) setResolvedFreelancer({ name: found.name, email: found.email });
+                }
+              }}
+              required
+            />
+            {resolvedFreelancer && (
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold px-2 py-1 rounded-lg pointer-events-none">
+                <User size={10} /> {resolvedFreelancer.name}
+              </div>
+            )}
           </div>
           <div className="w-full lg:w-40">
             <input className="border-0 bg-gray-50 p-4 w-full rounded-xl focus:bg-[#C9A84C]/5 focus:ring-0 outline-none font-medium text-left placeholder-gray-400"
-              dir="ltr" type="number" min="1" max={remainingBudget} placeholder="المبلغ $" value={payment} onChange={e => setPayment(e.target.value)} required />
+              dir="ltr" type="number" min="1" placeholder="المبلغ $" value={payment} onChange={e => setPayment(e.target.value)} required />
           </div>
           <button className="font-bold px-6 py-4 rounded-xl w-full lg:w-auto transition-all flex justify-center items-center gap-2 shadow-lg whitespace-nowrap text-white hover:-translate-y-0.5"
             style={{ background: '#0D1B2A' }}>
-            <Send size={18} /> أضف للسجل
+            <Send size={18} /> إرسال دعوة
           </button>
         </form>
       )}
@@ -384,6 +494,7 @@ const ProjectDetails: FC = () => {
             project={project}
             onApprove={completeTask}
             onDispute={openDispute}
+            onTaskClick={setSelectedTask}
             userRole={user.role}
           />
         ))}
@@ -399,6 +510,19 @@ const ProjectDetails: FC = () => {
         <DisputeModal
           target={disputeTarget}
           onClose={() => setDisputeTarget(null)}
+        />
+      )}
+
+      {/* Task Details Modal */}
+      {selectedTask && (
+        <TaskDetailsModal
+          task={selectedTask}
+          onClose={() => setSelectedTask(null)}
+          onApprove={(taskId) => {
+            completeTask(taskId);
+            setSelectedTask(null);
+          }}
+          userRole={user.role}
         />
       )}
     </div>

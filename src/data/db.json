@@ -1,0 +1,220 @@
+{
+  "users": [
+    {
+      "id": "user_admin_1",
+      "username": "kafil_admin",
+      "email": "admin@kafil.sa",
+      "role": "admin",
+      "name": "كفيل — المدير",
+      "avatar": "KA",
+      "joinedAt": "2025-01-01",
+      "bio": "مدير منصة كفيل. يشرف على جميع العمليات والنزاعات.",
+      "skills": []
+    },
+    {
+      "id": "user_client_1",
+      "username": "ahmed_k",
+      "email": "ahmed@acmecorp.sa",
+      "role": "client",
+      "name": "أحمد خالد",
+      "avatar": "AK",
+      "joinedAt": "2025-03-10",
+      "bio": "رائد أعمال في قطاع التقنية. أبحث عن مستقلين محترفين.",
+      "skills": []
+    },
+    {
+      "id": "user_client_2",
+      "username": "sara_n",
+      "email": "sara@startuphub.sa",
+      "role": "client",
+      "name": "سارة ناصر",
+      "avatar": "SN",
+      "joinedAt": "2025-04-01",
+      "bio": "مؤسسة شركة ناشئة للتطبيقات الجوالة.",
+      "skills": []
+    },
+    {
+      "id": "user_freelancer_1",
+      "username": "omar_dev",
+      "email": "omar@freelance.sa",
+      "role": "freelancer",
+      "name": "عمر العلي",
+      "avatar": "OA",
+      "joinedAt": "2025-02-15",
+      "rating": 4.8,
+      "bio": "مطوّر واجهات أمامية متخصص في React و TypeScript.",
+      "skills": ["React", "TypeScript", "TailwindCSS", "Node.js"]
+    },
+    {
+      "id": "user_freelancer_2",
+      "username": "lina_design",
+      "email": "lina@creative.sa",
+      "role": "freelancer",
+      "name": "لينا محمد",
+      "avatar": "LM",
+      "joinedAt": "2025-01-20",
+      "rating": 4.9,
+      "bio": "مصممة UI/UX محترفة، خبرة 5 سنوات في تصميم المنتجات الرقمية.",
+      "skills": ["Figma", "UI/UX", "Prototyping", "Design Systems"]
+    },
+    {
+      "id": "user_freelancer_3",
+      "username": "yasser_mobile",
+      "email": "yasser@appdev.sa",
+      "role": "freelancer",
+      "name": "ياسر سالم",
+      "avatar": "YS",
+      "joinedAt": "2025-03-05",
+      "rating": 4.6,
+      "bio": "مطوّر تطبيقات جوالة (iOS & Android) بخبرة 4 سنوات.",
+      "skills": ["Swift", "Kotlin", "Flutter", "Firebase"]
+    },
+    {
+      "id": "user_coordinator_1",
+      "username": "tariq_pm",
+      "email": "tariq@pm.sa",
+      "role": "coordinator",
+      "name": "طارق منصور",
+      "avatar": "TM",
+      "joinedAt": "2025-02-01",
+      "rating": 4.7,
+      "bio": "منسق مشاريع محترف، يدير فرق العمل الحر ويضمن التسليم في الوقت.",
+      "skills": ["Project Management", "Agile", "Scrum", "Communication"]
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj_1",
+      "title": "موقع متجر إلكتروني — أحمد",
+      "description": "بناء متجر إلكتروني متكامل لبيع المنتجات التقنية. يشمل واجهة مستخدم عصرية، صفحات منتجات، سلة تسوق، وبوابة دفع آمنة.",
+      "budget": 3000,
+      "owner": "أحمد خالد",
+      "ownerUsername": "ahmed_k",
+      "ownerId": "user_client_1",
+      "escrow": true,
+      "category": "تطوير ويب",
+      "createdAt": "2026-04-01",
+      "tasks": [
+        {
+          "id": "task_1",
+          "name": "تصميم واجهة المستخدم (UI)",
+          "description": "تصميم شاشات المتجر الكاملة على Figma بما فيها الصفحة الرئيسية، صفحة المنتج، والسلة.",
+          "assignedTo": "user_freelancer_2",
+          "assignedToEmail": "lina@creative.sa",
+          "assignedToName": "لينا محمد",
+          "payment": 800,
+          "status": "Completed",
+          "paid": true,
+          "inviteStatus": "Accepted",
+          "deadline": "10 أبريل 2026"
+        },
+        {
+          "id": "task_2",
+          "name": "تطوير الواجهة الأمامية (Frontend)",
+          "description": "تحويل التصاميم إلى كود React مع TailwindCSS. يشمل جميع الصفحات والمكونات التفاعلية.",
+          "assignedTo": "user_freelancer_1",
+          "assignedToEmail": "omar@freelance.sa",
+          "assignedToName": "عمر العلي",
+          "payment": 1000,
+          "status": "In Progress",
+          "paid": false,
+          "inviteStatus": "Accepted",
+          "deadline": "25 أبريل 2026"
+        },
+        {
+          "id": "task_3",
+          "name": "تطوير الواجهة الخلفية (Backend)",
+          "description": "إنشاء API باستخدام Node.js و Express. يشمل نظام المستخدمين والمنتجات وبوابة الدفع.",
+          "assignedTo": "user_freelancer_3",
+          "assignedToEmail": "yasser@appdev.sa",
+          "assignedToName": "ياسر سالم",
+          "payment": 1200,
+          "status": "Pending",
+          "paid": false,
+          "inviteStatus": "Pending",
+          "deadline": "10 مايو 2026"
+        }
+      ]
+    },
+    {
+      "id": "proj_2",
+      "title": "تطبيق جوال — سارة",
+      "description": "تطبيق جوال لإدارة المواعيد والحجوزات للمصالح الصغيرة. يدعم iOS و Android.",
+      "budget": 5000,
+      "owner": "سارة ناصر",
+      "ownerUsername": "sara_n",
+      "ownerId": "user_client_2",
+      "escrow": true,
+      "category": "تطبيقات جوال",
+      "createdAt": "2026-04-10",
+      "tasks": [
+        {
+          "id": "task_4",
+          "name": "رسوم هيكلية UX (Wireframing)",
+          "description": "رسم خرائط المستخدم والشاشات الأساسية للتطبيق على Figma.",
+          "assignedTo": "user_freelancer_2",
+          "assignedToEmail": "lina@creative.sa",
+          "assignedToName": "لينا محمد",
+          "payment": 1000,
+          "status": "Completed",
+          "paid": true,
+          "inviteStatus": "Accepted",
+          "deadline": "15 أبريل 2026"
+        },
+        {
+          "id": "task_5",
+          "name": "تطوير التطبيق (Flutter)",
+          "description": "بناء التطبيق كاملاً باستخدام Flutter مع ربطه بـ Firebase للخدمات الخلفية.",
+          "assignedTo": "user_freelancer_3",
+          "assignedToEmail": "yasser@appdev.sa",
+          "assignedToName": "ياسر سالم",
+          "payment": 4000,
+          "status": "In Progress",
+          "paid": false,
+          "inviteStatus": "Accepted",
+          "deadline": "30 مايو 2026"
+        }
+      ]
+    },
+    {
+      "id": "proj_3",
+      "title": "لوحة إدارة — أحمد",
+      "description": "لوحة تحكم ادارية لمتابعة الطلبات والعملاء وإحصائيات المبيعات.",
+      "budget": 2000,
+      "owner": "أحمد خالد",
+      "ownerUsername": "ahmed_k",
+      "ownerId": "user_client_1",
+      "escrow": true,
+      "category": "تطوير ويب",
+      "createdAt": "2026-04-20",
+      "tasks": [
+        {
+          "id": "task_6",
+          "name": "تصميم لوحة التحكم",
+          "description": "تصميم الواجهة الكاملة للوحة التحكم مع الرسوم البيانية والجداول.",
+          "assignedTo": "user_freelancer_2",
+          "assignedToEmail": "lina@creative.sa",
+          "assignedToName": "لينا محمد",
+          "payment": 600,
+          "status": "Pending",
+          "paid": false,
+          "inviteStatus": "Pending",
+          "deadline": "5 مايو 2026"
+        },
+        {
+          "id": "task_7",
+          "name": "تطوير لوحة التحكم",
+          "description": "برمجة لوحة التحكم باستخدام React مع الرسوم البيانية والجداول التفاعلية.",
+          "assignedTo": "user_freelancer_1",
+          "assignedToEmail": "omar@freelance.sa",
+          "assignedToName": "عمر العلي",
+          "payment": 1400,
+          "status": "Pending",
+          "paid": false,
+          "inviteStatus": "Pending",
+          "deadline": "20 مايو 2026"
+        }
+      ]
+    }
+  ]
+}

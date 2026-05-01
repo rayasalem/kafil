@@ -14,13 +14,16 @@ const CreateProject: FC = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const newProject = await api.createProject({
-      title,
-      budget: Number(budget),
-      owner: user.name,
-      ownerUsername: user.username
-    });
-    navigate(`/projects/${newProject.id}`);
+    try {
+      const newProject = await api.createProject({
+        title,
+        budget: Number(budget),
+        ownerId: user.id,
+      });
+      navigate(`/projects/${newProject.id}`);
+    } catch (err: any) {
+      alert(err.message || 'Failed to create project');
+    }
   };
 
   return (

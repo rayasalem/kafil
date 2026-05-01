@@ -9,6 +9,20 @@ interface MyTask extends Task {
   projectId: string;
 }
 
+interface MyInvitation {
+  id: string;
+  projectId: string;
+  projectName: string;
+  taskName: string;
+  budget: number;
+  deadline: string;
+  sender: string;
+  senderRole: string;
+  description: string;
+  requirements: string[];
+  attachments: string[];
+}
+
 // Extended mock data for the modal
 const MOCK_TEAM: Record<string, { name: string; role: string; payment: number; status: string; paid: boolean; avatar: string }[]> = {
   proj_1: [
@@ -39,73 +53,85 @@ const avatarColors: Record<string, string> = {
   L: 'bg-teal-100 text-teal-700',
 };
 
-// Mock Invitations
-const MOCK_INVITATIONS = [
-  {
-    id: 'inv_1',
-    projectName: 'تطبيق متجر إلكتروني',
-    taskName: 'برمجة واجهات الدفع',
-    budget: 600,
-    deadline: '15 يوليو 2026',
-    sender: 'Tariq M.',
-    senderRole: 'منسق المشروع',
-    status: 'pending', // pending, accepted, rejected
-    description: 'نحن بصدد بناء متجر إلكتروني متكامل لبيع المنتجات التقنية. المشروع يهدف لتقديم تجربة مستخدم سلسة وموثوقة لعملائنا في الشرق الأوسط. يتميز المتجر بتصميم عصري وأداء عالٍ.',
-    requirements: [
-      'برمجة وتطوير واجهات الدفع (Checkout) باستخدام React.',
-      'الربط مع بوابات الدفع (Stripe & PayTabs).',
-      'دعم الدفع باستخدام Apple Pay و Google Pay.',
-      'ضمان التوافق مع شاشات الجوال.',
-      'كتابة كود نظيف وموثق.'
-    ],
-    attachments: ['UI_Design_Specs.pdf', 'API_Documentation.pdf']
-  }
-];
 
 export default function FreelancerDashboard() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedTask, setSelectedTask] = useState<MyTask | null>(null);
   const [uploadedFile, setUploadedFile] = useState<string>('');
   const [requestSent, setRequestSent] = useState(false);
-  const [invitations, setInvitations] = useState(MOCK_INVITATIONS);
-  const [selectedInvitation, setSelectedInvitation] = useState<typeof MOCK_INVITATIONS[0] | null>(null);
+  const [selectedInvitation, setSelectedInvitation] = useState<MyInvitation | null>(null);
 
   const user: User = JSON.parse(localStorage.getItem('user') || 'null') || {
-    role: 'freelancer', name: 'Omar', username: 'omar', id: '2',
+    id: 'user_freelancer_1',
+    role: 'freelancer',
+    name: 'عمر العلي',
+    username: 'omar_dev',
+    email: 'omar@freelance.sa',
+    avatar: 'OA',
+    joinedAt: '2025-02-15',
   };
 
   useEffect(() => {
     api.getProjects().then(setProjects);
   }, []);
 
+  const handleAcceptInvite = async (inv: MyInvitation) => {
+    try {
+      await api.updateInviteStatus(inv.projectId, inv.id, 'Accepted');
+      api.getProjects().then(setProjects);
+      if (selectedInvitation?.id === inv.id) setSelectedInvitation(null);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleRejectInvite = async (inv: MyInvitation) => {
+    try {
+      await api.updateInviteStatus(inv.projectId, inv.id, 'Rejected');
+      api.getProjects().then(setProjects);
+      if (selectedInvitation?.id === inv.id) setSelectedInvitation(null);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   let myTasks: MyTask[] = [];
+  let myInvitations: MyInvitation[] = [];
   let myEarnings = 0;
   let escrowed = 0;
 
   projects.forEach(p => {
     p.tasks.forEach(t => {
       const match =
-        (user.name && t.assignedTo.toLowerCase().includes(user.name.split(' ')[0].toLowerCase())) ||
-        t.assignedTo === 'Omar';
-      if (match) {
-        myTasks.push({ ...t, projectName: p.title, projectId: p.id });
-        if (t.paid) myEarnings += t.payment;
-        else escrowed += t.payment;
-      }
-    });
-  });
+        t.assignedTo === user.id ||
+        (user.email && t.assignedToEmail?.toLowerCase() === user.email.toLowerCase()) ||
+        // fallback for legacy name-based tasks
+        t.assignedTo === user.username ||
+        (user.name && t.assignedTo.toLowerCase().includes(user.name.split(' ')[0].toLowerCase()));
 
-  if (myTasks.length === 0) {
-    projects.forEach(p => {
-      p.tasks.forEach(t => {
-        if (t.assignedTo === 'Omar' || t.assignedTo === 'ياسر (مطور واجهات)') {
+      if (match) {
+        if (t.inviteStatus === 'Pending') {
+          myInvitations.push({
+            id: t.id,
+            projectId: p.id,
+            projectName: p.title,
+            taskName: t.name,
+            budget: t.payment,
+            deadline: t.deadline ?? 'مفتوح',
+            sender: p.owner,
+            senderRole: 'مدير المشروع',
+            description: t.description ?? 'لقد تمت دعوتك للعمل على هذه المهمة. يرجى مراجعة التفاصيل أدناه لتقرير قبول الانضمام أو الرفض.',
+            requirements: [t.name, 'الالتزام بمواعيد التسليم', 'تسليم العمل بجودة عالية'],
+            attachments: []
+          });
+        } else if (t.inviteStatus !== 'Rejected') {
           myTasks.push({ ...t, projectName: p.title, projectId: p.id });
           if (t.paid) myEarnings += t.payment;
           else escrowed += t.payment;
         }
-      });
+      }
     });
-  }
+  });
 
   const team = selectedTask ? (MOCK_TEAM[selectedTask.projectId] || []) : [];
   const milestones = selectedTask ? (MOCK_MILESTONES[selectedTask.projectId] || []) : [];
@@ -160,14 +186,14 @@ export default function FreelancerDashboard() {
       </div>
 
       {/* Invitations Section */}
-      {invitations.filter(i => i.status === 'pending').length > 0 && (
+      {myInvitations.length > 0 && (
         <div className="mb-10">
           <h2 className="text-xl font-bold mb-4 flex items-center gap-2" style={{ color: '#0D1B2A' }}>
             <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-            دعوات مشاريع جديدة ({invitations.filter(i => i.status === 'pending').length})
+            دعوات مشاريع جديدة ({myInvitations.length})
           </h2>
           <div className="grid gap-4">
-            {invitations.filter(i => i.status === 'pending').map(inv => (
+            {myInvitations.map(inv => (
               <div key={inv.id} className="bg-white border-2 border-blue-100 p-6 rounded-2xl shadow-sm relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-2 h-full bg-blue-500"></div>
                 <div className="flex flex-col md:flex-row justify-between gap-4">
@@ -193,7 +219,7 @@ export default function FreelancerDashboard() {
                   
                   <div className="flex flex-row md:flex-col items-center justify-center gap-3 min-w-[150px]">
                     <button 
-                      onClick={() => setInvitations(invs => invs.map(i => i.id === inv.id ? { ...i, status: 'accepted' } : i))}
+                      onClick={() => handleAcceptInvite(inv)}
                       className="w-full bg-[#1A7F74] text-white font-black py-2.5 rounded-xl hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-900/20 text-sm"
                     >
                       قبول الانضمام
@@ -206,7 +232,7 @@ export default function FreelancerDashboard() {
                         عرض التفاصيل
                       </button>
                       <button 
-                        onClick={() => setInvitations(invs => invs.map(i => i.id === inv.id ? { ...i, status: 'rejected' } : i))}
+                        onClick={() => handleRejectInvite(inv)}
                         className="flex-1 bg-white border border-red-200 text-red-600 font-bold py-2.5 rounded-xl hover:bg-red-50 transition-colors text-xs"
                       >
                         رفض
@@ -346,19 +372,13 @@ export default function FreelancerDashboard() {
             {/* Action Buttons */}
             <div className="sticky bottom-0 bg-white border-t border-[#E8DDD0] p-6 flex items-center gap-4">
               <button 
-                onClick={() => {
-                  setInvitations(invs => invs.map(i => i.id === selectedInvitation.id ? { ...i, status: 'accepted' } : i));
-                  setSelectedInvitation(null);
-                }}
+                onClick={() => handleAcceptInvite(selectedInvitation)}
                 className="flex-1 bg-[#1A7F74] text-white font-black py-4 rounded-xl hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-900/20 text-center"
               >
                 قبول الانضمام والالتزام بالميزانية
               </button>
               <button 
-                onClick={() => {
-                  setInvitations(invs => invs.map(i => i.id === selectedInvitation.id ? { ...i, status: 'rejected' } : i));
-                  setSelectedInvitation(null);
-                }}
+                onClick={() => handleRejectInvite(selectedInvitation)}
                 className="px-8 py-4 bg-white border border-red-200 text-red-600 font-bold rounded-xl hover:bg-red-50 transition-colors text-center"
               >
                 رفض العرض
@@ -518,7 +538,20 @@ export default function FreelancerDashboard() {
 
                       {/* Submit Button */}
                       <button
-                        onClick={() => { if (uploadedFile) setRequestSent(true); }}
+                        onClick={async () => { 
+                          if (uploadedFile && selectedTask) {
+                            try {
+                              await api.submitTaskWork(selectedTask.projectId, selectedTask.id, {
+                                deliverableFile: uploadedFile,
+                                deliverableNote: 'تم تسليم العمل بنجاح'
+                              });
+                              setRequestSent(true);
+                              api.getProjects().then(setProjects);
+                            } catch (e) {
+                              console.error('Failed to submit work', e);
+                            }
+                          } 
+                        }}
                         className={`w-full py-4 rounded-xl font-black text-base flex items-center justify-center gap-2 transition-all ${uploadedFile ? 'text-white shadow-lg hover:-translate-y-0.5' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
                         style={uploadedFile ? { background: '#C9A84C', boxShadow: '0 4px 16px rgba(201,168,76,0.4)' } : {}}
                         disabled={!uploadedFile}

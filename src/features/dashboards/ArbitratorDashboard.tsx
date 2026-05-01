@@ -35,8 +35,17 @@ const PAST_CASES = [
   { id: 'KF-2702', title: 'نزاع تأخر تسليم', outcome: 'حكم لصالح المدعى عليه', reward: 3, date: '10 أبريل 2026', correct: false },
 ];
 
+const CLIENT_DISPUTE_STATS = {
+  totalDisputed: 2450,
+  wonBack: 1850,
+  lost: 600,
+  activeCases: 1,
+};
+
 export default function ArbitratorDashboard() {
   const [tab, setTab] = useState<'open' | 'past'>('open');
+  const userStr = localStorage.getItem('user');
+  const user = userStr ? JSON.parse(userStr) : { role: 'guest', name: 'Guest' };
 
   const totalEarned = PAST_CASES.reduce((s, c) => s + c.reward, 0);
 
@@ -46,19 +55,61 @@ export default function ArbitratorDashboard() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-black text-[#0D1B2A] tracking-tight mb-1">لوحة المحكّم</h1>
-          <p className="text-gray-500 font-medium">أنت محكّم موثق. قراراتك تصنع العدل لمستقلي المنطقة العربية.</p>
+          <h1 className="text-3xl font-black text-[#0D1B2A] tracking-tight mb-1">
+            {user.role === 'client' ? 'إحصائيات النزاعات' : 'مركز التحكيم المجتمعي'}
+          </h1>
+          <p className="text-gray-500 font-medium">
+            {user.role === 'client' 
+              ? 'تتبع النزاعات الخاصة بك والمبالغ المستردة من الضمان.' 
+              : 'أنت محكّم موثق. قراراتك تصنع العدل لمستقلي المنطقة العربية وتحصل على مكافآت.'}
+          </p>
         </div>
-        <div className="flex items-center gap-3 bg-[#0D1B2A] px-5 py-3 rounded-2xl">
-          <Shield size={20} className="text-[#C9A84C]" />
-          <div>
-            <p className="text-[10px] font-black text-[#C9A84C] uppercase tracking-widest">محكّم موثق</p>
-            <p className="text-sm font-black text-white">⭐ 4.8 · 47 قضية</p>
+        
+        {user.role !== 'client' && (
+          <div className="flex items-center gap-3 bg-[#0D1B2A] px-5 py-3 rounded-2xl">
+            <Shield size={20} className="text-[#C9A84C]" />
+            <div>
+              <p className="text-[10px] font-black text-[#C9A84C] uppercase tracking-widest">محكّم موثق</p>
+              <p className="text-sm font-black text-white">⭐ 4.8 · 47 قضية</p>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
-      {/* Stats */}
+      {user.role === 'client' ? (
+        /* Client View */
+        <div className="space-y-8">
+          <div className="grid md:grid-cols-4 gap-4">
+            <div className="bg-white border border-[#E8DDD0] p-5 rounded-2xl">
+              <p className="text-[10px] font-black text-gray-400 uppercase mb-2 flex items-center gap-1"><Gavel size={12} /> نزاعات نشطة</p>
+              <p className="text-3xl font-black text-[#0D1B2A]">{CLIENT_DISPUTE_STATS.activeCases}</p>
+            </div>
+            <div className="bg-white border border-[#E8DDD0] p-5 rounded-2xl">
+              <p className="text-[10px] font-black text-gray-400 uppercase mb-2 flex items-center gap-1"><AlertCircle size={12} /> إجمالي المتنازع عليه</p>
+              <p className="text-3xl font-black text-[#0D1B2A]">${CLIENT_DISPUTE_STATS.totalDisputed}</p>
+            </div>
+            <div className="bg-emerald-50 border border-emerald-200 p-5 rounded-2xl">
+              <p className="text-[10px] font-black text-emerald-600 uppercase mb-2 flex items-center gap-1"><CheckCircle size={12} /> مبالغ مستردة (فوز)</p>
+              <p className="text-3xl font-black text-emerald-700">${CLIENT_DISPUTE_STATS.wonBack}</p>
+            </div>
+            <div className="bg-red-50 border border-red-200 p-5 rounded-2xl">
+              <p className="text-[10px] font-black text-red-500 uppercase mb-2 flex items-center gap-1"><TrendingUp size={12} /> مبالغ خاسرة</p>
+              <p className="text-3xl font-black text-red-600">${CLIENT_DISPUTE_STATS.lost}</p>
+            </div>
+          </div>
+
+          <div className="bg-white border-2 border-[#E8DDD0] rounded-3xl p-8 text-center shadow-sm">
+            <h3 className="font-black text-[#0D1B2A] text-xl mb-3">تفاصيل قضاياك</h3>
+            <p className="text-gray-500 font-medium mb-6">يمكنك متابعة تفاصيل النزاعات الخاصة بك وقراءة ملخصاتها من خلال مركز النزاعات الخاص بك.</p>
+            <Link to="/disputes" className="inline-flex items-center gap-2 bg-[#0D1B2A] text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:-translate-y-0.5 transition-all">
+              <Gavel size={18} /> الانتقال إلى نزاعاتي
+            </Link>
+          </div>
+        </div>
+      ) : (
+        /* Arbitrator (Freelancer/Coordinator) View */
+        <>
+          {/* Stats */}
       <div className="grid md:grid-cols-4 gap-4">
         <div className="bg-white border border-[#E8DDD0] p-5 rounded-2xl">
           <p className="text-[10px] font-black text-gray-400 uppercase mb-2 flex items-center gap-1"><Gavel size={12} /> قضايا مفتوحة</p>
@@ -162,28 +213,30 @@ export default function ArbitratorDashboard() {
         </div>
       )}
 
-      {/* Past Cases */}
-      {tab === 'past' && (
-        <div className="space-y-3">
-          {PAST_CASES.map(c => (
-            <div key={c.id} className="bg-white border border-[#E8DDD0] p-5 rounded-2xl flex items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${c.correct ? 'bg-emerald-50 text-emerald-600' : 'bg-gray-100 text-gray-400'}`}>
-                  {c.correct ? <CheckCircle size={20} /> : <Star size={20} />}
+          {/* Past Cases */}
+          {tab === 'past' && (
+            <div className="space-y-3">
+              {PAST_CASES.map(c => (
+                <div key={c.id} className="bg-white border border-[#E8DDD0] p-5 rounded-2xl flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${c.correct ? 'bg-emerald-50 text-emerald-600' : 'bg-gray-100 text-gray-400'}`}>
+                      {c.correct ? <CheckCircle size={20} /> : <Star size={20} />}
+                    </div>
+                    <div>
+                      <p className="font-bold text-sm text-[#0D1B2A]">{c.title}</p>
+                      <p className="text-xs text-gray-400">{c.id} · {c.date}</p>
+                      <p className="text-xs font-bold text-gray-500 mt-0.5">{c.outcome}</p>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="text-sm font-black text-emerald-600">+${c.reward}</p>
+                    <p className="text-[10px] text-gray-400">مكافأة</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-bold text-sm text-[#0D1B2A]">{c.title}</p>
-                  <p className="text-xs text-gray-400">{c.id} · {c.date}</p>
-                  <p className="text-xs font-bold text-gray-500 mt-0.5">{c.outcome}</p>
-                </div>
-              </div>
-              <div className="text-right shrink-0">
-                <p className="text-sm font-black text-emerald-600">+${c.reward}</p>
-                <p className="text-[10px] text-gray-400">مكافأة</p>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
     </div>
   );

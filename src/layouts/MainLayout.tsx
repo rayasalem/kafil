@@ -32,7 +32,7 @@ const MainLayout: FC = () => {
           name: 'فتح مشروع',
           icon: <PlusCircle size={20} />,
           path: '/create',
-          roles: ['client', 'admin'],
+          roles: ['client'],
         },
       ],
     },
@@ -47,10 +47,10 @@ const MainLayout: FC = () => {
           badge: 2,
         },
         {
-          name: 'لوحة التحكيم',
+          name: 'مركز التحكيم',
           icon: <Scale size={20} />,
-          path: '/dashboard/arbitrator',
-          roles: ['arbitrator', 'admin'],
+          path: '/arbitration',
+          roles: null, // Open to all roles
         },
       ],
     },

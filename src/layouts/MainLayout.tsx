@@ -214,10 +214,10 @@ const MainLayout: FC = () => {
             <motion.div
               key={location.pathname}
               className="absolute inset-0 p-6 md:p-10 overflow-y-auto w-full h-full"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0, filter: 'blur(10px)' }}
+              animate={{ opacity: 1, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, filter: 'blur(10px)' }}
+              transition={{ type: 'spring', stiffness: 350, damping: 35, mass: 0.8 }}
             >
               {outlet}
             </motion.div>

@@ -409,10 +409,10 @@ const ProjectDetails: FC = () => {
   return (
     <motion.div 
       layoutId={`project-card-${id}`}
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0, scale: 0.95, y: 20 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95, y: 20 }}
+      transition={{ type: 'spring', stiffness: 350, damping: 35, mass: 0.8 }}
       className="max-w-5xl mx-auto bg-white rounded-[28px] overflow-hidden shadow-2xl relative z-50 mb-10" 
       dir="rtl"
     >

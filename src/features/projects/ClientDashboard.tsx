@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Lock,
@@ -61,6 +61,7 @@ export default function ClientDashboard() {
   const [disputeTarget, setDisputeTarget] = useState<{ project: Project; task: Task } | null>(null);
   const containerRef = useRef(null);
   const routeTimerRef = useRef<number | null>(null);
+  const location = useLocation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -161,6 +162,15 @@ export default function ClientDashboard() {
   };
 
   const handleOpenProjectDetails = (projectId: string) => {
+    // Save scroll position immediately (before animations) so we can restore it on return
+    const scroller = document.getElementById('app-scroll-container') as HTMLElement | null;
+    const scrollTop = scroller ? scroller.scrollTop : window.scrollY;
+    try {
+      sessionStorage.setItem(`scroll:${location.pathname}`, scrollTop.toString());
+    } catch (e) {
+      // ignore storage errors
+    }
+
     setOpeningProjectId(projectId);
 
     if (routeTimerRef.current) {

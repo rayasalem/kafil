@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Lock, Send, Gavel, User as UserIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -19,6 +19,24 @@ const ProjectDetailsView: FC = () => {
   const { user } = useAuth();
 
   const { project, form, modals, stats, actions } = useProjectDetails(id);
+
+  // Ensure the app scroll container scrolls to top smoothly when entering project details
+  useEffect(() => {
+    const scroller = document.getElementById('app-scroll-container') as HTMLElement | null;
+    if (scroller) {
+      try {
+        scroller.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch {
+        scroller.scrollTop = 0;
+      }
+    } else {
+      try {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch {
+        window.scrollTo(0, 0);
+      }
+    }
+  }, []);
 
   if (!project) {
     return (

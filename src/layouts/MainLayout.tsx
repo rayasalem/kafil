@@ -46,9 +46,34 @@ const MainLayout: FC = () => {
   }, [location.pathname]);
 
   useLayoutEffect(() => {
-    // Only restore scroll position when entering a dashboard route
-    if (!location.pathname.startsWith('/dashboard')) return;
+    // Reset scroll to top for non-dashboard routes (project details, etc.)
+    if (!location.pathname.startsWith('/dashboard')) {
+      const scroller = document.getElementById('app-scroll-container');
+      let frame = 0;
+      const maxFrames = 8;
 
+      const resetScroll = () => {
+        frame += 1;
+        if (scroller) {
+          scroller.scrollTop = 0;
+          if (frame < maxFrames && scroller.scrollTop !== 0) {
+            requestAnimationFrame(resetScroll);
+            return;
+          }
+        } else {
+          window.scrollTo({ top: 0, behavior: 'auto' });
+          if (frame < maxFrames && window.scrollY !== 0) {
+            requestAnimationFrame(resetScroll);
+            return;
+          }
+        }
+      };
+
+      requestAnimationFrame(resetScroll);
+      return;
+    }
+
+    // Restore scroll position for dashboard routes
     const scroller = document.getElementById('app-scroll-container');
     const saved = sessionStorage.getItem(`scroll:${location.pathname}`);
     if (!saved) return;
@@ -76,6 +101,48 @@ const MainLayout: FC = () => {
     };
 
     requestAnimationFrame(applyScroll);
+
+    // If the dashboard content mounts async (images, data), retry when DOM changes
+    let observer: MutationObserver | null = null;
+    let t1: number | null = null;
+    let t2: number | null = null;
+
+    if (scroller) {
+      observer = new MutationObserver(() => {
+        if (scroller && scroller.scrollHeight > targetTop) {
+          scroller.scrollTop = targetTop;
+          observer?.disconnect();
+        }
+      });
+      try {
+        observer.observe(scroller, { childList: true, subtree: true, attributes: true });
+      } catch (e) {
+        observer.disconnect();
+      }
+    } else {
+      // Observe body changes as a fallback
+      observer = new MutationObserver(() => {
+        if (document.body.scrollHeight > targetTop) {
+          window.scrollTo({ top: targetTop, behavior: 'auto' });
+          observer?.disconnect();
+        }
+      });
+      try {
+        observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+      } catch (e) {
+        observer.disconnect();
+      }
+    }
+
+    // Fallback retries in case MutationObserver doesn't trigger quickly enough
+    t1 = window.setTimeout(applyScroll, 220) as unknown as number;
+    t2 = window.setTimeout(applyScroll, 600) as unknown as number;
+
+    return () => {
+      if (observer) observer.disconnect();
+      if (t1) clearTimeout(t1 as unknown as number);
+      if (t2) clearTimeout(t2 as unknown as number);
+    };
   }, [location.pathname]);
 
   const menuSections = [
@@ -285,10 +352,7 @@ const MainLayout: FC = () => {
           </div>
         </header>
 
-        <div
-          id="app-scroll-container"
-          className="relative flex-1 overflow-y-auto bg-[#F9F4EE]"
-        >
+        <div id="app-scroll-container" className="relative flex-1 overflow-y-auto bg-[#F9F4EE]">
           <LayoutGroup>
             <AnimatePresence mode="popLayout">
               <motion.div

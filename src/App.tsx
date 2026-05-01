@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import { AnimatePresence } from 'framer-motion';
 import Layout from '@/layouts/MainLayout';
 import { User } from '@/types';
+import { LanguageProvider } from '@/shared/context/LanguageContext';
+import { DemoStoryRunner } from '@/shared/components/fintech/DemoStoryRunner';
 
 // Lazy loading views for production optimization
 const Landing = lazy(() => import('@/pages/Landing'));
@@ -18,6 +20,7 @@ const ProjectDetails = lazy(() => import('@/features/projects/ProjectDetailsView
 const DisputeFlow = lazy(() => import('@/pages/DisputeFlow'));
 const ArbitratorCaseView = lazy(() => import('@/pages/ArbitratorCaseView'));
 const DisputesPage = lazy(() => import('@/pages/DisputesPage'));
+const Settings = lazy(() => import('@/pages/Settings'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
 const DashboardRedirect: FC = () => {
@@ -37,38 +40,40 @@ const AnimatedRoutes: FC = () => {
   const location = useLocation();
 
   return (
-    <AnimatePresence mode="sync">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<Landing />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route element={<Layout />}>
-          <Route path="/dashboard/admin" element={<AdminDashboard />} />
-          <Route path="/dashboard/client" element={<ClientDashboard />} />
-          <Route path="/dashboard/freelancer" element={<FreelancerDashboard />} />
-          <Route path="/dashboard/coordinator" element={<CoordinatorDashboard />} />
-          <Route path="/arbitration" element={<ArbitratorDashboard />} />
-          <Route path="/dashboard" element={<DashboardRedirect />} />
-          <Route path="/create" element={<CreateProject />} />
-          <Route path="/projects/:id" element={<ProjectDetails />} />
-          <Route path="/dispute/:taskId" element={<DisputeFlow />} />
-          <Route path="/arbitrate/:caseId" element={<ArbitratorCaseView />} />
-          <Route path="/disputes" element={<DisputesPage />} />
-        </Route>
-        {/* Catch-all route for 404 Not Found */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </AnimatePresence>
+    <Routes location={location}>
+      <Route path="/" element={<Landing />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route element={<Layout />}>
+        <Route path="/dashboard/admin" element={<AdminDashboard />} />
+        <Route path="/dashboard/client" element={<ClientDashboard />} />
+        <Route path="/dashboard/freelancer" element={<FreelancerDashboard />} />
+        <Route path="/dashboard/coordinator" element={<CoordinatorDashboard />} />
+        <Route path="/arbitration" element={<ArbitratorDashboard />} />
+        <Route path="/dashboard" element={<DashboardRedirect />} />
+        <Route path="/create" element={<CreateProject />} />
+        <Route path="/projects/:id" element={<ProjectDetails />} />
+        <Route path="/dispute/:taskId" element={<DisputeFlow />} />
+        <Route path="/arbitrate/:caseId" element={<ArbitratorCaseView />} />
+        <Route path="/disputes" element={<DisputesPage />} />
+        <Route path="/settings" element={<Settings />} />
+      </Route>
+      {/* Catch-all route for 404 Not Found */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 };
 
 const App: FC = () => {
   return (
-    <Router>
-      <Suspense fallback={<LoadingFallback />}>
-        <AnimatedRoutes />
-      </Suspense>
-    </Router>
+    <LanguageProvider>
+      <Router>
+        <Suspense fallback={<LoadingFallback />}>
+          <AnimatedRoutes />
+          <DemoStoryRunner />
+        </Suspense>
+      </Router>
+    </LanguageProvider>
   );
 };
 

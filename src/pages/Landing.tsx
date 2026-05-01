@@ -282,7 +282,7 @@ export default function Landing() {
               <Sparkles size={16} className="text-blue-500 dark:text-blue-400 transition-colors" /> معيار جديد للعمل الحر في الشرق الأوسط
             </motion.div>
 
-            <h1 ref={titleRef} className="text-4xl md:text-6xl lg:text-7xl font-black text-[#0D1B2A] dark:text-white mb-6 leading-[1.15] tracking-tight transition-colors">
+            <h1 ref={titleRef} className="text-4xl md:text-6xl lg:text-7xl font-black text-[#0D1B2A] dark:text-white mb-6 leading-relaxed tracking-widest transition-colors">
               <div className="overflow-hidden">
                 احمِ أموالك.
               </div>
@@ -660,7 +660,7 @@ export default function Landing() {
           <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[100px] -z-10"></div>
           
           <div className="relative z-10">
-            <h2 className="text-4xl md:text-6xl lg:text-[4.5rem] font-black text-white mb-8 leading-[1.15] tracking-tight">
+            <h2 className="text-4xl md:text-6xl lg:text-[4.5rem] font-black text-white mb-10 leading-relaxed tracking-widest">
               جاهز لتبني مستقبلك<br />بكل أمان؟
             </h2>
             <p className="text-lg md:text-xl text-blue-200 mb-16 max-w-2xl mx-auto font-medium opacity-80">
@@ -728,6 +728,195 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* 💰 PRICING SECTION */}
+      <section id="pricing" className="py-32 px-6 md:px-12 bg-white dark:bg-[#08111A] transition-colors duration-500">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-20">
+            <span className="inline-block bg-[#C9A84C]/10 dark:bg-[#C9A84C]/5 text-[#C9A84C] font-black text-xs uppercase tracking-widest px-5 py-2 rounded-full mb-6 border border-[#C9A84C]/20">
+              الأسعار والخطط
+            </span>
+            <h2 className="text-5xl md:text-6xl font-black text-[#0D1B2A] dark:text-white mb-6 tracking-tight transition-colors">
+              ادفع فقط عند <span className="text-[#C9A84C]">نجاح مشروعك</span>
+            </h2>
+            <p className="text-xl text-gray-500 dark:text-gray-400 max-w-2xl mx-auto font-medium transition-colors">
+              لا عمولات خفية. لا مفاجآت. خطط واضحة تناسب كل حجم من أحجام الأعمال.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-stretch">
+            
+            {/* Basic */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0 }}
+              className="relative bg-white dark:bg-[#0D1B2A] border-2 border-gray-100 dark:border-white/5 rounded-3xl p-8 flex flex-col transition-colors hover:border-gray-200 dark:hover:border-white/10 hover:shadow-xl group"
+            >
+              <div className="mb-8">
+                <span className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Basic</span>
+                <h3 className="text-2xl font-black text-[#0D1B2A] dark:text-white mt-2 mb-1 transition-colors">مجاني</h3>
+                <p className="text-gray-400 dark:text-gray-500 text-sm font-medium">للأفراد يبدأون رحلتهم</p>
+                <div className="mt-6 flex items-end gap-1">
+                  <span className="text-5xl font-black text-[#0D1B2A] dark:text-white transition-colors">$0</span>
+                  <span className="text-gray-400 mb-2 font-medium">/شهر</span>
+                </div>
+              </div>
+              <ul className="space-y-3 flex-1 mb-8">
+                {[
+                  '✅ مشروع واحد نشط في كل وقت',
+                  '✅ مستقل واحد فقط لكل مهمة',
+                  '✅ خزنة Escrow مدمجة',
+                  '✅ نظام التسليم الموثق',
+                  '❌ لا تحكيم مجتمعي',
+                  '❌ لا تقارير مالية'
+                ].map((f, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm font-medium text-gray-600 dark:text-gray-300">{f}</li>
+                ))}
+              </ul>
+              <motion.a
+                href="/register"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="block w-full text-center py-3.5 rounded-2xl border-2 border-gray-200 dark:border-white/10 text-[#0D1B2A] dark:text-white font-bold text-sm hover:bg-gray-50 dark:hover:bg-white/5 transition-all"
+              >
+                ابدأ مجاناً
+              </motion.a>
+            </motion.div>
+
+            {/* Pro */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="relative bg-white dark:bg-[#0D1B2A] border-2 border-gray-100 dark:border-white/5 rounded-3xl p-8 flex flex-col transition-colors hover:border-blue-200 dark:hover:border-blue-500/20 hover:shadow-xl"
+            >
+              <div className="mb-8">
+                <span className="text-xs font-black text-blue-500 uppercase tracking-widest">Pro</span>
+                <h3 className="text-2xl font-black text-[#0D1B2A] dark:text-white mt-2 mb-1 transition-colors">المحترف</h3>
+                <p className="text-gray-400 dark:text-gray-500 text-sm font-medium">للمشاريع المتعددة والفرق الصغيرة</p>
+                <div className="mt-6 flex items-end gap-1">
+                  <span className="text-5xl font-black text-[#0D1B2A] dark:text-white transition-colors">$29</span>
+                  <span className="text-gray-400 mb-2 font-medium">/شهر</span>
+                </div>
+              </div>
+              <ul className="space-y-3 flex-1 mb-8">
+                {[
+                  '✅ حتى 15 مشروعاً نشطاً',
+                  '✅ حتى 6 مستقلين لكل مشروع',
+                  '✅ خزنة Escrow مدمجة',
+                  '✅ التحكيم المجتمعي للنزاعات',
+                  '✅ تقارير مالية أساسية',
+                  '✅ إشعارات بريد إلكتروني',
+                  '❌ منسق مخصص'
+                ].map((f, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm font-medium text-gray-600 dark:text-gray-300">{f}</li>
+                ))}
+              </ul>
+              <motion.a
+                href="/register"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="block w-full text-center py-3.5 rounded-2xl border-2 border-blue-500 text-blue-600 dark:text-blue-400 font-bold text-sm hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-all"
+              >
+                ابدأ تجربة 14 يوم
+              </motion.a>
+            </motion.div>
+
+            {/* Premium — MOST POPULAR */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="relative bg-[#0D1B2A] dark:bg-[#C9A84C]/10 border-2 border-[#C9A84C] rounded-3xl p-8 flex flex-col shadow-2xl shadow-[#C9A84C]/20 scale-[1.02]"
+            >
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                <span className="bg-[#C9A84C] text-[#0D1B2A] text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full whitespace-nowrap shadow-lg">
+                  ⭐ الأكثر شيوعاً
+                </span>
+              </div>
+              <div className="mb-8">
+                <span className="text-xs font-black text-[#C9A84C] uppercase tracking-widest">Premium</span>
+                <h3 className="text-2xl font-black text-white mt-2 mb-1">المتميز</h3>
+                <p className="text-white/50 text-sm font-medium">للشركات التي تتوسع بثقة</p>
+                <div className="mt-6 flex items-end gap-1">
+                  <span className="text-5xl font-black text-white">$79</span>
+                  <span className="text-white/50 mb-2 font-medium">/شهر</span>
+                </div>
+              </div>
+              <ul className="space-y-3 flex-1 mb-8">
+                {[
+                  '✅ مشاريع ومستقلين بلا حدود',
+                  '✅ تحكيم ذو أولوية قصوى',
+                  '✅ منسق مشاريع مخصص',
+                  '✅ لوحة تحليلات متقدمة',
+                  '✅ تقارير PDF تلقائية',
+                  '✅ API للتكامل مع أنظمتك',
+                  '✅ دعم أولوية 24/7'
+                ].map((f, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm font-medium text-white/80">{f}</li>
+                ))}
+              </ul>
+              <motion.a
+                href="/register"
+                whileHover={{ scale: 1.02, boxShadow: '0 8px 32px rgba(201,168,76,0.5)' }}
+                whileTap={{ scale: 0.98 }}
+                className="block w-full text-center py-3.5 rounded-2xl bg-[#C9A84C] text-[#0D1B2A] font-black text-sm transition-all"
+              >
+                ابدأ تجربة 14 يوم
+              </motion.a>
+            </motion.div>
+
+            {/* Enterprise */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="relative bg-white dark:bg-[#0D1B2A] border-2 border-gray-100 dark:border-white/5 rounded-3xl p-8 flex flex-col transition-colors hover:border-purple-200 dark:hover:border-purple-500/20 hover:shadow-xl"
+            >
+              <div className="mb-8">
+                <span className="text-xs font-black text-purple-500 uppercase tracking-widest">Enterprise</span>
+                <h3 className="text-2xl font-black text-[#0D1B2A] dark:text-white mt-2 mb-1 transition-colors">المؤسسات</h3>
+                <p className="text-gray-400 dark:text-gray-500 text-sm font-medium">حلول مخصصة لفرق الأعمال الكبيرة</p>
+                <div className="mt-6">
+                  <span className="text-3xl font-black text-[#0D1B2A] dark:text-white transition-colors">تواصل معنا</span>
+                </div>
+              </div>
+              <ul className="space-y-3 flex-1 mb-8">
+                {[
+                  '✅ كل ما في Premium',
+                  '✅ SLA مضمون 99.9% uptime',
+                  '✅ بيئة منفصلة (Private Instance)',
+                  '✅ تكامل مع SAP / ERP',
+                  '✅ فريق دعم مخصص',
+                  '✅ تدريب الفريق',
+                  '✅ عقد مخصص وفاتورة شهرية'
+                ].map((f, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm font-medium text-gray-600 dark:text-gray-300">{f}</li>
+                ))}
+              </ul>
+              <motion.a
+                href="mailto:enterprise@kafil.sa"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="block w-full text-center py-3.5 rounded-2xl bg-[#0D1B2A] dark:bg-white text-white dark:text-[#0D1B2A] font-bold text-sm transition-all hover:opacity-90"
+              >
+                تواصل مع فريق المبيعات
+              </motion.a>
+            </motion.div>
+
+          </div>
+
+          {/* Bottom note */}
+          <p className="text-center text-gray-400 dark:text-gray-500 font-medium text-sm mt-12 transition-colors">
+            جميع الخطط تشمل خزنة Escrow مدمجة وحماية مالية كاملة للعملاء والمستقلين. العمولة على المعاملات <span className="font-black text-[#0D1B2A] dark:text-white">5%</span> فقط.
+          </p>
+        </div>
+      </section>
+
       {/* 🏁 FOOTER - Minimalist Apple Style */}
       <footer className="bg-white dark:bg-[#08111A] pt-32 pb-16 px-6 md:px-12 border-t border-gray-100 dark:border-white/5 transition-colors duration-500">
         <div className="max-w-7xl mx-auto grid md:grid-cols-4 gap-20 mb-24">
@@ -748,6 +937,7 @@ export default function Landing() {
               <li><a href="#about" className="hover:text-blue-600 transition-colors">عن كفيل</a></li>
               <li><a href="#how-it-works" className="hover:text-blue-600 transition-colors">نظام الضمان</a></li>
               <li><a href="#ai-justice" className="hover:text-blue-600 transition-colors">مقـيم العدالة</a></li>
+              <li><a href="#pricing" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">الأسعار</a></li>
               <li><a href="#faq" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">الأسئلة الشائعة</a></li>
             </ul>
           </div>
@@ -762,10 +952,11 @@ export default function Landing() {
         </div>
         <div className="hidden lg:flex gap-10 text-gray-500 font-bold text-sm justify-center mb-12">
           {[
-            { name: 'الرئيسية', id: 'home' },
+                      { name: 'الرئيسية', id: 'home' },
             { name: 'من نحن', id: 'about' },
             { name: 'كيفية العمل', id: 'how-it-works' },
             { name: 'الذكاء الاصطناعي', id: 'ai-justice' },
+            { name: 'الأسعار', id: 'pricing' },
             { name: 'الأسئلة الشائعة', id: 'faq' }
           ].map((item, i) => (
             <motion.a 

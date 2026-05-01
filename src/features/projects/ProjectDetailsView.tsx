@@ -408,25 +408,27 @@ const ProjectDetails: FC = () => {
   const openDisputes = project.tasks.filter(t => t.status === 'Disputed').length;
 
   return (
-    <motion.div 
-      layoutId={`project-card-${id}`}
-      initial={{ opacity: 0, scale: 0.95, y: 20 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95, y: 20 }}
-      transition={{ type: 'spring', stiffness: 350, damping: 35, mass: 0.8 }}
-      className="max-w-5xl mx-auto bg-white rounded-[28px] overflow-hidden shadow-2xl relative z-50 mb-10" 
-      dir="rtl"
-    >
-      {/* Close Button */}
+    <div className="relative min-h-screen">
+      {/* Close Button - Outside the card */}
       <button 
         onClick={() => navigate(-1)}
-        className="absolute top-6 left-6 z-50 w-10 h-10 rounded-full bg-gray-100/50 backdrop-blur-md flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-all focus:outline-none focus:ring-2 focus:ring-[var(--color-kafil-gold)]"
+        className="fixed top-8 left-8 z-[60] w-12 h-12 rounded-full bg-[var(--color-kafil-midnight)]/10 backdrop-blur-xl flex items-center justify-center text-[var(--color-kafil-midnight)] hover:bg-[var(--color-kafil-midnight)] hover:text-white transition-all shadow-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-kafil-gold)]"
         aria-label="إغلاق والعودة للوحة التحكم"
+        style={{ border: '1px solid rgba(13,27,42,0.1)' }}
       >
-        <X size={20} />
+        <X size={24} />
       </button>
 
-      {/* Project Header */}
+      <motion.div 
+        layoutId={`project-card-${id}`}
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        transition={{ type: 'spring', stiffness: 350, damping: 35, mass: 0.8 }}
+        className="max-w-5xl mx-auto bg-white rounded-[28px] overflow-hidden shadow-2xl relative z-50 mb-10" 
+        dir="rtl"
+      >
+        {/* Project Header */}
       <div className="bg-white border-b border-[#E8DDD0] p-8 mb-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
@@ -543,7 +545,8 @@ const ProjectDetails: FC = () => {
           userRole={user.role}
         />
       )}
-    </motion.div>
+      </motion.div>
+    </div>
   );
 };
 

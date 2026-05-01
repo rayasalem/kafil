@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -116,6 +116,18 @@ export default function ClientDashboard() {
     },
   });
 
+  useLayoutEffect(() => {
+    // Attempt to restore scroll position immediately on mount to prevent visual jumps
+    const savedScrollPos = sessionStorage.getItem('clientDashboardScroll');
+    if (savedScrollPos) {
+      // Must use a tiny delay sometimes to ensure DOM has painted length
+      setTimeout(() => {
+        window.scrollTo({ top: parseInt(savedScrollPos, 10), behavior: 'instant' });
+      }, 10);
+      sessionStorage.removeItem('clientDashboardScroll');
+    }
+  }, [projects.length]);
+
   // Memoized derived state to prevent re-calculations on every render
   const { totalBudget, totalPaid, totalLocked, pendingApprovals } = useMemo(() => {
     let budget = 0;
@@ -161,6 +173,8 @@ export default function ClientDashboard() {
   };
 
   const handleOpenProjectDetails = (projectId: string) => {
+    // Save scroll position precisely before animating out
+    sessionStorage.setItem('clientDashboardScroll', window.scrollY.toString());
     setOpeningProjectId(projectId);
 
     if (routeTimerRef.current) {

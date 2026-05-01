@@ -1,5 +1,7 @@
-import { Link } from 'react-router-dom';
+import { useState, useRef, MouseEvent } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Briefcase, Lock, CheckCircle, Wallet, ArrowLeft, ChevronLeft } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import DemoButton from '@/shared/components/DemoButton';
 import { FC } from 'react';
 import { Project } from '@/types';
@@ -12,8 +14,31 @@ interface ClientDashboardProps {
 }
 
 const ClientDashboard: FC<ClientDashboardProps> = ({ projects, totalBudget, totalLocked, totalPaid }) => {
+  const navigate = useNavigate();
+  const [animatingProjectId, setAnimatingProjectId] = useState<string | null>(null);
+  
+  const handleProjectClick = (e: MouseEvent, projectId: string) => {
+    e.preventDefault();
+    setAnimatingProjectId(projectId);
+    // Add a slightly longer delay for a smoother, more cinematic animation
+    setTimeout(() => {
+      navigate(`/projects/${projectId}`);
+    }, 1200); // 1200ms provides enough time for the slow "grow to center" visual effect 
+  };
+
   return (
-    <div className="animate-fade-in max-w-5xl mx-auto">
+    <div className="animate-fade-in max-w-5xl mx-auto relative">
+      <AnimatePresence>
+        {animatingProjectId && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-white/95 backdrop-blur-sm"
+            transition={{ duration: 0.8, delay: 0.3, ease: "easeInOut" }}
+          />
+        )}
+      </AnimatePresence>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-black text-gray-900 tracking-tight mb-1">الخزنة المركزية (Client)</h1>
@@ -82,9 +107,23 @@ const ClientDashboard: FC<ClientDashboardProps> = ({ projects, totalBudget, tota
           </div>
         </div>
       ) : (
-        <div className="grid lg:grid-cols-2 gap-5">
+        <div className="grid lg:grid-cols-2 gap-5 relative">
           {projects.map(p => (
-            <Link key={p.id} to={`/projects/${p.id}`} className="bg-white border border-gray-100 p-6 rounded-3xl hover:border-blue-200 hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-300 group block relative overflow-hidden">
+            <motion.a
+              key={p.id}
+              href={`/projects/${p.id}`}
+              onClick={(e) => handleProjectClick(e, p.id)}
+              layoutId={`project-card-${p.id}`}
+              layout
+              initial={false}
+              whileHover={animatingProjectId ? {} : { scale: 1.02 }}
+              transition={{
+                layout: { type: "spring", stiffness: 100, damping: 20, mass: 1 }
+              }}
+              className={`bg-white border border-gray-100 p-6 rounded-3xl hover:border-blue-200 hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-1000 group block overflow-hidden cursor-pointer ${
+                animatingProjectId && animatingProjectId !== p.id ? "opacity-0 blur-xl pointer-events-none scale-90" : ""
+              } ${animatingProjectId === p.id ? "fixed z-[60] shadow-[0_40px_100px_-20px_rgba(30,58,138,0.4)] m-auto top-[20%] left-0 right-0 w-[90vw] max-w-[800px] scale-105 overflow-visible" : "relative"}`}
+             >
               <div className="flex justify-between items-start mb-6 relative z-10">
                 <h3 className="font-extrabold text-xl text-gray-900 group-hover:text-blue-900 transition truncate pl-2">{p.title}</h3>
                 <span className="bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full text-xs font-bold shrink-0 flex items-center gap-1.5 shadow-sm">
@@ -111,7 +150,17 @@ const ClientDashboard: FC<ClientDashboardProps> = ({ projects, totalBudget, tota
                   <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform"/>
                 </div>
               </div>
-            </Link>
+              
+              {/* Animated Expansion Overlay when clicked */}
+              {animatingProjectId === p.id && (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 50 }}
+                  transition={{ duration: 0.6, ease: "easeIn" }}
+                  className="absolute top-1/2 left-1/2 w-8 h-8 bg-blue-50/90 rounded-full -translate-x-1/2 -translate-y-1/2 z-0"
+                />
+              )}
+            </motion.a>
           ))}
         </div>
       )}

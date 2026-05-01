@@ -28,14 +28,14 @@ const DashboardRedirect: FC = () => {
 };
 
 const LoadingFallback: FC = () => (
-  <div className="min-h-screen flex items-center justify-center bg-gray-50">
-    <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+  <div className="flex min-h-screen items-center justify-center bg-gray-50">
+    <div className="h-16 w-16 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div>
   </div>
 );
 
 const AnimatedRoutes: FC = () => {
   const location = useLocation();
-  
+
   return (
     <AnimatePresence mode="sync">
       <Routes location={location} key={location.pathname}>

@@ -61,9 +61,6 @@ export const AppleCloseButton: React.FC<AppleCloseButtonProps> = ({
         onMouseLeave={handleMouseLeave}
         
         // HOVER SEQUENCE
-        animate={{
-          scale: isHovered ? 1.1 : 1,
-        }}
         whileTap={{ scale: 0.96 }}
         
         // ENTRANCE SEQUENCE

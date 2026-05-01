@@ -40,7 +40,7 @@ const ProjectDetailsView: FC = () => {
       <motion.div
         layoutId={`project-card-${id}`}
         initial={false}
-        transition={{ layout: { type: 'spring', stiffness: 180, damping: 22, mass: 0.9 } }}
+        transition={{ layout: { type: 'spring', stiffness: 150, damping: 26, mass: 1.1 } }}
         className="relative z-50 mx-auto mb-10 max-w-5xl overflow-hidden rounded-[28px] bg-white shadow-2xl"
         dir="rtl"
       >

@@ -40,7 +40,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
       animate={
         isOpening
           ? {
-              scale: 1.045,
+              scale: 1.035,
               y: 0,
               opacity: 1,
               boxShadow: '0 40px 100px -20px rgba(13,27,42,0.35)',
@@ -53,12 +53,16 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
             }
       }
       whileHover={isOpening ? undefined : { y: -5, scale: 1.01 }}
-      transition={{ type: 'spring', stiffness: 130, damping: 18, mass: 1 }}
-      className={`group relative z-10 overflow-hidden rounded-[28px] border border-[var(--color-kafil-sand)] bg-white transition-all duration-300 hover:border-[var(--color-kafil-gold)]/50 hover:shadow-2xl ${
-        isOpening
-          ? 'fixed top-1/2 left-1/2 z-60 w-[min(92vw,860px)] -translate-x-1/2 -translate-y-1/2'
-          : ''
-      } ${isDimming ? 'pointer-events-none scale-[0.98] opacity-20 blur-[1px]' : ''}`}
+      transition={{
+        type: 'spring',
+        stiffness: 110,
+        damping: 22,
+        mass: 1.1,
+        opacity: { duration: 0.2 },
+      }}
+      className={`group relative z-10 transform-gpu overflow-hidden rounded-[28px] border border-[var(--color-kafil-sand)] bg-white transition-all duration-500 ease-out hover:border-[var(--color-kafil-gold)]/50 hover:shadow-2xl ${
+        isOpening ? 'z-60' : ''
+      } ${isDimming ? 'pointer-events-none scale-[0.985] opacity-30 blur-[2px]' : ''}`}
       aria-labelledby={`project-title-${p.id}`}
     >
       {/* Card Header */}

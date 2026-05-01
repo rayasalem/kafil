@@ -36,6 +36,26 @@ export default function Landing() {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isDark, setIsDark] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
+
+  // Track active section for Apple-style nav pill
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ['home', 'how-it-works', 'about', 'ai-justice', 'pricing', 'faq'].map(id => document.getElementById(id));
+      let current = 'home';
+      for (const section of sections) {
+        if (section) {
+          const rect = section.getBoundingClientRect();
+          if (rect.top <= window.innerHeight / 3 && rect.bottom >= window.innerHeight / 3) {
+            current = section.id;
+          }
+        }
+      }
+      setActiveSection(current);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Initialize Smooth Scrolling (Lenis)
   useEffect(() => {
@@ -187,6 +207,42 @@ export default function Landing() {
       });
     });
 
+    // Premium GSAP Parallax Effect for Hero
+    gsap.to(".hero-text-content", {
+      yPercent: 30,
+      ease: "none",
+      scrollTrigger: {
+        trigger: "#home",
+        start: "top top",
+        end: "bottom top",
+        scrub: true
+      }
+    });
+
+    gsap.to(".animation-container", {
+      yPercent: -20,
+      ease: "none",
+      scrollTrigger: {
+        trigger: "#home",
+        start: "top top",
+        end: "bottom top",
+        scrub: true
+      }
+    });
+
+    // Parallax on pricing cards
+    gsap.from(".pricing-card", {
+      y: 100,
+      opacity: 0,
+      stagger: 0.1,
+      duration: 1,
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: "#pricing",
+        start: "top 70%",
+      }
+    });
+
     // Escrow Vault Animation
     gsap.to(".vault-inner", {
       scrollTrigger: {
@@ -213,6 +269,7 @@ export default function Landing() {
     { name: 'كيفية العمل', id: 'how-it-works' },
     { name: 'من نحن', id: 'about' },
     { name: 'الذكاء الاصطناعي', id: 'ai-justice' },
+    { name: 'الأسعار والخطط', id: 'pricing' },
     { name: 'الأسئلة الشائعة', id: 'faq' },
   ];
 
@@ -233,24 +290,36 @@ export default function Landing() {
           كفيل
         </Link>
 
-        <div className="hidden lg:flex gap-1 p-1.5 bg-white/40 backdrop-blur-md rounded-full border border-white/20 shadow-[0_4px_30px_rgba(0,0,0,0.03)]">
-          {navLinks.map((link, i) => (
-            <motion.a 
-              key={link.id}
-              href={`#${link.id}`}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 + i * 0.1, duration: 0.5 }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="px-6 py-2 rounded-full text-sm font-bold text-gray-600 dark:text-gray-300 hover:text-[#0D1B2A] dark:hover:text-white transition-all duration-300 relative group"
-            >
-              <span className="relative z-10">{link.name}</span>
-              <motion.span 
-                className="absolute inset-0 bg-white/80 rounded-full -z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-sm"
-              />
-            </motion.a>
-          ))}
+        <div className="hidden lg:flex gap-1 p-1.5 bg-white/40 dark:bg-[#0D1B2A]/40 backdrop-blur-md rounded-full border border-white/20 dark:border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.03)] relative">
+          {navLinks.map((link) => {
+            const isActive = activeSection === link.id;
+            return (
+              <motion.a 
+                key={link.id}
+                href={`#${link.id}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById(link.id)?.scrollIntoView({ behavior: 'smooth' });
+                  setActiveSection(link.id);
+                }}
+                className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 relative group ${isActive ? 'text-[#0D1B2A] dark:text-white' : 'text-gray-600 dark:text-gray-300 hover:text-[#0D1B2A] dark:hover:text-white'}`}
+              >
+                <span className="relative z-10">{link.name}</span>
+                {isActive && (
+                  <motion.div
+                    layoutId="active-nav-pill"
+                    className="absolute inset-0 bg-white dark:bg-white/10 rounded-full shadow-sm border border-black/5 dark:border-white/5"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+                {!isActive && (
+                  <motion.span 
+                    className="absolute inset-0 bg-white/40 dark:bg-white/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  />
+                )}
+              </motion.a>
+            );
+          })}
         </div>
 
         <div className="flex gap-4 items-center">
@@ -747,11 +816,7 @@ export default function Landing() {
             
             {/* Basic */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0 }}
-              className="relative bg-white dark:bg-[#0D1B2A] border-2 border-gray-100 dark:border-white/5 rounded-3xl p-8 flex flex-col transition-colors hover:border-gray-200 dark:hover:border-white/10 hover:shadow-xl group"
+              className="pricing-card relative bg-white dark:bg-[#0D1B2A] border-2 border-gray-100 dark:border-white/5 rounded-3xl p-8 flex flex-col transition-colors hover:border-gray-200 dark:hover:border-white/10 hover:shadow-xl group"
             >
               <div className="mb-8">
                 <span className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Basic</span>
@@ -786,11 +851,7 @@ export default function Landing() {
 
             {/* Pro */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="relative bg-white dark:bg-[#0D1B2A] border-2 border-gray-100 dark:border-white/5 rounded-3xl p-8 flex flex-col transition-colors hover:border-blue-200 dark:hover:border-blue-500/20 hover:shadow-xl"
+              className="pricing-card relative bg-white dark:bg-[#0D1B2A] border-2 border-gray-100 dark:border-white/5 rounded-3xl p-8 flex flex-col transition-colors hover:border-blue-200 dark:hover:border-blue-500/20 hover:shadow-xl"
             >
               <div className="mb-8">
                 <span className="text-xs font-black text-blue-500 uppercase tracking-widest">Pro</span>
@@ -826,11 +887,7 @@ export default function Landing() {
 
             {/* Premium — MOST POPULAR */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="relative bg-[#0D1B2A] dark:bg-[#C9A84C]/10 border-2 border-[#C9A84C] rounded-3xl p-8 flex flex-col shadow-2xl shadow-[#C9A84C]/20 scale-[1.02]"
+              className="pricing-card relative bg-[#0D1B2A] dark:bg-[#C9A84C]/10 border-2 border-[#C9A84C] rounded-3xl p-8 flex flex-col shadow-2xl shadow-[#C9A84C]/20 scale-[1.02]"
             >
               <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                 <span className="bg-[#C9A84C] text-[#0D1B2A] text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full whitespace-nowrap shadow-lg">
@@ -871,11 +928,7 @@ export default function Landing() {
 
             {/* Enterprise */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              className="relative bg-white dark:bg-[#0D1B2A] border-2 border-gray-100 dark:border-white/5 rounded-3xl p-8 flex flex-col transition-colors hover:border-purple-200 dark:hover:border-purple-500/20 hover:shadow-xl"
+              className="pricing-card relative bg-white dark:bg-[#0D1B2A] border-2 border-gray-100 dark:border-white/5 rounded-3xl p-8 flex flex-col transition-colors hover:border-purple-200 dark:hover:border-purple-500/20 hover:shadow-xl"
             >
               <div className="mb-8">
                 <span className="text-xs font-black text-purple-500 uppercase tracking-widest">Enterprise</span>
@@ -937,7 +990,7 @@ export default function Landing() {
               <li><a href="#about" className="hover:text-blue-600 transition-colors">عن كفيل</a></li>
               <li><a href="#how-it-works" className="hover:text-blue-600 transition-colors">نظام الضمان</a></li>
               <li><a href="#ai-justice" className="hover:text-blue-600 transition-colors">مقـيم العدالة</a></li>
-              <li><a href="#pricing" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">الأسعار</a></li>
+              <li><a href="#pricing" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">الأسعار والخطط</a></li>
               <li><a href="#faq" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">الأسئلة الشائعة</a></li>
             </ul>
           </div>
@@ -956,7 +1009,7 @@ export default function Landing() {
             { name: 'من نحن', id: 'about' },
             { name: 'كيفية العمل', id: 'how-it-works' },
             { name: 'الذكاء الاصطناعي', id: 'ai-justice' },
-            { name: 'الأسعار', id: 'pricing' },
+            { name: 'الأسعار والخطط', id: 'pricing' },
             { name: 'الأسئلة الشائعة', id: 'faq' }
           ].map((item, i) => (
             <motion.a 
